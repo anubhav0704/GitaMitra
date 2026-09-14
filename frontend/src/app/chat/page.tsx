@@ -387,7 +387,7 @@ export default function ChatPage() {
       if (abortControllerRef.current === controller) {
         controller.abort("Request timed out. Please retry.");
       }
-    }, 25000);
+    }, 60000);
 
     try {
       const response = await fetch(`${API_BASE}/chat/stream`, {

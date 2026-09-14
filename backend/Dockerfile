@@ -7,6 +7,7 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV MALLOC_ARENA_MAX 2
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -25,5 +26,5 @@ COPY . .
 # Expose port
 EXPOSE 8000
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Run the application (no --reload in production to save memory)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

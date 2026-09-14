@@ -31,23 +31,25 @@ export function getAuthHeaders(): Record<string, string> {
   return {};
 }
 
-export async function resilientFetch(input: RequestInfo | URL, init: RequestInit = {}, maxRetries = 6): Promise<Response> {
+export async function resilientFetch(input: RequestInfo | URL, init: RequestInit = {}, maxRetries = 8): Promise<Response> {
   let attempt = 0;
   while (attempt < maxRetries) {
     try {
       const response = await fetch(input, init);
+      // Render returns 502/503/504 HTML pages during cold starts (no CORS headers)
       if (response.status === 502 || response.status === 503 || response.status === 504) {
-        throw new TypeError("Render cold start 502/503/504");
+        throw new TypeError("Backend cold start (502/503/504)");
       }
       return response;
     } catch (err: any) {
-      const isFailedToFetch = err instanceof TypeError && 
-        (err.message.includes("Failed to fetch") || err.message.includes("NetworkError") || err.message.includes("cold start"));
+      const isRetryable = err instanceof TypeError && 
+        (err.message.includes("Failed to fetch") || err.message.includes("NetworkError") || err.message.includes("cold start") || err.message.includes("CORS"));
       
-      if (isFailedToFetch && attempt < maxRetries - 1) {
+      if (isRetryable && attempt < maxRetries - 1) {
         attempt++;
-        const delay = 3000 * Math.pow(1.5, attempt - 1);
-        console.warn(`[GitaMitra] API waking up... retrying in ${delay}ms (Attempt ${attempt}/${maxRetries})`);
+        // 5s base with 1.5x exponential backoff: 5s, 7.5s, 11.25s, 16.8s, 25.3s, 37.9s, 56.8s
+        const delay = 5000 * Math.pow(1.5, attempt - 1);
+        console.warn(`[GitaMitra] Backend waking up... retry ${attempt}/${maxRetries} in ${(delay/1000).toFixed(1)}s`);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }

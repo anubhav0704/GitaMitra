@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { API_BASE, getAuthHeaders, removeAuthToken, setAuthToken } from '../lib/api';
+import { API_BASE, getAuthHeaders, getAuthToken, removeAuthToken, setAuthToken } from '../lib/api';
 
 export interface User {
   id: string;
@@ -20,12 +20,48 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function getSavedUser(): User | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = localStorage.getItem("gitamitra_user");
+    if (saved) return JSON.parse(saved);
+  } catch { /* ignore */ }
+  return null;
+}
+
+function saveUser(user: User | null) {
+  if (typeof window === "undefined") return;
+  if (user) {
+    localStorage.setItem("gitamitra_user", JSON.stringify(user));
+  } else {
+    localStorage.removeItem("gitamitra_user");
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
+  // Instantly restore user from localStorage (no loading spinner if cached)
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on mount
+    const token = getAuthToken();
+    const cachedUser = getSavedUser();
+    
+    // If no token stored, user is definitely not logged in
+    if (!token) {
+      setUser(null);
+      saveUser(null);
+      setLoading(false);
+      return;
+    }
+
+    // Instantly restore cached user so UI doesn't flash
+    if (cachedUser) {
+      setUser(cachedUser);
+      setLoading(false);
+    }
+
+    // Validate token in the background with /auth/me
     fetch(`${API_BASE}/auth/me`, {
       headers: getAuthHeaders(),
       credentials: 'include'
@@ -34,14 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (res.ok) {
           return res.json();
         }
-        throw new Error('Not authenticated');
+        // Only clear token on explicit auth rejection (401/403)
+        if (res.status === 401 || res.status === 403) {
+          removeAuthToken();
+          saveUser(null);
+          setUser(null);
+        }
+        // For 502/503/network errors, keep the cached user — backend is sleeping
+        throw new Error(`Auth check: ${res.status}`);
       })
       .then(data => {
         setUser(data);
+        saveUser(data);
       })
-      .catch(() => {
-        setUser(null);
-        removeAuthToken();
+      .catch((err) => {
+        // Don't remove token/user on network errors (backend cold start)
+        console.warn('[GitaMitra] Auth check failed (backend may be waking up):', err.message);
       })
       .finally(() => {
         setLoading(false);
@@ -53,10 +97,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAuthToken(token);
     }
     setUser(user);
+    saveUser(user);
   };
 
   const logout = () => {
     setUser(null);
+    saveUser(null);
     removeAuthToken();
   };
 

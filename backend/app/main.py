@@ -39,7 +39,9 @@ async def lifespan(app: FastAPI):
             await seed_data()
             logger.info("Scripture and pre-computed embeddings seeding completed.")
     except Exception as e:
-        logger.warning(f"Lifespan database setup exception: {e}")
+        logger.warning(f"Lifespan database setup exception (non-fatal, will retry on first request): {e}")
+    
+    logger.info("GitaMitra API is ready to serve requests.")
     yield
     logger.info("Graceful shutdown: closing GitaMitra API resources...")
 

@@ -30,9 +30,7 @@ def setup_database():
         
         if chapter_count < 18:
             from scripts.seed_gita import seed_data
-            from scripts.generate_embeddings import generate_embeddings
             await seed_data()
-            await generate_embeddings()
             
         await engine.dispose()
     

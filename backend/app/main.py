@@ -36,10 +36,8 @@ async def lifespan(app: FastAPI):
         if count < 18:
             logger.info("Empty scripture database detected. Auto-seeding Gita chapters, verses, and embeddings...")
             from scripts.seed_gita import seed_data
-            from scripts.generate_embeddings import generate_embeddings
             await seed_data()
-            await generate_embeddings()
-            logger.info("Scripture seeding completed.")
+            logger.info("Scripture and pre-computed embeddings seeding completed.")
     except Exception as e:
         logger.warning(f"Lifespan database setup exception: {e}")
     yield

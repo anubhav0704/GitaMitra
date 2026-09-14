@@ -6,11 +6,15 @@ services:
     region: singapore
     plan: free
     buildCommand: cd backend && pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
-    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
     healthCheckPath: /api/health/ready
     envVars:
       - key: ENVIRONMENT
         value: production
+      - key: WEB_CONCURRENCY
+        value: "1"
+      - key: MALLOC_ARENA_MAX
+        value: "2"
       - key: POSTGRES_SERVER
         fromDatabase:
           name: gitamitra-db

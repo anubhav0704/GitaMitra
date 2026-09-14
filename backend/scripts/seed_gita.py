@@ -102,6 +102,39 @@ async def seed_data():
             )
             await session.execute(stmt)
         await session.commit()
+
+        # Seed pre-computed embeddings if embeddings.json exists
+        embeddings_path = os.path.join(RAW_DIR, 'embeddings.json')
+        if os.path.exists(embeddings_path):
+            from app.models.rag import GitaEmbedding
+            print("Seeding Pre-computed Embeddings...")
+            with open(embeddings_path, 'r', encoding='utf-8') as f:
+                embeddings_data = json.load(f)
+            
+            result = await session.execute(select(Verse.id, Verse.verse_key))
+            verse_map = {vk: vid for vid, vk in result.all()}
+            
+            for emb in embeddings_data:
+                v_id = verse_map.get(emb['verse_key'])
+                if v_id:
+                    emb_stmt = insert(GitaEmbedding).values(
+                        verse_id=v_id,
+                        embedding=emb['embedding'],
+                        embedding_model=emb['embedding_model'],
+                        embedding_version=emb['embedding_version'],
+                        text_hash=emb['text_hash']
+                    )
+                    emb_stmt = emb_stmt.on_conflict_do_update(
+                        index_elements=['verse_id'],
+                        set_={
+                            'embedding': emb_stmt.excluded.embedding,
+                            'text_hash': emb_stmt.excluded.text_hash
+                        }
+                    )
+                    await session.execute(emb_stmt)
+            await session.commit()
+            print(f"Seeded {len(embeddings_data)} pre-computed embeddings successfully.")
+
         print("Database seed complete.")
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import ShlokaCard, { ShlokaReference } from "./ShlokaCard";
 import VoiceAudioPlayer from "./VoiceAudioPlayer";
+import { API_BASE } from "../../lib/api";
 import {
   Copy,
   Check,
@@ -61,7 +62,7 @@ export default function MessageBubble({
     if (feedbackSent !== null) return;
     setFeedbackSent(true);
     try {
-      await fetch("http://localhost:8000/api/feedback", {
+      await fetch(`${API_BASE}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -78,7 +79,7 @@ export default function MessageBubble({
   const submitDetailedFeedback = async (isHelpful: boolean) => {
     setSubmittingFeedback(true);
     try {
-      await fetch("http://localhost:8000/api/feedback", {
+      await fetch(`${API_BASE}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

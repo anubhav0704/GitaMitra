@@ -1,6 +1,6 @@
-"use client";
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+export const API_BASE = `${API_URL}/api`;
 
-const API_BASE = "http://localhost:8000/api";
 
 export class ApiError extends Error {
   status: number;

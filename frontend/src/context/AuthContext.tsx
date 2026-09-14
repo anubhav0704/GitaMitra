@@ -1,12 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { API_BASE } from '../lib/api';
 
-interface User {
+export interface User {
   id: string;
-  name: string | null;
+  name: string;
   email: string;
   role?: string;
+  is_active?: boolean;
 }
 
 interface AuthContextType {
@@ -24,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check if user is logged in on mount
-    fetch('http://localhost:8000/api/auth/me', {
+    fetch(`${API_BASE}/auth/me`, {
       credentials: 'include'
     })
       .then(res => {

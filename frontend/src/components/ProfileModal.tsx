@@ -23,6 +23,7 @@ import {
   Download,
   Trash2
 } from "lucide-react";
+import { API_BASE } from "../lib/api";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
@@ -97,7 +98,7 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
   useEffect(() => {
     if (!isOpen) return;
     // Fetch active memories count
-    fetch("http://localhost:8000/api/memories?is_active=true", {
+    fetch(`${API_BASE}/memories?is_active=true`, {
       credentials: "include"
     })
       .then((res) => (res.ok ? res.json() : []))
@@ -268,7 +269,7 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
 
             <button
               type="button"
-              onClick={() => window.open("http://localhost:8000/api/auth/account/export", "_blank")}
+              onClick={() => window.open(`${API_BASE}/auth/account/export`, "_blank")}
               className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 border border-gray-100 dark:border-gray-800 text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors cursor-pointer"
             >
               <div className="flex items-center space-x-2.5">
@@ -282,7 +283,7 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
               type="button"
               onClick={async () => {
                 if (confirm("Are you sure? This will permanently delete your account and all conversations and memories.")) {
-                  const res = await fetch("http://localhost:8000/api/auth/account", { method: "DELETE", credentials: "include" });
+                  const res = await fetch(`${API_BASE}/auth/account`, { method: "DELETE", credentials: "include" });
                   if (res.ok) {
                     onClose();
                     if (currentLogout) currentLogout();

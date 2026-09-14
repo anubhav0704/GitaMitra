@@ -28,6 +28,7 @@ import Sidebar, { ConversationItem } from "../../components/chat/Sidebar";
 import MessageBubble, { MessageItem } from "../../components/chat/MessageBubble";
 import { ShlokaReference } from "../../components/chat/ShlokaCard";
 import { useVoiceRecorder } from "../../lib/voice";
+import { API_BASE } from "../../lib/api";
 import { OnboardingModal } from "../../components/onboarding/OnboardingModal";
 import { MobileNav } from "../../components/layout/MobileNav";
 
@@ -154,7 +155,7 @@ export default function ChatPage() {
       formData.append("file", audioBlob, `speech.${ext}`);
       formData.append("detect_language", "true");
 
-      const res = await fetch("http://localhost:8000/api/voice/transcribe", {
+      const res = await fetch(`${API_BASE}/voice/transcribe`, {
         method: "POST",
         credentials: "include",
         body: formData
@@ -232,7 +233,7 @@ export default function ChatPage() {
   // Load conversations list
   const loadConversations = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/conversations", {
+      const res = await fetch(`${API_BASE}/conversations`, {
         credentials: "include"
       });
       if (res.ok) {
@@ -263,7 +264,7 @@ export default function ChatPage() {
 
     const loadMessages = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/conversations/${activeConvId}`, {
+        const res = await fetch(`${API_BASE}/conversations/${activeConvId}`, {
           credentials: "include"
         });
         if (res.ok) {
@@ -308,7 +309,7 @@ export default function ChatPage() {
   const deleteConversation = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`http://localhost:8000/api/conversations/${id}`, {
+      const res = await fetch(`${API_BASE}/conversations/${id}`, {
         method: "DELETE",
         credentials: "include"
       });
@@ -325,7 +326,7 @@ export default function ChatPage() {
 
   const handleRenameConversation = async (id: string, newTitle: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/conversations/${id}`, {
+      const res = await fetch(`${API_BASE}/conversations/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -385,7 +386,7 @@ export default function ChatPage() {
     }, 25000);
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat/stream", {
+      const response = await fetch(`${API_BASE}/chat/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

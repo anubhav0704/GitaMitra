@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
+import { API_BASE } from "../../lib/api";
 import { ArrowRight, Lock, Mail, User, Sparkles, Eye, EyeOff } from "lucide-react";
 
 export default function Register() {
@@ -23,7 +24,7 @@ export default function Register() {
 
     try {
       // 1. Register
-      const registerRes = await fetch("http://localhost:8000/api/auth/register", {
+      const registerRes = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
@@ -35,7 +36,7 @@ export default function Register() {
       }
 
       // 2. Login to get cookie
-      const loginRes = await fetch("http://localhost:8000/api/auth/login", {
+      const loginRes = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -47,7 +48,7 @@ export default function Register() {
       }
 
       // 3. Fetch user profile
-      const meRes = await fetch("http://localhost:8000/api/auth/me", {
+      const meRes = await fetch(`${API_BASE}/auth/me`, {
         credentials: "include",
       });
       

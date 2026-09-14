@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { MobileNav } from "../../components/layout/MobileNav";
+import { API_BASE } from "../../lib/api";
 
 interface Chapter {
   chapter_number: number;
@@ -19,7 +20,7 @@ export default function GitaExplorer() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/gita/chapters")
+    fetch(`${API_BASE}/gita/chapters`)
       .then((res) => res.json())
       .then((data) => {
         setChapters(data);

@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import { API_BASE } from "../../lib/api";
 
 export default function AdminDashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -47,13 +48,13 @@ export default function AdminDashboardPage() {
     setErrorMsg(null);
     try {
       const [mRes, uRes, gRes, rRes, fRes, hRes, aRes] = await Promise.all([
-        fetch(`http://localhost:8000/api/admin/metrics?period=${period}`, { credentials: "include" }),
-        fetch("http://localhost:8000/api/admin/users", { credentials: "include" }),
-        fetch("http://localhost:8000/api/admin/gita/health", { credentials: "include" }),
-        fetch("http://localhost:8000/api/admin/rag/stats", { credentials: "include" }),
-        fetch("http://localhost:8000/api/admin/feedback", { credentials: "include" }),
-        fetch("http://localhost:8000/api/admin/system/health", { credentials: "include" }),
-        fetch("http://localhost:8000/api/admin/audit-logs", { credentials: "include" })
+        fetch(`${API_BASE}/admin/metrics?period=${period}`, { credentials: "include" }),
+        fetch(`${API_BASE}/admin/users`, { credentials: "include" }),
+        fetch(`${API_BASE}/admin/gita/health`, { credentials: "include" }),
+        fetch(`${API_BASE}/admin/rag/stats`, { credentials: "include" }),
+        fetch(`${API_BASE}/admin/feedback`, { credentials: "include" }),
+        fetch(`${API_BASE}/admin/system/health`, { credentials: "include" }),
+        fetch(`${API_BASE}/admin/audit-logs`, { credentials: "include" })
       ]);
 
       if (mRes.status === 403) {
@@ -85,7 +86,7 @@ export default function AdminDashboardPage() {
 
   const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/admin/users/${userId}/status`, {
+      const res = await fetch(`${API_BASE}/admin/users/${userId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -102,7 +103,7 @@ export default function AdminDashboardPage() {
   const toggleUserRole = async (userId: string, currentRole: string) => {
     const newRole = currentRole === "admin" ? "user" : "admin";
     try {
-      const res = await fetch(`http://localhost:8000/api/admin/users/${userId}/role`, {
+      const res = await fetch(`${API_BASE}/admin/users/${userId}/role`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -119,7 +120,7 @@ export default function AdminDashboardPage() {
   const triggerEmbeddingRebuild = async () => {
     if (!confirm("Are you sure you want to trigger a full Gita embedding dataset rebuild?")) return;
     try {
-      const res = await fetch("http://localhost:8000/api/admin/gita/rebuild", {
+      const res = await fetch(`${API_BASE}/admin/gita/rebuild`, {
         method: "POST",
         credentials: "include"
       });

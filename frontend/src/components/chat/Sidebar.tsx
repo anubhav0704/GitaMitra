@@ -25,6 +25,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import ProfileModal from "../ProfileModal";
+import { API_BASE } from "../../lib/api";
 
 export interface ConversationItem {
   id: string;
@@ -99,7 +100,7 @@ export default function Sidebar({
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:8000/api/auth/logout", {
+      await fetch(`${API_BASE}/auth/logout`, {
         method: "POST",
         credentials: "include"
       });

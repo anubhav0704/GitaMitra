@@ -14,6 +14,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { cleanSanskritShloka, cleanHindiTranslation } from "../../../../../../lib/devanagari";
+import { API_BASE } from "../../../../../../lib/api";
 
 interface Verse {
   chapter_number: number;
@@ -111,7 +112,7 @@ export default function VersePage() {
     const fetchVerse = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:8000/api/gita/chapters/${chapterId}/verses/${verseId}`);
+        const res = await fetch(`${API_BASE}/gita/chapters/${chapterId}/verses/${verseId}`);
         if (res.ok) {
           const data = await res.json();
           setVerse(data);

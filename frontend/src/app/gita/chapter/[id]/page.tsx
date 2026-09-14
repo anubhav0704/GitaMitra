@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronLeft, ArrowRight, Sparkles } from "lucide-react";
+import { API_BASE } from "../../../../lib/api";
 
 interface Chapter {
   chapter_number: number;
@@ -34,8 +35,8 @@ export default function ChapterPage() {
     const fetchChapterData = async () => {
       try {
         const [chapterRes, versesRes] = await Promise.all([
-          fetch(`http://localhost:8000/api/gita/chapters/${chapterId}`),
-          fetch(`http://localhost:8000/api/gita/chapters/${chapterId}/verses`)
+          fetch(`${API_BASE}/gita/chapters/${chapterId}`),
+          fetch(`${API_BASE}/gita/chapters/${chapterId}/verses`)
         ]);
         
         if (chapterRes.ok && versesRes.ok) {

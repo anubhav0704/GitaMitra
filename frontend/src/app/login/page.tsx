@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
+import { API_BASE } from "../../lib/api";
 import { ArrowRight, Lock, Mail, Sparkles, Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
@@ -22,7 +23,7 @@ export default function Login() {
 
     try {
       // 1. Login to get cookie
-      const res = await fetch("http://localhost:8000/api/auth/login", {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -35,7 +36,7 @@ export default function Login() {
       }
 
       // 2. Fetch user profile
-      const meRes = await fetch("http://localhost:8000/api/auth/me", {
+      const meRes = await fetch(`${API_BASE}/auth/me`, {
         credentials: "include",
       });
       

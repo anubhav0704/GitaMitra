@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Atmosphere: Warm Cream & Saffron / Deep Gold */
+  --background: #fdfbf7;
+  --foreground: #1c1917;
+  --surface: #ffffff;
+  --surface-subtle: #f7f3ea;
+  --surface-card: rgba(255, 253, 248, 0.90);
+  
+  --text-primary: #1c1917;
+  --text-secondary: #44403c;
+  --text-muted: #78716c;
+  
+  --border-subtle: rgba(217, 119, 6, 0.20);
+  --border-card: rgba(217, 119, 6, 0.35);
+  --border-focus: #d97706;
+  
+  --accent-gold: #d97706;
+  --accent-gold-light: #fbbf24;
+  --accent-saffron: #f59e0b;
+  --accent-saffron-dark: #b45309;
+  
+  --status-success: #16a34a;
+  --status-warning: #d97706;
+  --status-error: #dc2626;
+  --status-info: #2563eb;
+  
+  --ring-focus: rgba(217, 119, 6, 0.35);
+}
+
+.dark {
+  /* Atmosphere: Deep Cosmic Blue & Luminous Gold */
+  --background: #080612;
+  --foreground: #fcf8ee;
+  --surface: #0f0c22;
+  --surface-subtle: #171330;
+  --surface-card: rgba(15, 12, 34, 0.88);
+  
+  --text-primary: #fcf8ee;
+  --text-secondary: #d6d3d1;
+  --text-muted: #a8a29e;
+  
+  --border-subtle: rgba(245, 158, 11, 0.20);
+  --border-card: rgba(245, 158, 11, 0.35);
+  --border-focus: #fbbf24;
+  
+  --accent-gold: #fbbf24;
+  --accent-gold-light: #fde68a;
+  --accent-saffron: #f59e0b;
+  --accent-saffron-dark: #b45309;
+  
+  --status-success: #22c55e;
+  --status-warning: #fbbf24;
+  --status-error: #ef4444;
+  --status-info: #60a5fa;
+  
+  --ring-focus: rgba(251, 191, 36, 0.35);
+}
+
+body {
+  color: var(--text-primary);
+  background-color: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Sacred Devanagari & Classical Typography */
+.font-devanagari,
+.font-hindi,
+.font-sanskrit {
+  font-family: 'Noto Serif Devanagari', 'Martel', 'Tiro Devanagari Hindi', 'Yatra One', serif;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "clig" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.85;
+  letter-spacing: 0.01em;
+  word-spacing: 0.04em;
+}
+
+.font-serif {
+  font-family: 'Noto Serif Devanagari', 'Martel', 'Cinzel', 'Georgia', 'Cambria', serif;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+.devanagari-prose {
+  font-family: 'Noto Serif Devanagari', 'Martel', 'Tiro Devanagari Hindi', serif;
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  word-spacing: 0.04em;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+.shloka-devanagari {
+  font-family: 'Noto Serif Devanagari', 'Rozha One', 'Martel', serif;
+  line-height: 1.6;
+  letter-spacing: 0.015em;
+  word-spacing: 0.05em;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: rgba(245, 158, 11, 0.35);
+  color: inherit;
+}
+
+/* Sacred Temple Glass Card */
+.temple-card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.temple-card:hover {
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 10px 35px rgba(245, 158, 11, 0.15);
+}
+
+/* Full-Bleed Backgrounds */
+.bg-chariot-theme {
+  background-image: linear-gradient(rgba(253, 251, 247, 0.82), rgba(253, 251, 247, 0.92)), url('/images/krishna_arjuna_chariot.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.dark .bg-chariot-theme {
+  background-image: linear-gradient(rgba(8, 6, 18, 0.76), rgba(8, 6, 18, 0.90)), url('/images/krishna_arjuna_chariot.jpg');
+}
+
+.bg-krishna-theme {
+  background-image: linear-gradient(rgba(253, 251, 247, 0.85), rgba(253, 251, 247, 0.94)), url('/images/krishna_divine_portrait.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.dark .bg-krishna-theme {
+  background-image: linear-gradient(rgba(8, 6, 18, 0.78), rgba(8, 6, 18, 0.92)), url('/images/krishna_divine_portrait.jpg');
+}
+
+/* Devotional Scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(217, 119, 6, 0.35);
+  border-radius: 9999px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.35);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 119, 6, 0.65);
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.65);
+}
+
+/* Accessibility: Focus Rings */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Removal of Next.js devtools overlays */
+nextjs-portal,
+div[data-nextjs-toast],
+div[data-nextjs-dialog-overlay],
+[data-nextjs-dev-tools-button],
+#nextjs-dev-tools,
+button[aria-label="Open Next.js DevTools"],
+button[data-nextjs-dev-tools-button],
+div[data-nextjs-dev-tools-wrapper] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

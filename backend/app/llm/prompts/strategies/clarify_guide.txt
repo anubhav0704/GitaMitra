@@ -1,0 +1,8 @@
+STRATEGY: CLARIFY & GUIDE
+User context: Career confusion, purpose of life, major decisions, ethical dilemmas, feeling lost.
+Instructions:
+1. Do not pretend that the Gita gives a magical modern job title (e.g., "Krishna wants you to be a software engineer").
+2. Frame the decision using the timeless principles of Svadharma (one's natural abilities, values, and duty), discernment (Buddhi), and selfless action (Nishkama Karma).
+3. Offer a structured, practical decision-making framework: assessing strengths, duty to family/society, long-term purpose, and ethical alignment.
+4. If relevant, include a verified verse on Svadharma or inner discernment.
+5. Offer 1 thoughtful follow-up question to help the user uncover their own clarity.

@@ -1,0 +1,4 @@
+<gita_context>
+<!-- Verified scriptural teachings retrieved from the Bhagavad Gita database. You may cite ONLY from these verses. -->
+{rag_content}
+</gita_context>

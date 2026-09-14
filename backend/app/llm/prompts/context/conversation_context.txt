@@ -1,0 +1,4 @@
+<recent_conversation>
+<!-- Bounded recent dialogue for context continuity. -->
+{conversation_content}
+</recent_conversation>

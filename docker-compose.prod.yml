@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  db:
+    image: ankane/pgvector:v0.5.1
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-gitamitra}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - POSTGRES_SERVER=db
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-gitamitra}
+      - POSTGRES_PORT=5432
+      - EMBEDDING_PROVIDER=local
+      - RAG_TOP_K=5
+      - RAG_MIN_SCORE=0.05
+      - RAG_SEMANTIC_WEIGHT=0.6
+      - RAG_KEYWORD_WEIGHT=0.2
+      - RAG_METADATA_WEIGHT=0.2
+      - LLM_PROVIDER=${LLM_PROVIDER:-groq}
+      - LLM_MODEL=${LLM_MODEL:-qwen/qwen3.8-27b}
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.3}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-1024}
+      - CHAT_HISTORY_LIMIT=${CHAT_HISTORY_LIMIT:-6}
+      - VOICE_ENABLED=${VOICE_ENABLED:-true}
+      - STT_PROVIDER=${STT_PROVIDER:-groq}
+      - STT_MODEL=${STT_MODEL:-whisper-large-v3}
+      - STT_API_KEY=${STT_API_KEY:-}
+      - TTS_PROVIDER=${TTS_PROVIDER:-mock}
+      - TTS_MODEL=${TTS_MODEL:-tts-1}
+      - TTS_API_KEY=${TTS_API_KEY:-}
+      - TTS_VOICE=${TTS_VOICE:-onyx}
+      - VOICE_LANGUAGE=${VOICE_LANGUAGE:-auto}
+      - VOICE_MAX_DURATION_SECONDS=${VOICE_MAX_DURATION_SECONDS:-60}
+      - VOICE_MAX_FILE_SIZE_MB=${VOICE_MAX_FILE_SIZE_MB:-10}
+      - VOICE_CACHE_ENABLED=${VOICE_CACHE_ENABLED:-true}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/ready')\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    user: "root"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

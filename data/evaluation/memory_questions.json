@@ -1,0 +1,307 @@
+[
+  {
+    "scenario_id": 1,
+    "title": "Software Placement Journey - Preparation to Setback to Hope",
+    "turns": [
+      {
+        "user_message": "I'm a final-year computer science student preparing for software placements.",
+        "expected_extract": [
+          {"type": "PROFILE", "keyword": "computer science student"},
+          {"type": "GOAL", "keyword": "software placements"}
+        ]
+      },
+      {
+        "user_message": "I failed my interview today. I feel so devastated.",
+        "expected_extract": [
+          {"type": "EVENT", "keyword": "failed"}
+        ]
+      },
+      {
+        "user_message": "I have another interview next week and I'm really scared.",
+        "expected_retrieval": ["computer science student", "software placements", "failed"]
+      }
+    ]
+  },
+  {
+    "scenario_id": 2,
+    "title": "Language Preference & Spiritual Inquiry",
+    "turns": [
+      {
+        "user_message": "Please explain teachings to me in Hindi.",
+        "expected_extract": [
+          {"type": "PREFERENCE", "keyword": "Hindi"}
+        ]
+      },
+      {
+        "user_message": "What does the Gita teach about self-mastery?",
+        "expected_retrieval": ["Hindi"]
+      }
+    ]
+  },
+  {
+    "scenario_id": 3,
+    "title": "Contradiction and Goal Change (GATE prep)",
+    "turns": [
+      {
+        "user_message": "I am preparing for GATE examination.",
+        "expected_extract": [
+          {"type": "GOAL", "keyword": "GATE"}
+        ]
+      },
+      {
+        "user_message": "I decided not to prepare for GATE anymore, I am searching for a full-time job.",
+        "expected_invalidation": "GATE",
+        "expected_extract": [
+          {"type": "CONTEXT", "keyword": "job"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 4,
+    "title": "Deduplication and Reinforcement",
+    "turns": [
+      {
+        "user_message": "I am preparing for software placement interviews.",
+        "expected_extract": [
+          {"type": "GOAL", "keyword": "placement interviews"}
+        ]
+      },
+      {
+        "user_message": "I am still preparing for my placement interviews and studying algorithms.",
+        "expected_deduplication": true
+      }
+    ]
+  },
+  {
+    "scenario_id": 5,
+    "title": "Recurring Struggle with Procrastination",
+    "turns": [
+      {
+        "user_message": "I have been struggling with procrastination while studying for my exams.",
+        "expected_extract": [
+          {"type": "CHALLENGE", "keyword": "procrastination"}
+        ]
+      },
+      {
+        "user_message": "How do I bring stillness and focus to my mind?",
+        "expected_retrieval": ["procrastination"]
+      }
+    ]
+  },
+  {
+    "scenario_id": 6,
+    "title": "Conversational Filler Filtering",
+    "turns": [
+      {
+        "user_message": "Okay, thanks a lot for the advice!",
+        "expected_should_remember": false
+      },
+      {
+        "user_message": "Hi, how are you doing today?",
+        "expected_should_remember": false
+      },
+      {
+        "user_message": "What is the definition of karma?",
+        "expected_should_remember": false
+      }
+    ]
+  },
+  {
+    "scenario_id": 7,
+    "title": "Medical Entrance Aspirant Journey",
+    "turns": [
+      {
+        "user_message": "I am a medical student preparing for NEET PG.",
+        "expected_extract": [
+          {"type": "PROFILE", "keyword": "medical student"},
+          {"type": "GOAL", "keyword": "NEET PG"}
+        ]
+      },
+      {
+        "user_message": "My mock exam results were very low and I feel anxious.",
+        "expected_extract": [
+          {"type": "EVENT", "keyword": "mock exam"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 8,
+    "title": "Civil Services / UPSC Preparation",
+    "turns": [
+      {
+        "user_message": "I have been preparing for UPSC civil services for two years.",
+        "expected_extract": [
+          {"type": "GOAL", "keyword": "UPSC"}
+        ]
+      },
+      {
+        "user_message": "I struggle with self-doubt and fear of failure every evening.",
+        "expected_extract": [
+          {"type": "CHALLENGE", "keyword": "fear of failure"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 9,
+    "title": "Concise Communication Style Preference",
+    "turns": [
+      {
+        "user_message": "I prefer concise answers without long introductory text.",
+        "expected_extract": [
+          {"type": "PREFERENCE", "keyword": "concise"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 10,
+    "title": "Transient Emotion vs Long-Term Fact",
+    "turns": [
+      {
+        "user_message": "I'm tired today and feeling lazy.",
+        "expected_should_remember": false
+      },
+      {
+        "user_message": "I am working on building my own educational startup.",
+        "expected_extract": [
+          {"type": "GOAL", "keyword": "startup"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 11,
+    "title": "Anger and Impatience Challenge",
+    "turns": [
+      {
+        "user_message": "I have difficulty controlling anger when things do not go as planned.",
+        "expected_extract": [
+          {"type": "CHALLENGE", "keyword": "anger"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 12,
+    "title": "Upcoming Major Milestone",
+    "turns": [
+      {
+        "user_message": "I have my final defense exam next week.",
+        "expected_extract": [
+          {"type": "EVENT", "keyword": "exam next week"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 13,
+    "title": "Sensitive Token / Credential Redaction",
+    "turns": [
+      {
+        "user_message": "My password: SecretPass123! and I work as a software engineer.",
+        "expected_redacted": true,
+        "expected_extract": [
+          {"type": "PROFILE", "keyword": "software engineer"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 14,
+    "title": "Hinglish Language Preference",
+    "turns": [
+      {
+        "user_message": "Mujhe Hinglish mein advice chahiye, English thoda formal lagta hai.",
+        "expected_extract": [
+          {"type": "PREFERENCE", "keyword": "Hinglish"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 15,
+    "title": "Career Transition Context",
+    "turns": [
+      {
+        "user_message": "I am currently searching for a new job in product management.",
+        "expected_extract": [
+          {"type": "CONTEXT", "keyword": "searching for a new job"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 16,
+    "title": "Overthinking and Anxiety Challenge",
+    "turns": [
+      {
+        "user_message": "My mind is constantly overthinking about the future.",
+        "expected_extract": [
+          {"type": "CHALLENGE", "keyword": "overthinking"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 17,
+    "title": "Engineering Graduate Background",
+    "turns": [
+      {
+        "user_message": "I am a mechanical engineering student.",
+        "expected_extract": [
+          {"type": "PROFILE", "keyword": "mechanical engineering student"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 18,
+    "title": "Job Selection Success Milestone",
+    "turns": [
+      {
+        "user_message": "I got selected for my dream internship today!",
+        "expected_extract": [
+          {"type": "EVENT", "keyword": "selected"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 19,
+    "title": "Personal Startup Challenge",
+    "turns": [
+      {
+        "user_message": "I am working towards launching our tech startup by December.",
+        "expected_extract": [
+          {"type": "GOAL", "keyword": "tech startup"}
+        ]
+      },
+      {
+        "user_message": "We couldn't secure funding yesterday and I feel anxious.",
+        "expected_extract": [
+          {"type": "EVENT", "keyword": "funding"}
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": 20,
+    "title": "Cross-Topic Relevance Query",
+    "turns": [
+      {
+        "user_message": "I'm a final-year student preparing for software placements.",
+        "expected_extract": [
+          {"type": "PROFILE", "keyword": "final-year"},
+          {"type": "GOAL", "keyword": "software placements"}
+        ]
+      },
+      {
+        "user_message": "I'm nervous about the interview tomorrow.",
+        "expected_retrieval": ["software placements"]
+      }
+    ]
+  }
+]

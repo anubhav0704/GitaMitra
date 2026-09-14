@@ -1,0 +1,42 @@
+[
+  {
+    "question": "I am scared of failing my exam and ruining my future.",
+    "expected_topics": ["fear", "failure", "action", "detachment"],
+    "expected_verses": ["2.47"]
+  },
+  {
+    "question": "I feel so angry all the time and I don't know why. It's destroying my peace.",
+    "expected_topics": ["anger", "desire", "peace"],
+    "expected_verses": ["2.62", "2.63", "16.21"]
+  },
+  {
+    "question": "I am confused about my career and don't know what to do.",
+    "expected_topics": ["confusion", "duty", "decision making"],
+    "expected_verses": ["18.47", "3.35"]
+  },
+  {
+    "question": "Someone close to me died and I can't stop crying.",
+    "expected_topics": ["grief", "death", "soul"],
+    "expected_verses": ["2.20", "2.22", "2.27"]
+  },
+  {
+    "question": "I feel jealous of my friend's success. How do I deal with this?",
+    "expected_topics": ["jealousy", "envy", "equanimity"],
+    "expected_verses": ["12.13", "12.14"]
+  },
+  {
+    "question": "What is the true nature of God?",
+    "expected_topics": ["God", "divine", "nature"],
+    "expected_verses": ["7.7", "9.4", "10.8"]
+  },
+  {
+    "question": "I have failed many times. I just want to give up.",
+    "expected_topics": ["failure", "action", "giving up"],
+    "expected_verses": ["2.47", "18.48"]
+  },
+  {
+    "question": "How can I find true peace of mind in this chaotic world?",
+    "expected_topics": ["peace", "mind", "meditation"],
+    "expected_verses": ["6.15", "6.12", "2.70", "6.7", "5.29"]
+  }
+]

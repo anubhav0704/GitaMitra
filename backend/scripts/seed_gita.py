@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.core.database import async_session_maker
 from app.models.gita import Chapter, Verse
 
-RAW_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'gita', 'raw')
+RAW_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'gita', 'raw'))
 
 async def seed_data():
     chapters_path = os.path.join(RAW_DIR, 'chapters.json')

@@ -28,7 +28,7 @@ import Sidebar, { ConversationItem } from "../../components/chat/Sidebar";
 import MessageBubble, { MessageItem } from "../../components/chat/MessageBubble";
 import { ShlokaReference } from "../../components/chat/ShlokaCard";
 import { useVoiceRecorder } from "../../lib/voice";
-import { API_BASE, getAuthHeaders } from "../../lib/api";
+import { API_BASE, getAuthHeaders, resilientFetch } from "../../lib/api";
 import { OnboardingModal } from "../../components/onboarding/OnboardingModal";
 import { MobileNav } from "../../components/layout/MobileNav";
 
@@ -234,7 +234,7 @@ export default function ChatPage() {
   // Load conversations list
   const loadConversations = async () => {
     try {
-      const res = await fetch(`${API_BASE}/conversations`, {
+      const res = await resilientFetch(`${API_BASE}/conversations`, {
         headers: getAuthHeaders(),
         credentials: "include"
       });
@@ -266,7 +266,7 @@ export default function ChatPage() {
 
     const loadMessages = async () => {
       try {
-        const res = await fetch(`${API_BASE}/conversations/${activeConvId}`, {
+        const res = await resilientFetch(`${API_BASE}/conversations/${activeConvId}`, {
           headers: getAuthHeaders(),
           credentials: "include"
         });
@@ -312,7 +312,7 @@ export default function ChatPage() {
   const deleteConversation = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`${API_BASE}/conversations/${id}`, {
+      const res = await resilientFetch(`${API_BASE}/conversations/${id}`, {
         method: "DELETE",
         headers: getAuthHeaders(),
         credentials: "include"
@@ -390,7 +390,7 @@ export default function ChatPage() {
     }, 60000);
 
     try {
-      const response = await fetch(`${API_BASE}/chat/stream`, {
+      const response = await resilientFetch(`${API_BASE}/chat/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",

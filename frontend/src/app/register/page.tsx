@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
-import { API_BASE, setAuthToken, getAuthHeaders } from "../../lib/api";
+import { API_BASE, setAuthToken, getAuthHeaders, resilientFetch } from "../../lib/api";
 import { ArrowRight, Lock, Mail, User, Sparkles, Eye, EyeOff } from "lucide-react";
 
 export default function Register() {
@@ -24,7 +24,7 @@ export default function Register() {
 
     try {
       // 1. Register
-      const registerRes = await fetch(`${API_BASE}/auth/register`, {
+      const registerRes = await resilientFetch(`${API_BASE}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
@@ -36,7 +36,7 @@ export default function Register() {
       }
 
       // 2. Login to get cookie and access token
-      const loginRes = await fetch(`${API_BASE}/auth/login`, {
+      const loginRes = await resilientFetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -59,7 +59,7 @@ export default function Register() {
       }
 
       // 3. Fetch user profile
-      const meRes = await fetch(`${API_BASE}/auth/me`, {
+      const meRes = await resilientFetch(`${API_BASE}/auth/me`, {
         headers: getAuthHeaders(),
         credentials: "include",
       });

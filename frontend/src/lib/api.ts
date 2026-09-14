@@ -31,13 +31,39 @@ export function getAuthHeaders(): Record<string, string> {
   return {};
 }
 
+export async function resilientFetch(input: RequestInfo | URL, init: RequestInit = {}, maxRetries = 6): Promise<Response> {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    try {
+      const response = await fetch(input, init);
+      if (response.status === 502 || response.status === 503 || response.status === 504) {
+        throw new TypeError("Render cold start 502/503/504");
+      }
+      return response;
+    } catch (err: any) {
+      const isFailedToFetch = err instanceof TypeError && 
+        (err.message.includes("Failed to fetch") || err.message.includes("NetworkError") || err.message.includes("cold start"));
+      
+      if (isFailedToFetch && attempt < maxRetries - 1) {
+        attempt++;
+        const delay = 3000 * Math.pow(1.5, attempt - 1);
+        console.warn(`[GitaMitra] API waking up... retrying in ${delay}ms (Attempt ${attempt}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error("Unreachable");
+}
+
 export async function fetchWithAuth(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
   const authH = getAuthHeaders();
   const headers = {
     ...authH,
     ...(init.headers || {})
   };
-  return fetch(input, {
+  return resilientFetch(input, {
     ...init,
     headers,
     credentials: "include"
@@ -64,7 +90,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     ...options.headers
   };
 
-  const response = await fetch(url, {
+  const response = await resilientFetch(url, {
     ...options,
     headers: options.body instanceof FormData ? { ...authH, ...(options.headers || {}) } : headers,
     credentials: "include"

@@ -14,14 +14,18 @@ import app.models.domain
 import app.models.gita
 import app.models.rag
 
+from sqlalchemy import text
+
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
-    """Automatically create all PostgreSQL database tables before tests run."""
+    """Automatically create pgvector extension and all PostgreSQL database tables before tests run."""
     async def init_models():
         async with engine.begin() as conn:
+            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
             await conn.run_sync(Base.metadata.create_all)
+        await engine.dispose()
     
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    loop.run_until_complete(init_models())
-    loop.close()
+    asyncio.run(init_models())
     yield
+    asyncio.run(engine.dispose())
+

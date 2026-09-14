@@ -53,6 +53,7 @@ jobs:
           LLM_PROVIDER: mock
           STT_PROVIDER: mock
           TTS_PROVIDER: mock
+          PYTHONPATH: backend
         run: |
           pytest backend/tests -v
 

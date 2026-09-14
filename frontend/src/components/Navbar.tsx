@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import ProfileModal from "./ProfileModal";
-import { API_BASE } from "../lib/api";
+import { API_BASE, getAuthHeaders } from "../lib/api";
 import { 
   BookOpen, 
   MessageSquare, 
@@ -29,6 +29,7 @@ export default function Navbar() {
     try {
       await fetch(`${API_BASE}/auth/logout`, {
         method: "POST",
+        headers: getAuthHeaders(),
         credentials: "include"
       });
     } catch (err) {

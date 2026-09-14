@@ -2,6 +2,48 @@ export const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:800
 export const API_BASE = `${API_URL}/api`;
 
 
+export function getAuthToken(): string | null {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("gitamitra_token") || localStorage.getItem("token");
+  }
+  return null;
+}
+
+export function setAuthToken(token: string) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("gitamitra_token", token);
+    localStorage.setItem("token", token);
+  }
+}
+
+export function removeAuthToken() {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("gitamitra_token");
+    localStorage.removeItem("token");
+  }
+}
+
+export function getAuthHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  if (token) {
+    return { Authorization: `Bearer ${token}` };
+  }
+  return {};
+}
+
+export async function fetchWithAuth(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
+  const authH = getAuthHeaders();
+  const headers = {
+    ...authH,
+    ...(init.headers || {})
+  };
+  return fetch(input, {
+    ...init,
+    headers,
+    credentials: "include"
+  });
+}
+
 export class ApiError extends Error {
   status: number;
   data: any;
@@ -15,14 +57,16 @@ export class ApiError extends Error {
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
+  const authH = getAuthHeaders();
   const headers = {
     "Content-Type": "application/json",
+    ...authH,
     ...options.headers
   };
 
   const response = await fetch(url, {
     ...options,
-    headers: options.body instanceof FormData ? (options.headers || {}) : headers,
+    headers: options.body instanceof FormData ? { ...authH, ...(options.headers || {}) } : headers,
     credentials: "include"
   });
 

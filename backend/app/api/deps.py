@@ -13,17 +13,21 @@ from app.models.domain import User
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
 async def get_token_from_request(request: Request, token: Optional[str] = Depends(oauth2_scheme)) -> str:
-    # First try to get token from HttpOnly cookie
-    cookie_token = request.cookies.get("access_token")
-    if cookie_token:
-        # If the cookie has 'Bearer ' prefix, remove it. (Depends on how we set it, usually we don't).
-        if cookie_token.startswith("Bearer "):
-            cookie_token = cookie_token.split(" ")[1]
-        return cookie_token
-    
-    # Fallback to Authorization header for swagger UI
+    # 1. First check Authorization header
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        return auth_header.split(" ", 1)[1].strip()
+
+    # 2. Fallback to OAuth2PasswordBearer token
     if token:
         return token
+
+    # 3. Check HttpOnly cookie
+    cookie_token = request.cookies.get("access_token")
+    if cookie_token:
+        if cookie_token.startswith("Bearer "):
+            cookie_token = cookie_token.split(" ", 1)[1].strip()
+        return cookie_token
         
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import ShlokaCard, { ShlokaReference } from "./ShlokaCard";
 import VoiceAudioPlayer from "./VoiceAudioPlayer";
-import { API_BASE } from "../../lib/api";
+import { API_BASE, getAuthHeaders } from "../../lib/api";
 import {
   Copy,
   Check,
@@ -64,7 +64,7 @@ export default function MessageBubble({
     try {
       await fetch(`${API_BASE}/feedback`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",
         body: JSON.stringify({
           message_id: message.id,
@@ -81,7 +81,7 @@ export default function MessageBubble({
     try {
       await fetch(`${API_BASE}/feedback`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",
         body: JSON.stringify({
           message_id: message.id,

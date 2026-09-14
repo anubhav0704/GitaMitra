@@ -28,7 +28,7 @@ import Sidebar, { ConversationItem } from "../../components/chat/Sidebar";
 import MessageBubble, { MessageItem } from "../../components/chat/MessageBubble";
 import { ShlokaReference } from "../../components/chat/ShlokaCard";
 import { useVoiceRecorder } from "../../lib/voice";
-import { API_BASE } from "../../lib/api";
+import { API_BASE, getAuthHeaders } from "../../lib/api";
 import { OnboardingModal } from "../../components/onboarding/OnboardingModal";
 import { MobileNav } from "../../components/layout/MobileNav";
 
@@ -157,6 +157,7 @@ export default function ChatPage() {
 
       const res = await fetch(`${API_BASE}/voice/transcribe`, {
         method: "POST",
+        headers: getAuthHeaders(),
         credentials: "include",
         body: formData
       });
@@ -234,6 +235,7 @@ export default function ChatPage() {
   const loadConversations = async () => {
     try {
       const res = await fetch(`${API_BASE}/conversations`, {
+        headers: getAuthHeaders(),
         credentials: "include"
       });
       if (res.ok) {
@@ -265,6 +267,7 @@ export default function ChatPage() {
     const loadMessages = async () => {
       try {
         const res = await fetch(`${API_BASE}/conversations/${activeConvId}`, {
+          headers: getAuthHeaders(),
           credentials: "include"
         });
         if (res.ok) {
@@ -311,6 +314,7 @@ export default function ChatPage() {
     try {
       const res = await fetch(`${API_BASE}/conversations/${id}`, {
         method: "DELETE",
+        headers: getAuthHeaders(),
         credentials: "include"
       });
       if (res.ok) {
@@ -328,7 +332,7 @@ export default function ChatPage() {
     try {
       const res = await fetch(`${API_BASE}/conversations/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",
         body: JSON.stringify({ title: newTitle })
       });
@@ -388,7 +392,7 @@ export default function ChatPage() {
     try {
       const response = await fetch(`${API_BASE}/chat/stream`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",
         signal: controller.signal,
         body: JSON.stringify({

@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Play, Pause, Square, RotateCcw, Volume2, Loader2, Sparkles } from "lucide-react";
-import { API_BASE } from "../../lib/api";
+import { API_BASE, getAuthHeaders } from "../../lib/api";
 
 // Global audio coordinator to ensure only one assistant response plays at a time
 let currentGlobalAudio: HTMLAudioElement | null = null;
@@ -60,7 +60,7 @@ export default function VoiceAudioPlayer({ text, messageId, autoPlay = false }: 
 
       const res = await fetch(`${API_BASE}/voice/synthesize`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",
         body: JSON.stringify({
           text: text,

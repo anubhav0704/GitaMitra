@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
-import { API_BASE } from "../../lib/api";
+import { API_BASE, setAuthToken, getAuthHeaders } from "../../lib/api";
 import { ArrowRight, Lock, Mail, Sparkles, Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
@@ -22,7 +22,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // 1. Login to get cookie
+      // 1. Login to get token and cookie
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,14 +35,28 @@ export default function Login() {
         throw new Error(data.detail || "Login failed");
       }
 
+      const data = await res.json();
+      if (data.access_token) {
+        setAuthToken(data.access_token);
+      }
+
+      if (data.user) {
+        login(data.user, data.access_token);
+        router.push("/chat");
+        return;
+      }
+
       // 2. Fetch user profile
       const meRes = await fetch(`${API_BASE}/auth/me`, {
+        headers: getAuthHeaders(),
         credentials: "include",
       });
       
       if (meRes.ok) {
         const userData = await meRes.json();
-        login(userData);
+        login(userData, data.access_token);
+        router.push("/chat");
+      } else {
         router.push("/chat");
       }
     } catch (err: any) {

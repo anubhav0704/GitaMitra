@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { API_BASE } from '../lib/api';
+import { API_BASE, getAuthHeaders, removeAuthToken, setAuthToken } from '../lib/api';
 
 export interface User {
   id: string;
@@ -14,7 +14,7 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (user: User) => void;
+  login: (user: User, token?: string) => void;
   logout: () => void;
 }
 
@@ -27,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check if user is logged in on mount
     fetch(`${API_BASE}/auth/me`, {
+      headers: getAuthHeaders(),
       credentials: 'include'
     })
       .then(res => {
@@ -40,18 +41,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {
         setUser(null);
+        removeAuthToken();
       })
       .finally(() => {
         setLoading(false);
       });
   }, []);
 
-  const login = (user: User) => {
+  const login = (user: User, token?: string) => {
+    if (token) {
+      setAuthToken(token);
+    }
     setUser(user);
   };
 
   const logout = () => {
     setUser(null);
+    removeAuthToken();
   };
 
   return (

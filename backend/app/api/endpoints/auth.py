@@ -88,13 +88,13 @@ async def login(response: Response, user_data: UserLogin, db: AsyncSession = Dep
     # Generate access token
     access_token = create_access_token(subject=str(user.id))
     
-    # Set HttpOnly cookie
+    # Set HttpOnly cookie with SameSite=None and Secure=True for cross-origin support
     response.set_cookie(
         key="access_token",
         value=f"Bearer {access_token}",
         httponly=True,
-        samesite="lax",
-        secure=False, # Set to True in production with HTTPS
+        samesite="none",
+        secure=True,
         max_age=7 * 24 * 60 * 60, # 7 days
     )
     
@@ -116,8 +116,8 @@ async def logout(response: Response):
     response.delete_cookie(
         key="access_token",
         httponly=True,
-        samesite="lax",
-        secure=False,
+        samesite="none",
+        secure=True,
     )
     return {"message": "Successfully logged out"}
 
@@ -209,8 +209,8 @@ async def delete_user_account(
     response.delete_cookie(
         key="access_token",
         httponly=True,
-        samesite="lax",
-        secure=False,
+        samesite="none",
+        secure=True,
     )
     return {"message": "Account and all associated personal data have been permanently deleted."}
 

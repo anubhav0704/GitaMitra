@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
-import { API_BASE } from "../../lib/api";
+import { API_BASE, setAuthToken, getAuthHeaders } from "../../lib/api";
 import { ArrowRight, Lock, Mail, User, Sparkles, Eye, EyeOff } from "lucide-react";
 
 export default function Register() {
@@ -35,7 +35,7 @@ export default function Register() {
         throw new Error(data.detail || "Registration failed");
       }
 
-      // 2. Login to get cookie
+      // 2. Login to get cookie and access token
       const loginRes = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,14 +47,28 @@ export default function Register() {
         throw new Error("Failed to auto-login after registration");
       }
 
+      const loginData = await loginRes.json();
+      if (loginData.access_token) {
+        setAuthToken(loginData.access_token);
+      }
+
+      if (loginData.user) {
+        login(loginData.user, loginData.access_token);
+        router.push("/chat");
+        return;
+      }
+
       // 3. Fetch user profile
       const meRes = await fetch(`${API_BASE}/auth/me`, {
+        headers: getAuthHeaders(),
         credentials: "include",
       });
       
       if (meRes.ok) {
         const userData = await meRes.json();
-        login(userData);
+        login(userData, loginData.access_token);
+        router.push("/chat");
+      } else {
         router.push("/chat");
       }
     } catch (err: any) {

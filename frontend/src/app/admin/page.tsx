@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
-import { API_BASE } from "../../lib/api";
+import { API_BASE, getAuthHeaders } from "../../lib/api";
 
 export default function AdminDashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -48,13 +48,13 @@ export default function AdminDashboardPage() {
     setErrorMsg(null);
     try {
       const [mRes, uRes, gRes, rRes, fRes, hRes, aRes] = await Promise.all([
-        fetch(`${API_BASE}/admin/metrics?period=${period}`, { credentials: "include" }),
-        fetch(`${API_BASE}/admin/users`, { credentials: "include" }),
-        fetch(`${API_BASE}/admin/gita/health`, { credentials: "include" }),
-        fetch(`${API_BASE}/admin/rag/stats`, { credentials: "include" }),
-        fetch(`${API_BASE}/admin/feedback`, { credentials: "include" }),
-        fetch(`${API_BASE}/admin/system/health`, { credentials: "include" }),
-        fetch(`${API_BASE}/admin/audit-logs`, { credentials: "include" })
+        fetch(`${API_BASE}/admin/metrics?period=${period}`, { headers: getAuthHeaders(), credentials: "include" }),
+        fetch(`${API_BASE}/admin/users`, { headers: getAuthHeaders(), credentials: "include" }),
+        fetch(`${API_BASE}/admin/gita/health`, { headers: getAuthHeaders(), credentials: "include" }),
+        fetch(`${API_BASE}/admin/rag/stats`, { headers: getAuthHeaders(), credentials: "include" }),
+        fetch(`${API_BASE}/admin/feedback`, { headers: getAuthHeaders(), credentials: "include" }),
+        fetch(`${API_BASE}/admin/system/health`, { headers: getAuthHeaders(), credentials: "include" }),
+        fetch(`${API_BASE}/admin/audit-logs`, { headers: getAuthHeaders(), credentials: "include" })
       ]);
 
       if (mRes.status === 403) {
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch(`${API_BASE}/admin/users/${userId}/status`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",
         body: JSON.stringify({ is_active: !currentStatus })
       });
@@ -105,7 +105,7 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch(`${API_BASE}/admin/users/${userId}/role`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",
         body: JSON.stringify({ role: newRole })
       });
@@ -122,6 +122,7 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch(`${API_BASE}/admin/gita/rebuild`, {
         method: "POST",
+        headers: getAuthHeaders(),
         credentials: "include"
       });
       if (res.ok) {

@@ -25,7 +25,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import ProfileModal from "../ProfileModal";
-import { API_BASE } from "../../lib/api";
+import { API_BASE, getAuthHeaders } from "../../lib/api";
 
 export interface ConversationItem {
   id: string;
@@ -102,6 +102,7 @@ export default function Sidebar({
     try {
       await fetch(`${API_BASE}/auth/logout`, {
         method: "POST",
+        headers: getAuthHeaders(),
         credentials: "include"
       });
     } catch (err) {

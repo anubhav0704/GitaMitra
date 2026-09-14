@@ -23,7 +23,7 @@ import {
   Download,
   Trash2
 } from "lucide-react";
-import { API_BASE } from "../lib/api";
+import { API_BASE, getAuthHeaders } from "../lib/api";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
@@ -99,6 +99,7 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
     if (!isOpen) return;
     // Fetch active memories count
     fetch(`${API_BASE}/memories?is_active=true`, {
+      headers: getAuthHeaders(),
       credentials: "include"
     })
       .then((res) => (res.ok ? res.json() : []))
@@ -283,7 +284,11 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
               type="button"
               onClick={async () => {
                 if (confirm("Are you sure? This will permanently delete your account and all conversations and memories.")) {
-                  const res = await fetch(`${API_BASE}/auth/account`, { method: "DELETE", credentials: "include" });
+                  const res = await fetch(`${API_BASE}/auth/account`, {
+                    method: "DELETE",
+                    headers: getAuthHeaders(),
+                    credentials: "include"
+                  });
                   if (res.ok) {
                     onClose();
                     if (currentLogout) currentLogout();

@@ -21,10 +21,27 @@ logger = logging.getLogger("gitamitra.api")
 async def lifespan(app: FastAPI):
     logger.info("Starting GitaMitra Production API...")
     try:
+        from sqlalchemy import text, select, func
+        from app.models.gita import Chapter
+        from app.core.database import async_session_maker
+        
         async with engine.begin() as conn:
+            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
             await conn.run_sync(Base.metadata.create_all)
+            
+        async with async_session_maker() as session:
+            res = await session.execute(select(func.count(Chapter.id)))
+            count = res.scalar() or 0
+            
+        if count < 18:
+            logger.info("Empty scripture database detected. Auto-seeding Gita chapters, verses, and embeddings...")
+            from scripts.seed_gita import seed_data
+            from scripts.generate_embeddings import generate_embeddings
+            await seed_data()
+            await generate_embeddings()
+            logger.info("Scripture seeding completed.")
     except Exception as e:
-        logger.warning(f"Metadata create_all exception (ignorable if tables exist): {e}")
+        logger.warning(f"Lifespan database setup exception: {e}")
     yield
     logger.info("Graceful shutdown: closing GitaMitra API resources...")
 

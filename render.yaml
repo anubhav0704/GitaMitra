@@ -58,15 +58,13 @@ services:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: gitamitra-backend
-          property: url
+        value: https://gitamitra-backend.onrender.com
 
 databases:
   # 3. Managed PostgreSQL Database
   - name: gitamitra-db
     databaseName: gitamitra
-    user: postgres
+    user: gitamitra
     region: singapore
     plan: free
+

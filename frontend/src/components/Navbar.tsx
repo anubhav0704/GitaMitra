@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import ProfileModal from "./ProfileModal";
+import { API_BASE } from "../lib/api";
 import { 
   BookOpen, 
   MessageSquare, 

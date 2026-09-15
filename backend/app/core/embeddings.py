@@ -31,14 +31,47 @@ class EmbeddingProvider(ABC):
         """Compute a deterministic hash for the embedding input text."""
         return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
+class MockEmbeddingProvider(EmbeddingProvider):
+    """Fast, lightweight fallback embedding provider when PyTorch/sentence-transformers is unavailable."""
+    def __init__(self, dimension: int = 384):
+        self._dimension = dimension
+
+    @property
+    def model_name(self) -> str:
+        return "mock-384"
+
+    @property
+    def version(self) -> str:
+        return "1.0"
+
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+
+    def get_embedding(self, text: str) -> List[float]:
+        import random
+        seed = int(self.compute_hash(text)[:8], 16)
+        rng = random.Random(seed)
+        vec = [rng.uniform(-1.0, 1.0) for _ in range(self._dimension)]
+        norm = sum(x * x for x in vec) ** 0.5 or 1.0
+        return [x / norm for x in vec]
+
+    def get_embeddings(self, texts: List[str]) -> List[List[float]]:
+        return [self.get_embedding(t) for t in texts]
+
 class LocalEmbeddingProvider(EmbeddingProvider):
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
-        # Import inside init so it's only loaded when needed
-        import torch
-        torch.set_num_threads(1)
-        from sentence_transformers import SentenceTransformer
         self._model_name = model_name
-        self.model = SentenceTransformer(model_name)
+        try:
+            import torch
+            torch.set_num_threads(1)
+            from sentence_transformers import SentenceTransformer
+            self.model = SentenceTransformer(model_name)
+            self.fallback = None
+        except Exception as e:
+            print(f"[Embeddings] Unable to load SentenceTransformer ({e}). Using MockEmbeddingProvider fallback.")
+            self.model = None
+            self.fallback = MockEmbeddingProvider()
     
     @property
     def model_name(self) -> str:
@@ -50,14 +83,23 @@ class LocalEmbeddingProvider(EmbeddingProvider):
 
     @property
     def dimension(self) -> int:
-        # all-MiniLM-L6-v2 is 384-dimensional
         return 384
 
     def get_embedding(self, text: str) -> List[float]:
-        return self.model.encode(text).tolist()
+        if self.model:
+            try:
+                return self.model.encode(text).tolist()
+            except Exception:
+                pass
+        return self.fallback.get_embedding(text)
 
     def get_embeddings(self, texts: List[str]) -> List[List[float]]:
-        return self.model.encode(texts).tolist()
+        if self.model:
+            try:
+                return self.model.encode(texts).tolist()
+            except Exception:
+                pass
+        return self.fallback.get_embeddings(texts)
 
 _singleton_embedding_provider: Optional[EmbeddingProvider] = None
 

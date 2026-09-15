@@ -55,6 +55,10 @@ async def send_chat_message(
             detail=f"Chat processing failed: {str(e)}"
         )
 
+@router.options("/stream")
+async def options_stream_chat_message():
+    return {}
+
 @router.post("/stream")
 async def stream_chat_message(
     request: ChatRequest,

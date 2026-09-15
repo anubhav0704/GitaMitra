@@ -39,9 +39,7 @@ async def lifespan(app: FastAPI):
             await seed_data()
             logger.info("Scripture and pre-computed embeddings seeding completed.")
     except Exception as e:
-        logger.warning(f"Lifespan database setup exception (non-fatal, will retry on first request): {e}")
-    
-    logger.info("GitaMitra API is ready to serve requests.")
+        logger.warning(f"Lifespan database setup exception: {e}")
     yield
     logger.info("Graceful shutdown: closing GitaMitra API resources...")
 
@@ -84,14 +82,21 @@ class RequestTracingMiddleware:
 
 app.add_middleware(RequestTracingMiddleware)
 
-# Configure CORS dynamically from settings
-origins = [o.strip() for o in settings.CORS_ALLOWED_ORIGINS.split(",") if o.strip()]
+# Configure CORS dynamically with wildcard Vercel support
+raw_origins = [o.strip() for o in settings.CORS_ALLOWED_ORIGINS.split(",") if o.strip()]
+allowed_origins = [o for o in raw_origins if o != "*"]
+for default_origin in ["https://gita-mitra.vercel.app", "http://localhost:3000", "http://127.0.0.1:3000"]:
+    if default_origin not in allowed_origins:
+        allowed_origins.append(default_origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins if origins else ["http://localhost:3000"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app|http://localhost:\d+",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Include routers

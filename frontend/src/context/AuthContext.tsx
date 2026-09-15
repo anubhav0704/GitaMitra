@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { API_BASE, getAuthHeaders, getAuthToken, removeAuthToken, setAuthToken } from '../lib/api';
+import { API_BASE, getAuthHeaders, removeAuthToken, setAuthToken } from '../lib/api';
 
 export interface User {
   id: string;
@@ -20,90 +20,77 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function getSavedUser(): User | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const saved = localStorage.getItem("gitamitra_user");
-    if (saved) return JSON.parse(saved);
-  } catch { /* ignore */ }
-  return null;
-}
-
-function saveUser(user: User | null) {
-  if (typeof window === "undefined") return;
-  if (user) {
-    localStorage.setItem("gitamitra_user", JSON.stringify(user));
-  } else {
-    localStorage.removeItem("gitamitra_user");
-  }
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Instantly restore user from localStorage (no loading spinner if cached)
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== "undefined") {
+      const savedUser = localStorage.getItem("gitamitra_user");
+      if (savedUser) {
+        try {
+          return JSON.parse(savedUser);
+        } catch {
+          return null;
+        }
+      }
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = getAuthToken();
-    const cachedUser = getSavedUser();
-    
-    // If no token stored, user is definitely not logged in
+    const token = typeof window !== "undefined" ? (localStorage.getItem("gitamitra_token") || localStorage.getItem("token")) : null;
     if (!token) {
       setUser(null);
-      saveUser(null);
       setLoading(false);
       return;
     }
 
-    // Instantly restore cached user so UI doesn't flash
-    if (cachedUser) {
-      setUser(cachedUser);
-      setLoading(false);
-    }
-
-    // Validate token in the background with /auth/me
+    // Verify token with backend, but don't log out if it's a transient server error
     fetch(`${API_BASE}/auth/me`, {
       headers: getAuthHeaders(),
       credentials: 'include'
     })
       .then(res => {
         if (res.ok) {
-          return res.json();
-        }
-        // Only clear token on explicit auth rejection (401/403)
-        if (res.status === 401 || res.status === 403) {
-          removeAuthToken();
-          saveUser(null);
+          return res.json().then(data => {
+            setUser(data);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("gitamitra_user", JSON.stringify(data));
+            }
+          });
+        } else if (res.status === 401 || res.status === 403) {
+          // Token is invalid/expired -> log out
           setUser(null);
+          removeAuthToken();
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("gitamitra_user");
+          }
         }
-        // For 502/503/network errors, keep the cached user — backend is sleeping
-        throw new Error(`Auth check: ${res.status}`);
-      })
-      .then(data => {
-        setUser(data);
-        saveUser(data);
+        // If 500, 502, 503, network error, etc., KEEP local user state!
       })
       .catch((err) => {
-        // Don't remove token/user on network errors (backend cold start)
-        console.warn('[GitaMitra] Auth check failed (backend may be waking up):', err.message);
+        console.warn("[AuthContext] Unable to reach /auth/me, keeping local session:", err);
       })
       .finally(() => {
         setLoading(false);
       });
   }, []);
 
-  const login = (user: User, token?: string) => {
+  const login = (userData: User, token?: string) => {
     if (token) {
       setAuthToken(token);
     }
-    setUser(user);
-    saveUser(user);
+    setUser(userData);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("gitamitra_user", JSON.stringify(userData));
+    }
   };
 
   const logout = () => {
     setUser(null);
-    saveUser(null);
     removeAuthToken();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("gitamitra_user");
+    }
   };
 
   return (

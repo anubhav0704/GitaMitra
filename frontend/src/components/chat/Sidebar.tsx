@@ -201,7 +201,7 @@ export default function Sidebar({
               <Plus className="w-4 h-4" />
               <span>New Spiritual Inquiry</span>
             </div>
-            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-md font-mono">
+            <span className="hidden sm:inline-block text-[10px] bg-white/20 px-1.5 py-0.5 rounded-md font-mono">
               Ctrl+N
             </span>
           </button>
@@ -214,7 +214,7 @@ export default function Sidebar({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search chats (Ctrl+K)..."
+              placeholder="Search conversations..."
               className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-amber-500/20 bg-white/60 dark:bg-[#15102a]/70 text-xs text-stone-900 dark:text-white placeholder-stone-400 focus:outline-none focus:border-amber-500 font-sans"
             />
             {searchQuery && (

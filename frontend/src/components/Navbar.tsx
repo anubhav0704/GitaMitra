@@ -152,15 +152,9 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2 text-xs font-medium">
+                <div className="flex items-center text-xs font-medium">
                   <Link
-                    href="/login"
-                    className="px-3.5 py-1.5 text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/register"
+                    href="/chat"
                     className="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-white font-semibold shadow-sm hover:opacity-90 active:scale-95 transition-all"
                   >
                     Begin Journey

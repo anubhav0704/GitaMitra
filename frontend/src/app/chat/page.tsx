@@ -38,28 +38,93 @@ interface PromptCard {
   tag: string;
 }
 
-const SUGGESTED_CARDS: PromptCard[] = [
+const INQUIRY_LIBRARY: PromptCard[] = [
   {
-    title: "Overcoming failure & rejection",
-    prompt: "I failed my interview and I feel like I am useless.",
-    tag: "कर्म योग // Karma Yoga"
+    title: "Moral Duty vs Affection",
+    prompt: "How do I choose between doing what is right and protecting the feelings of someone I love?",
+    tag: "धर्म // Dharma"
   },
   {
-    title: "Anxiety & restless mind",
-    prompt: "How do I control my anger and restless mind?",
+    title: "Anxiety & Racing Thoughts",
+    prompt: "My mind never stops worrying about what might happen next. How do I find inner calm?",
     tag: "ध्यान योग // Dhyana Yoga"
   },
   {
-    title: "Comparison & jealousy",
-    prompt: "My friend got a much better job than me and I feel jealous.",
+    title: "Releasing Fear of Failure",
+    prompt: "I am giving my best effort, but fear of an outcome is paralyzing me. How do I act with detachment?",
+    tag: "निष्काम कर्म // Nishkama Karma"
+  },
+  {
+    title: "Grief & Coping with Loss",
+    prompt: "I am struggling with deep sorrow after losing someone precious. How does the Gita understand grief?",
+    tag: "आत्म तत्त्व // Eternal Soul"
+  },
+  {
+    title: "Mastering Anger & Irritation",
+    prompt: "Small frustrations quickly trigger my anger and disturb my peace. How do I maintain equanimity?",
+    tag: "समत्वं // Samatvam"
+  },
+  {
+    title: "Loneliness & Feeling Alienated",
+    prompt: "I feel surrounded by people yet profoundly alone and misunderstood. How can I feel connected within?",
+    tag: "भक्ति योग // Bhakti Yoga"
+  },
+  {
+    title: "Mental Exhaustion & Burnout",
+    prompt: "I feel depleted and overwhelmed by non-stop demands. Where do I find renewal and balance?",
+    tag: "युक्त चेष्ट // Moderation"
+  },
+  {
+    title: "Overcoming Comparison & Envy",
+    prompt: "When I see others flourishing while I struggle, bitterness creeps in. How do I transcend jealousy?",
     tag: "ज्ञान योग // Jnana Yoga"
   },
   {
-    title: "Confusion about career & purpose",
-    prompt: "I am confused about my career and life direction.",
+    title: "Forgiving Deep Betrayal",
+    prompt: "Someone broke my trust. How can I practice forgiveness without feeling like a victim?",
+    tag: "क्षमा // Forgiveness"
+  },
+  {
+    title: "Discovering Authentic Calling",
+    prompt: "I feel trapped between external expectations and my own nature. How do I recognize my Swadharma?",
     tag: "स्वधर्म // Swadharma"
+  },
+  {
+    title: "Self-Doubt & Inner Critic",
+    prompt: "I constantly feel not good enough and doubt my abilities. How do I cultivate unshakeable self-faith?",
+    tag: "आत्म श्रद्धा // Self-Faith"
+  },
+  {
+    title: "Standing Firm in Crisis",
+    prompt: "Circumstances feel overwhelming right now. How do I gather courage when everything feels shaken?",
+    tag: "अभयम् // Fearlessness"
+  },
+  {
+    title: "Guilt & Healing Past Regrets",
+    prompt: "I carry heavy guilt about mistakes I made in the past. Can an individual truly be redeemed?",
+    tag: "शुद्धि // Purification"
+  },
+  {
+    title: "Love Without Possessiveness",
+    prompt: "How can I love and care for others deeply without becoming possessive or terrified of losing them?",
+    tag: "वैराग्य // Dispassion"
+  },
+  {
+    title: "Conflict & Ethical Decisions",
+    prompt: "When two good values clash, how does Buddhi Yoga guide a seeker to discern the right action?",
+    tag: "बुद्धि योग // Buddhi Yoga"
+  },
+  {
+    title: "Accepting Inevitable Change",
+    prompt: "Life transitions frighten me and I resist change. How do I accept the flow of time and impermanence?",
+    tag: "अनित्यता // Impermanence"
   }
 ];
+
+function getRandomInquiries(count: number = 4): PromptCard[] {
+  const shuffled = [...INQUIRY_LIBRARY].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
 
 export default function ChatPage() {
   const { user, loading } = useAuth();
@@ -75,6 +140,18 @@ export default function ChatPage() {
   const [streamingContent, setStreamingContent] = useState("");
   const [streamingRefs, setStreamingRefs] = useState<ShlokaReference[]>([]);
   const [chatError, setChatError] = useState<string | null>(null);
+
+  // Suggested Inquiries - generalized across life themes and randomized for every session
+  const [suggestedCards, setSuggestedCards] = useState<PromptCard[]>(() => INQUIRY_LIBRARY.slice(0, 4));
+
+  useEffect(() => {
+    // Randomize inquiries on client mount so every user and session gets a unique set
+    setSuggestedCards(getRandomInquiries(4));
+  }, []);
+
+  const shuffleInquiries = () => {
+    setSuggestedCards(getRandomInquiries(4));
+  };
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -304,6 +381,8 @@ export default function ChatPage() {
     setStreamingRefs([]);
     setChatError(null);
     setInputText("");
+    // Re-randomize inquiries for the fresh conversation
+    setSuggestedCards(getRandomInquiries(4));
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -660,10 +739,24 @@ export default function ChatPage() {
 
                 {/* Suggested Inquiries Temple Grid */}
                 <div className="pt-1">
+                  <div className="flex items-center justify-between px-1 mb-2">
+                    <span className="font-serif text-[11px] text-amber-800/80 dark:text-amber-400 font-semibold tracking-wider uppercase">
+                      ✦ Timeless Life Inquiries
+                    </span>
+                    <button
+                      type="button"
+                      onClick={shuffleInquiries}
+                      className="inline-flex items-center space-x-1 text-[11px] font-serif text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-100 hover:underline cursor-pointer transition-colors"
+                      title="Explore other inquiries"
+                    >
+                      <RefreshCw className="w-3 h-3 text-amber-500" />
+                      <span>Shuffle</span>
+                    </button>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-left">
-                    {SUGGESTED_CARDS.map((card, i) => (
+                    {suggestedCards.map((card, i) => (
                       <button
-                        key={i}
+                        key={`${card.title}-${i}`}
                         onClick={() => sendMessage(card.prompt)}
                         className="temple-card p-3.5 sm:p-4 hover:-translate-y-0.5 active:scale-[0.99] transition-all duration-200 text-left cursor-pointer flex flex-col justify-between group shadow-sm hover:shadow-md"
                       >
@@ -741,7 +834,7 @@ export default function ChatPage() {
         </div>
 
         {/* Pinned Bottom Floating Composer */}
-        <div className="flex-shrink-0 px-3 sm:px-4 pt-2.5 pb-16 sm:py-3 bg-white/75 dark:bg-[#0c091a]/85 backdrop-blur-xl border-t border-amber-500/20 z-20">
+        <div className="flex-shrink-0 px-3 sm:px-4 pt-2.5 pb-[76px] md:!pb-3 bg-white/80 dark:bg-[#0c091a]/90 backdrop-blur-xl border-t border-amber-500/20 z-20">
           <div className="max-w-3xl mx-auto w-full">
             {/* Voice Recording Active Banner */}
             {isRecording && (
@@ -832,7 +925,7 @@ export default function ChatPage() {
                   <span className="truncate">Grounded in 700 Verses of Bhagavad Gita</span>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 shrink-0">
                   {/* Microphone Action Button */}
                   <button
                     type="button"
@@ -873,7 +966,7 @@ export default function ChatPage() {
               </div>
             </div>
 
-            <p className="text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 text-center mt-1.5 font-serif">
+            <p className="hidden sm:block text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 text-center mt-1.5 font-serif">
               GitaMitra offers spiritual reflection grounded in Dharma. Press Enter to send, Shift+Enter for newline.
             </p>
           </div>

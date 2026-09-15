@@ -192,17 +192,8 @@ body {
   }
 }
 
-/* Removal of Next.js devtools overlays */
-nextjs-portal,
-div[data-nextjs-toast],
-div[data-nextjs-dialog-overlay],
-[data-nextjs-dev-tools-button],
-#nextjs-dev-tools,
-button[aria-label="Open Next.js DevTools"],
-button[data-nextjs-dev-tools-button],
-div[data-nextjs-dev-tools-wrapper] {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+/* Mobile Safe Area */
+.safe-area-pb {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
 }
+

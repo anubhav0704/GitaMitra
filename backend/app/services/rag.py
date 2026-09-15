@@ -1,8 +1,7 @@
 import os
 import re
-from typing import List, Dict, Any, Optional
-from sqlalchemy import select, func, or_, text
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List, Dict, Any, Optional, Tuple
+from sqlalchemy import select, func, or_, and_, text
 from app.models.gita import Verse
 from app.models.rag import GitaEmbedding
 from app.core.embeddings import get_embedding_provider
@@ -19,6 +18,39 @@ class RAGQueryService:
         self.semantic_weight = float(os.getenv("RAG_SEMANTIC_WEIGHT", "0.6"))
         self.keyword_weight = float(os.getenv("RAG_KEYWORD_WEIGHT", "0.2"))
         self.metadata_weight = float(os.getenv("RAG_METADATA_WEIGHT", "0.2"))
+
+    @staticmethod
+    def extract_verse_references(query: str) -> List[Tuple[int, int]]:
+        """
+        Extracts explicit Chapter and Verse numbers from user query.
+        E.g. 'Chapter 2, Verse 32', 'Chapter 2 Verse 32', 'BG 2.32', '2:32', 'Gita 2.32', 'Verse 32 of Chapter 2'.
+        """
+        refs = []
+        # Pattern 1: Chapter X, Verse Y (or Shloka/Sloka)
+        m1 = re.findall(r'\b(?:chapter|adhyay)\s*(\d{1,2})\s*[,.:\s-]+\s*(?:verse|shloka|sloka|shlok)?\s*(\d{1,2})\b', query, re.IGNORECASE)
+        for ch, vs in m1:
+            refs.append((int(ch), int(vs)))
+
+        # Pattern 2: Verse Y of Chapter X
+        m2 = re.findall(r'\b(?:verse|shloka|sloka|shlok)\s*(\d{1,2})\s*(?:of|in)?\s*(?:chapter|adhyay)\s*(\d{1,2})\b', query, re.IGNORECASE)
+        for vs, ch in m2:
+            refs.append((int(ch), int(vs)))
+
+        # Pattern 3: BG X.Y or Gita X.Y or standalone X.Y
+        m3 = re.findall(r'\b(?:bg|gita|bhagavad\s*gita)?\s*(\d{1,2})[:.](\d{1,2})\b', query, re.IGNORECASE)
+        for ch, vs in m3:
+            pair = (int(ch), int(vs))
+            if pair not in refs and 1 <= int(ch) <= 18:
+                refs.append(pair)
+
+        # Filter valid Gita chapters (1-18) and verses (1-78)
+        return [(ch, vs) for ch, vs in refs if 1 <= ch <= 18 and 1 <= vs <= 78]
+
+    @staticmethod
+    def extract_quoted_phrases(query: str) -> List[str]:
+        """Extracts quoted strings that might match verse translations."""
+        quotes = re.findall(r'["“\']([^"”\']{10,})["”\']', query)
+        return [q.strip() for q in quotes if len(q.strip()) >= 10]
 
     def analyze_query(self, query: str) -> Dict[str, List[str]]:
         """Lightweight query analysis to extract potential keywords/topics."""
@@ -75,60 +107,106 @@ class RAGQueryService:
                 
         # Simple word tokenization for keywords (ignoring stop words)
         words = re.findall(r'\w+', query_lower)
-        stopwords = {"i", "am", "is", "are", "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "with", "my", "of", "it", "that", "this", "what", "how", "why", "so", "all", "do", "can"}
+        stopwords = {"i", "am", "is", "are", "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "with", "my", "of", "it", "that", "this", "what", "how", "why", "so", "all", "do", "can", "please", "guide", "me", "chapter", "verse", "shloka"}
         extracted["keywords"] = [w for w in words if w not in stopwords and len(w) > 2]
         
         return extracted
 
     async def search(self, query: str, top_k: Optional[int] = None) -> Dict[str, Any]:
-        """Hybrid search combining semantic, keyword, and metadata matching."""
+        """Hybrid search combining direct citation lookup, semantic, keyword, and metadata matching."""
         if top_k is None:
             top_k = self.top_k
-            
+
+        # 0. Check for explicit verse citations or quoted translations first
+        explicit_refs = self.extract_verse_references(query)
+        quoted_phrases = self.extract_quoted_phrases(query)
+        exact_verses: List[Verse] = []
+
+        if explicit_refs:
+            for ch, vs in explicit_refs:
+                stmt = select(Verse).where(
+                    and_(Verse.chapter_number == ch, Verse.verse_number == vs)
+                )
+                res = await self.db.execute(stmt)
+                v = res.scalar_one_or_none()
+                if v and v not in exact_verses:
+                    exact_verses.append(v)
+
+        if quoted_phrases and not exact_verses:
+            for q_phrase in quoted_phrases:
+                tokens = re.findall(r'\w+', q_phrase.lower())
+                if len(tokens) >= 3:
+                    sample = " ".join(tokens[:6])
+                    stmt = select(Verse).where(
+                        or_(
+                            Verse.translation_en.ilike(f"%{sample}%"),
+                            Verse.translation_hi.ilike(f"%{sample}%"),
+                            Verse.transliteration.ilike(f"%{sample}%")
+                        )
+                    ).limit(2)
+                    res = await self.db.execute(stmt)
+                    matches = res.scalars().all()
+                    for m in matches:
+                        if m not in exact_verses:
+                            exact_verses.append(m)
+
         # 1. Analyze query
         analysis = self.analyze_query(query)
         
         candidates = []
-        try:
-            # 2. Get embedding
-            query_embedding = self.provider.get_embedding(query)
-            
-            # 3. Perform Vector Search using cosine distance
-            cosine_distance = GitaEmbedding.embedding.cosine_distance(query_embedding)
-            similarity_score = 1 - cosine_distance
-            
-            stmt = (
-                select(
-                    Verse,
-                    similarity_score.label('semantic_score')
-                )
-                .join(GitaEmbedding, Verse.id == GitaEmbedding.verse_id)
-                .where(
-                    or_(
-                        GitaEmbedding.embedding_model == self.provider.model_name,
-                        GitaEmbedding.embedding_model == "all-MiniLM-L6-v2",
-                        GitaEmbedding.embedding_model == "mock-384"
-                    )
-                )
-                .order_by(cosine_distance)
-                .limit(max(30, top_k * 5))
-            )
-            
-            result = await self.db.execute(stmt)
-            candidates = result.all()
-        except Exception as vec_err:
-            print(f"[RAG] Vector search error/fallback: {vec_err}")
-            candidates = []
 
-        if not candidates:
-            # Direct SQL fallback on Verse table
-            fallback_stmt = select(Verse).limit(top_k * 2)
-            if analysis["keywords"]:
-                conds = [Verse.translation_en.ilike(f"%{kw}%") for kw in analysis["keywords"][:3]]
-                fallback_stmt = select(Verse).where(or_(*conds)).limit(top_k * 2)
-            fb_res = await self.db.execute(fallback_stmt)
-            verses_fb = fb_res.scalars().all()
-            candidates = [(v, 0.5) for v in verses_fb]
+        # If user explicitly asked for a specific verse, make sure it is at the front with max score
+        exact_verse_ids = set()
+        for ev in exact_verses:
+            candidates.append((ev, 1.0))
+            exact_verse_ids.add(ev.id)
+
+        # If user explicitly asked for specific verses and we found them, we can limit broader search
+        # to avoid polluting the prompt with irrelevant extra verses
+        need_broader_search = (len(exact_verses) == 0) or (top_k > len(exact_verses))
+
+        if need_broader_search:
+            try:
+                # 2. Get embedding
+                query_embedding = self.provider.get_embedding(query)
+                
+                # 3. Perform Vector Search using cosine distance
+                cosine_distance = GitaEmbedding.embedding.cosine_distance(query_embedding)
+                similarity_score = 1 - cosine_distance
+                
+                stmt = (
+                    select(
+                        Verse,
+                        similarity_score.label('semantic_score')
+                    )
+                    .join(GitaEmbedding, Verse.id == GitaEmbedding.verse_id)
+                    .where(
+                        or_(
+                            GitaEmbedding.embedding_model == self.provider.model_name,
+                            GitaEmbedding.embedding_model == "all-MiniLM-L6-v2",
+                            GitaEmbedding.embedding_model == "mock-384"
+                        )
+                    )
+                    .order_by(cosine_distance)
+                    .limit(max(30, top_k * 5))
+                )
+                
+                result = await self.db.execute(stmt)
+                for v, score in result.all():
+                    if v.id not in exact_verse_ids:
+                        candidates.append((v, score))
+            except Exception as vec_err:
+                print(f"[RAG] Vector search error/fallback: {vec_err}")
+
+            if not candidates:
+                # Direct SQL fallback on Verse table
+                fallback_stmt = select(Verse).limit(top_k * 2)
+                if analysis["keywords"]:
+                    conds = [Verse.translation_en.ilike(f"%{kw}%") for kw in analysis["keywords"][:3]]
+                    fallback_stmt = select(Verse).where(or_(*conds)).limit(top_k * 2)
+                fb_res = await self.db.execute(fallback_stmt)
+                verses_fb = fb_res.scalars().all()
+                candidates = [(v, 0.5) for v in verses_fb]
 
         
         # 4. Rerank with Hybrid Strategy
@@ -190,8 +268,11 @@ class RAGQueryService:
         
         # 6. Apply threshold and top_k
         final_list = []
+        has_high_confidence = any(item["score"] >= 0.7 for item in ranked_results)
+        dynamic_min_score = 0.35 if has_high_confidence else self.min_score
+
         for item in ranked_results:
-            if item["score"] >= self.min_score:
+            if item["score"] >= dynamic_min_score:
                 final_list.append(item)
                 
             if len(final_list) >= top_k:

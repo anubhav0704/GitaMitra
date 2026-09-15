@@ -39,7 +39,7 @@ export default function ShlokaCard({ refData }: { refData: ShlokaReference }) {
             ॐ
           </div>
           <span className="font-bold text-amber-900 dark:text-amber-200 font-serif tracking-wide text-sm">
-            Bhagavad Gita {refData.reference}
+            {refData.reference.startsWith("Bhagavad Gita") ? refData.reference : `Bhagavad Gita ${refData.reference}`}
           </span>
           {refData.relevance_score !== undefined && (
             <span className="text-[10px] px-2 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/15 text-amber-800 dark:text-amber-300 font-semibold font-serif">

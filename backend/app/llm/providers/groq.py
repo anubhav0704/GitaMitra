@@ -57,6 +57,5 @@ class GroqProvider(OpenAIProvider):
             )
             model = GROQ_STABLE_DEFAULT
 
-        logger.info(f"GroqProvider initialised with model: {model}")
-        fallback_models = ["llama-3.3-70b-versatile", "mistral-saba-24b"]
+        fallback_models = ["openai/gpt-oss-20b", "groq/compound-mini"]
         super().__init__(api_key=api_key, model=model, base_url=base_url, fallback_models=fallback_models)

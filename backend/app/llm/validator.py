@@ -160,8 +160,8 @@ class ResponseValidator:
                     (rv.get("sanskrit") and len(rv["sanskrit"]) > 10 and rv["sanskrit"][:15] in content)
                 )
 
-                # Or if user explicitly asked for scriptural verse and this is the top retrieved match
-                is_scripture_query = (strategy == "SCRIPTURE_FOCUSED") and (len(verified_references) == 0)
+                # Or if user explicitly asked for scriptural verse and this is the top retrieved match with high relevance
+                is_scripture_query = (strategy == "SCRIPTURE_FOCUSED") and (len(verified_references) == 0) and (rv.get("relevance_score", 0.0) >= 0.5)
 
                 if is_cited or is_scripture_query:
                     topics = rv.get("topics") or []

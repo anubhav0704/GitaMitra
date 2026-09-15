@@ -11,7 +11,6 @@ import {
   PanelLeftClose, 
   ChevronUp,
   User as UserIcon,
-  BookOpen,
   Sun,
   Moon,
   LogOut,
@@ -19,8 +18,7 @@ import {
   Sparkles,
   Search,
   Edit2,
-  Check,
-  Settings as SettingsIcon
+  Check
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -328,48 +326,6 @@ export default function Sidebar({
 
         {/* Bottom Navigation Sections Pinned to Bottom */}
         <div className="mt-auto p-2 border-t border-amber-500/20 flex-shrink-0 space-y-1 bg-[#faf6ee]/95 dark:bg-[#0d091e]/95">
-          {/* Gita Explorer Link */}
-          <Link
-            href="/gita"
-            onClick={onClose}
-            className={`flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold active:scale-[0.99] transition-all duration-150 font-serif ${
-              pathname?.startsWith("/gita")
-                ? "bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/30"
-                : "text-stone-700 dark:text-stone-300 hover:bg-amber-500/10 hover:text-amber-900 dark:hover:text-amber-200"
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-            <span className="truncate">Gita 700 Verses Explorer</span>
-          </Link>
-
-          {/* Personal Memory Sanctuary Link */}
-          <Link
-            href="/memory"
-            onClick={onClose}
-            className={`flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold active:scale-[0.99] transition-all duration-150 font-serif ${
-              pathname === "/memory"
-                ? "bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/30"
-                : "text-stone-700 dark:text-stone-300 hover:bg-amber-500/10 hover:text-amber-900 dark:hover:text-amber-200"
-            }`}
-          >
-            <Shield className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-            <span className="truncate">Spiritual Memory Sanctuary</span>
-          </Link>
-
-          {/* Settings Link */}
-          <Link
-            href="/settings"
-            onClick={onClose}
-            className={`flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold active:scale-[0.99] transition-all duration-150 font-serif ${
-              pathname === "/settings"
-                ? "bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/30"
-                : "text-stone-700 dark:text-stone-300 hover:bg-amber-500/10 hover:text-amber-900 dark:hover:text-amber-200"
-            }`}
-          >
-            <SettingsIcon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-            <span className="truncate">Settings & Sanctuary</span>
-          </Link>
-
           {/* Admin Portal Link (Only visible to admin users) */}
           {user?.role === "admin" && (
             <Link

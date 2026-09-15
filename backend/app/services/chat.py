@@ -371,6 +371,7 @@ class ChatService:
 
             # 14. Emit complete event
             complete_payload = {
+                "done": True,
                 "conversation_id": str(conv.id),
                 "assistant_message_id": str(assistant_msg.id),
                 "references": verified_refs,

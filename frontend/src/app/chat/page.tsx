@@ -458,7 +458,7 @@ export default function ChatPage() {
               }
 
               // Stream ended
-              if (parsed.done) {
+              if (parsed.done || parsed.assistant_message_id) {
                 const assistantMsg: MessageItem = {
                   role: "assistant",
                   content: accumulatedText || parsed.message || "",

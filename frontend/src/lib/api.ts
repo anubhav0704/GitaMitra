@@ -1,4 +1,6 @@
-export const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+export const API_URL = typeof window !== "undefined"
+  ? ""
+  : (process.env.NEXT_PUBLIC_API_URL || "https://gitamitra-backend.onrender.com").replace(/\/+$/, "");
 export const API_BASE = `${API_URL}/api`;
 
 

@@ -101,6 +101,8 @@ class LocalEmbeddingProvider(EmbeddingProvider):
                 pass
         return self.fallback.get_embeddings(texts)
 
+_singleton_embedding_provider: Optional[EmbeddingProvider] = None
+
 def get_embedding_provider() -> EmbeddingProvider:
     """Factory to get the configured embedding provider as a singleton."""
     global _singleton_embedding_provider

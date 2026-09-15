@@ -37,6 +37,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Proactively warm up backend if it's sleeping on Render free tier
+    fetch(`${API_BASE}/health`, { mode: "cors" }).catch(() => {});
+
     const token = typeof window !== "undefined" ? (localStorage.getItem("gitamitra_token") || localStorage.getItem("token")) : null;
     if (!token) {
       setUser(null);

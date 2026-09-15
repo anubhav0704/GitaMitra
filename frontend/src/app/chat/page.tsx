@@ -387,7 +387,7 @@ export default function ChatPage() {
       if (abortControllerRef.current === controller) {
         controller.abort("Request timed out. Please retry.");
       }
-    }, 180000); // 3 minutes — accounts for Render cold start + LLM processing
+    }, 180000);
 
     try {
       const response = await resilientFetch(`${API_BASE}/chat/stream`, {

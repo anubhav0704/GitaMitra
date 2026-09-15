@@ -3,15 +3,17 @@ from app.llm.providers.openai import OpenAIProvider
 
 logger = logging.getLogger(__name__)
 
-# Best available text-output model on this Groq account
-GROQ_STABLE_DEFAULT = "openai/gpt-oss-120b"
+# Best available text-output models on Groq Cloud
+GROQ_STABLE_DEFAULT = "llama-3.3-70b-versatile"
 
-# Models known to produce empty/think-only content on Groq (thinking mode enabled)
+# Models known to produce empty/think-only content or invalid names
 GROQ_THINKING_MODELS = {
     "qwen/qwen3.8-27b",
     "qwen/qwen3.6-27b",
     "qwen/qwen3.32b",
     "qwen/qwen3.8b",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b"
 }
 
 
@@ -38,7 +40,6 @@ class GroqProvider(OpenAIProvider):
             not model
             or model.startswith("gpt-4")   # OpenAI GPT-4 variants — not on Groq
             or model.startswith("gemini-")  # Google Gemini — not on Groq
-            or model == "llama-3.3-70b-versatile"   # No longer available on Groq
             or model.lower() in GROQ_THINKING_MODELS
         )
 
@@ -50,5 +51,5 @@ class GroqProvider(OpenAIProvider):
             model = GROQ_STABLE_DEFAULT
 
         logger.info(f"GroqProvider initialised with model: {model}")
-        fallback_models = ["openai/gpt-oss-20b"] if model != "openai/gpt-oss-20b" else ["openai/gpt-oss-120b"]
+        fallback_models = ["llama-3.1-8b-instant", "mixtral-8x7b-32768"]
         super().__init__(api_key=api_key, model=model, base_url=base_url, fallback_models=fallback_models)

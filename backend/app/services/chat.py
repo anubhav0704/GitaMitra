@@ -243,6 +243,9 @@ class ChatService:
         Emits events: init, retrieval, token, complete, error.
         """
         try:
+            # Immediately yield initial ping to flush 200 OK & CORS headers to client in < 50ms
+            yield ": ping\n\n"
+
             conv = await self.get_or_create_conversation(user, conversation_id)
 
             # 1. Save user message immediately

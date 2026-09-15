@@ -61,7 +61,10 @@ class OpenAIProvider(LLMProvider):
                     if resp.status_code == 429:
                         logger.warning(f"Model {current_model} rate-limited (429). Attempting fallback...")
                         continue
-                    resp.raise_for_status()
+                    if resp.status_code >= 400:
+                        await resp.aread()
+                        logger.error(f"HTTP {resp.status_code} Error from {current_model}: {resp.text}")
+                        resp.raise_for_status()
                     data = resp.json()
                     choice = data["choices"][0]
                     content = choice["message"].get("content") or choice["message"].get("reasoning_content") or ""
@@ -118,7 +121,11 @@ class OpenAIProvider(LLMProvider):
                         if response.status_code == 429:
                             logger.warning(f"Model {current_model} rate limited (429) in stream. Immediately trying fallback...")
                             continue
-                        response.raise_for_status()
+                        if response.status_code >= 400:
+                            await response.aread()
+                            logger.error(f"HTTP {response.status_code} Error from {current_model}: {response.text}")
+                            response.raise_for_status()
+                            
                         yielded_any = False
                         async for line in response.aiter_lines():
                             if not line or not line.startswith("data: "):

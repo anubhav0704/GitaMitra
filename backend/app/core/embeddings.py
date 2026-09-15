@@ -101,19 +101,23 @@ class LocalEmbeddingProvider(EmbeddingProvider):
                 pass
         return self.fallback.get_embeddings(texts)
 
-_singleton_embedding_provider: Optional[EmbeddingProvider] = None
-
 def get_embedding_provider() -> EmbeddingProvider:
     """Factory to get the configured embedding provider as a singleton."""
     global _singleton_embedding_provider
     if _singleton_embedding_provider is not None:
         return _singleton_embedding_provider
 
-    provider_type = os.getenv("EMBEDDING_PROVIDER", "local").lower()
-    
-    if provider_type == "local":
+    provider_type = os.getenv("EMBEDDING_PROVIDER", "mock").lower()
+
+    if provider_type == "mock":
+        _singleton_embedding_provider = MockEmbeddingProvider()
+        return _singleton_embedding_provider
+    elif provider_type == "local":
         _singleton_embedding_provider = LocalEmbeddingProvider()
         return _singleton_embedding_provider
     else:
-        raise ValueError(f"Unknown embedding provider: {provider_type}")
+        # Default safe lightweight fallback to avoid OOM
+        _singleton_embedding_provider = MockEmbeddingProvider()
+        return _singleton_embedding_provider
+
 

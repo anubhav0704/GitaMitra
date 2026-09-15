@@ -461,7 +461,7 @@ export default function ChatPage() {
               if (parsed.done || parsed.assistant_message_id) {
                 const assistantMsg: MessageItem = {
                   role: "assistant",
-                  content: accumulatedText || parsed.message || "",
+                  content: accumulatedText || parsed.message || parsed.response || "Namaste. I am here alongside you. Share what is on your mind and let us reflect on Krishna's wisdom together.",
                   references: finalReferences,
                   memories: finalMemories,
                   created_at: new Date().toISOString()

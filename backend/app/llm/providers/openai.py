@@ -56,7 +56,7 @@ class OpenAIProvider(LLMProvider):
                 "max_tokens": max_tokens
             }
             try:
-                async with httpx.AsyncClient(timeout=25.0) as client:
+                async with httpx.AsyncClient(timeout=httpx.Timeout(60.0, connect=10.0, read=60.0)) as client:
                     resp = await client.post(f"{self.base_url}/chat/completions", json=payload, headers=headers)
                     if resp.status_code == 429:
                         logger.warning(f"Model {current_model} rate-limited (429). Attempting fallback...")
@@ -107,7 +107,7 @@ class OpenAIProvider(LLMProvider):
                 "stream": True
             }
             try:
-                async with httpx.AsyncClient(timeout=25.0) as client:
+                async with httpx.AsyncClient(timeout=httpx.Timeout(60.0, connect=10.0, read=60.0)) as client:
                     async with client.stream("POST", f"{self.base_url}/chat/completions", json=payload, headers=headers) as response:
                         if response.status_code == 429:
                             logger.warning(f"Model {current_model} rate limited (429) in stream. Immediately trying fallback...")

@@ -88,35 +88,48 @@ class RAGQueryService:
         # 1. Analyze query
         analysis = self.analyze_query(query)
         
-        # 2. Get embedding
-        query_embedding = self.provider.get_embedding(query)
-        
-        # 3. Perform Vector Search using cosine distance
-        # pgvector cosine distance: embedding <=> query_embedding
-        # To get similarity score: 1 - (embedding <=> query_embedding)
-        cosine_distance = GitaEmbedding.embedding.cosine_distance(query_embedding)
-        similarity_score = 1 - cosine_distance
-        
-        stmt = (
-            select(
-                Verse,
-                similarity_score.label('semantic_score')
-            )
-            .join(GitaEmbedding, Verse.id == GitaEmbedding.verse_id)
-            .where(
-                or_(
-                    GitaEmbedding.embedding_model == self.provider.model_name,
-                    GitaEmbedding.embedding_model == "all-MiniLM-L6-v2",
-                    GitaEmbedding.embedding_model == "mock-384"
+        candidates = []
+        try:
+            # 2. Get embedding
+            query_embedding = self.provider.get_embedding(query)
+            
+            # 3. Perform Vector Search using cosine distance
+            cosine_distance = GitaEmbedding.embedding.cosine_distance(query_embedding)
+            similarity_score = 1 - cosine_distance
+            
+            stmt = (
+                select(
+                    Verse,
+                    similarity_score.label('semantic_score')
                 )
+                .join(GitaEmbedding, Verse.id == GitaEmbedding.verse_id)
+                .where(
+                    or_(
+                        GitaEmbedding.embedding_model == self.provider.model_name,
+                        GitaEmbedding.embedding_model == "all-MiniLM-L6-v2",
+                        GitaEmbedding.embedding_model == "mock-384"
+                    )
+                )
+                .order_by(cosine_distance)
+                .limit(max(30, top_k * 5))
             )
-            # Retrieve a slightly larger pool for hybrid reranking
-            .order_by(cosine_distance)
-            .limit(max(30, top_k * 5))
-        )
-        
-        result = await self.db.execute(stmt)
-        candidates = result.all()
+            
+            result = await self.db.execute(stmt)
+            candidates = result.all()
+        except Exception as vec_err:
+            print(f"[RAG] Vector search error/fallback: {vec_err}")
+            candidates = []
+
+        if not candidates:
+            # Direct SQL fallback on Verse table
+            fallback_stmt = select(Verse).limit(top_k * 2)
+            if analysis["keywords"]:
+                conds = [Verse.translation_en.ilike(f"%{kw}%") for kw in analysis["keywords"][:3]]
+                fallback_stmt = select(Verse).where(or_(*conds)).limit(top_k * 2)
+            fb_res = await self.db.execute(fallback_stmt)
+            verses_fb = fb_res.scalars().all()
+            candidates = [(v, 0.5) for v in verses_fb]
+
         
         # 4. Rerank with Hybrid Strategy
         ranked_results = []

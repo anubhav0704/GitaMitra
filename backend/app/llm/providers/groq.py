@@ -36,11 +36,12 @@ class GroqProvider(OpenAIProvider):
     ):
         model = (model or "").strip()
 
+        lower_model = model.lower()
         is_unsupported = (
-            not model
-            or model.startswith("gpt-4")   # OpenAI GPT-4 variants — not on Groq
-            or model.startswith("gemini-")  # Google Gemini — not on Groq
-            or model.lower() in GROQ_THINKING_MODELS
+            not lower_model
+            or lower_model.startswith("gpt-") 
+            or lower_model.startswith("gemini")
+            or lower_model in GROQ_THINKING_MODELS
         )
 
         if is_unsupported:

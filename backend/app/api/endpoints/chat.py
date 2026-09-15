@@ -67,18 +67,27 @@ async def stream_chat_message(
 ):
     """
     Streaming chat endpoint via Server-Sent Events (SSE).
-    Emits events: init, retrieval, token, complete, error.
+    Guarantees instant 200 OK + CORS headers before any processing.
     """
-    service = ChatService(db)
-    stream_generator = service.stream_message(
-        user=current_user,
-        message_text=request.message,
-        conversation_id=request.conversation_id,
-        response_depth=request.response_depth or "BALANCED"
-    )
+    async def safe_stream_wrapper():
+        # Flush HTTP 200 OK and CORS headers immediately (< 10ms)
+        yield ": ping\n\n"
+        try:
+            service = ChatService(db)
+            async for chunk in service.stream_message(
+                user=current_user,
+                message_text=request.message,
+                conversation_id=request.conversation_id,
+                response_depth=request.response_depth or "BALANCED"
+            ):
+                yield chunk
+        except Exception as e:
+            import logging, json
+            logging.getLogger("gitamitra.api").exception("Error during chat stream execution")
+            yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n"
 
     return StreamingResponse(
-        stream_generator,
+        safe_stream_wrapper(),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

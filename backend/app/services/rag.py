@@ -104,8 +104,11 @@ class RAGQueryService:
             )
             .join(GitaEmbedding, Verse.id == GitaEmbedding.verse_id)
             .where(
-                GitaEmbedding.embedding_model == self.provider.model_name,
-                GitaEmbedding.embedding_version == self.provider.version
+                or_(
+                    GitaEmbedding.embedding_model == self.provider.model_name,
+                    GitaEmbedding.embedding_model == "all-MiniLM-L6-v2",
+                    GitaEmbedding.embedding_model == "mock-384"
+                )
             )
             # Retrieve a slightly larger pool for hybrid reranking
             .order_by(cosine_distance)

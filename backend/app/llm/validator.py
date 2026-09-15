@@ -83,6 +83,11 @@ class ResponseValidator:
             flags=re.IGNORECASE
         )
 
+        # Sanitize robotic AI bold headers (e.g. "**1. Cultivate Peace:**" -> "1. Cultivate Peace:")
+        # Leaves single-word focal concepts like **svadharma** or **dharma** intact.
+        cleaned_content = re.sub(r"^\*\*(.+?):\*\*\s*", r"\1: ", cleaned_content, flags=re.MULTILINE)
+        cleaned_content = re.sub(r"^\*\*([A-Z0-9\s—–,-]{4,60})\*\*\s*$", r"\1", cleaned_content, flags=re.MULTILINE)
+
         # 2. Ethical / Religious Safety Check
         for pat in cls.UNSAFE_PATTERNS:
             if re.search(pat, content_lower):

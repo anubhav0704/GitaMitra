@@ -102,6 +102,34 @@ export default function MessageBubble({
   // Safe formatting helper for headings, bold, verses, bullet points
   const renderFormattedContent = (content: string) => {
     const lines = content.split("\n");
+    // Clean robotic AI bold heading prefixes while preserving and elegantly styling bold terms used for focus
+    const renderInline = (text: string) => {
+      if (!text) return null;
+
+      // Strip robotic AI boilerplate bold headers at start of line:
+      // e.g. "**1. Understand Your Duty:**" -> "1. Understand Your Duty:"
+      // e.g. "**Karma Yoga:**" -> "Karma Yoga:"
+      let cleaned = text.replace(/^\*\*([^*]+?):\*\*\s*/, "$1: ");
+      if (cleaned.startsWith("**") && cleaned.endsWith("**") && (cleaned.match(/\*\*/g) || []).length === 2) {
+        cleaned = cleaned.slice(2, -2);
+      }
+
+      // Split and render inline bold markers for genuine conceptual focus
+      const parts = cleaned.split(/(\*\*[^*]+?\*\*)/g);
+      return parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+          const boldWord = part.slice(2, -2);
+          return (
+            <strong key={i} className="font-bold text-stone-950 dark:text-amber-100">
+              {boldWord}
+            </strong>
+          );
+        }
+        // Never output unparsed raw asterisks
+        return <React.Fragment key={i}>{part.replace(/\*\*/g, "")}</React.Fragment>;
+      });
+    };
+
     return lines.map((line, idx) => {
       const trimmed = line.trim();
 
@@ -128,7 +156,7 @@ export default function MessageBubble({
               <span>प्रैक्टिकल सार // Core Spiritual Guidance</span>
             </div>
             <p className="text-sm font-medium text-stone-900 dark:text-amber-100 leading-relaxed font-sans">
-              {saarText}
+              {renderInline(saarText)}
             </p>
           </div>
         );
@@ -143,7 +171,7 @@ export default function MessageBubble({
             className="font-serif text-sm font-bold text-amber-900 dark:text-amber-300 mt-4 mb-1.5 flex items-center space-x-1.5"
           >
             <span className="text-amber-500 text-xs">✦</span>
-            <span>{headerText}</span>
+            <span>{renderInline(headerText)}</span>
           </h3>
         );
       }
@@ -156,7 +184,7 @@ export default function MessageBubble({
             key={idx}
             className="my-3 pl-4 border-l-2 border-amber-500 italic text-sm text-stone-700 dark:text-amber-200/90 py-1 font-serif bg-amber-500/5 rounded-r-xl"
           >
-            {quoteText}
+            {renderInline(quoteText)}
           </blockquote>
         );
       }
@@ -167,7 +195,7 @@ export default function MessageBubble({
         return (
           <div key={idx} className="flex items-start space-x-2 my-1 text-sm text-stone-800 dark:text-stone-200">
             <span className="text-amber-500 mt-0.5">•</span>
-            <span className="leading-relaxed font-sans">{bulletText}</span>
+            <span className="leading-relaxed font-sans">{renderInline(bulletText)}</span>
           </div>
         );
       }
@@ -180,7 +208,7 @@ export default function MessageBubble({
       // Standard paragraph
       return (
         <p key={idx} className="text-sm text-stone-800 dark:text-stone-200 leading-relaxed my-1 font-sans">
-          {line}
+          {renderInline(line)}
         </p>
       );
     });

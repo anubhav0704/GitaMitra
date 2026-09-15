@@ -84,6 +84,7 @@ async def test_conversation_crud_and_user_isolation():
         await client1.post("/api/auth/register", json=user1)
         login_res1 = await client1.post("/api/auth/login", json={"email": user1["email"], "password": user1["password"]})
         assert login_res1.status_code == 200
+        client1.headers["Authorization"] = f"Bearer {login_res1.json()['access_token']}"
 
         # Create Conversation for User 1
         res_conv = await client1.post("/api/conversations", json={"title": "Career Dilemma"})
@@ -105,7 +106,9 @@ async def test_conversation_crud_and_user_isolation():
         # Now test User 2
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client2:
             await client2.post("/api/auth/register", json=user2)
-            await client2.post("/api/auth/login", json={"email": user2["email"], "password": user2["password"]})
+            login_res2 = await client2.post("/api/auth/login", json={"email": user2["email"], "password": user2["password"]})
+            assert login_res2.status_code == 200
+            client2.headers["Authorization"] = f"Bearer {login_res2.json()['access_token']}"
 
             # User 2 tries to access User 1's conversation -> MUST return 404
             res_u2_get = await client2.get(f"/api/conversations/{conv_id}")
@@ -134,6 +137,7 @@ async def test_chat_non_streaming_and_streaming():
         await client.post("/api/auth/register", json=user)
         login_res = await client.post("/api/auth/login", json={"email": user["email"], "password": user["password"]})
         assert login_res.status_code == 200
+        client.headers["Authorization"] = f"Bearer {login_res.json()['access_token']}"
 
         # 1. Non-streaming Chat Request
         payload = {

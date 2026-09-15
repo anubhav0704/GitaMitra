@@ -152,26 +152,41 @@ body {
   background-image: linear-gradient(rgba(8, 6, 18, 0.78), rgba(8, 6, 18, 0.92)), url('/images/krishna_divine_portrait.jpg');
 }
 
-/* Devotional Scrollbars */
+/* Optimized Fluid Scroll Experience */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(217, 119, 6, 0.35) transparent;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+.dark .custom-scrollbar {
+  scrollbar-color: rgba(245, 158, 11, 0.35) transparent;
+}
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(217, 119, 6, 0.35);
+  background: rgba(217, 119, 6, 0.3);
   border-radius: 9999px;
+  transition: background-color 0.2s ease;
 }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.3);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(217, 119, 6, 0.65);
+  background: rgba(217, 119, 6, 0.7);
 }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(245, 158, 11, 0.65);
+  background: rgba(245, 158, 11, 0.7);
 }
 
 /* Accessibility: Focus Rings */

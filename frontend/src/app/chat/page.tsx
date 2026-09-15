@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   ArrowUp,
+  ArrowDown,
   PanelLeftOpen,
   Plus,
   BookOpen,
@@ -159,8 +160,10 @@ export default function ChatPage() {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
 
   // Check for first-time onboarding
   useEffect(() => {
@@ -360,10 +363,34 @@ export default function ChatPage() {
     loadMessages();
   }, [activeConvId]);
 
-  // Auto-scroll to bottom on new messages
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    setIsUserScrolledUp(distanceFromBottom > 140);
+  };
+
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior
+      });
+    }
+  };
+
+  // High-performance auto-scroll: smooth for new messages, instant during streaming to eliminate jitter, respects user manual scroll
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streamingContent]);
+    if (!isUserScrolledUp) {
+      if (isGenerating) {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+        }
+      } else {
+        scrollToBottom("smooth");
+      }
+    }
+  }, [messages, streamingContent, isGenerating]);
 
   // Auto-resize textarea
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -456,6 +483,8 @@ export default function ChatPage() {
     setIsGenerating(true);
     setStreamingContent("");
     setStreamingRefs([]);
+    setIsUserScrolledUp(false);
+    setTimeout(() => scrollToBottom("smooth"), 50);
 
     // Append optimistic user message with input_mode
     const userMsg: MessageItem = { role: "user", content: message, input_mode: currentMode };
@@ -713,7 +742,11 @@ export default function ChatPage() {
         </header>
 
         {/* Scrollable Conversation Container */}
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar px-3 sm:px-4 py-3 sm:py-4">
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar px-3 sm:px-4 py-3 sm:py-4 relative"
+        >
           <div className="max-w-3xl mx-auto w-full">
             {messages.length === 0 && !streamingContent ? (
               /* Divine Welcome Screen with Official Logo */
@@ -836,6 +869,25 @@ export default function ChatPage() {
 
             <div ref={messagesEndRef} />
           </div>
+
+          {/* Floating Scroll to Bottom Button */}
+          {isUserScrolledUp && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsUserScrolledUp(false);
+                scrollToBottom("smooth");
+              }}
+              className="sticky bottom-3 float-right mr-2 z-30 px-3 py-1.5 rounded-full bg-white/95 dark:bg-[#1a1435]/95 border border-amber-500/40 text-amber-900 dark:text-amber-200 shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center space-x-1.5 text-xs font-serif cursor-pointer backdrop-blur-md animate-in fade-in"
+              title="Jump to latest divine counsel"
+            >
+              <ArrowDown className="w-3.5 h-3.5 text-amber-500" />
+              <span>Latest</span>
+              {isGenerating && (
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Bottom Floating Composer */}

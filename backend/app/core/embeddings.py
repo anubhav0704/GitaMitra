@@ -104,12 +104,19 @@ class LocalEmbeddingProvider(EmbeddingProvider):
 _singleton_embedding_provider: Optional[EmbeddingProvider] = None
 
 def get_embedding_provider() -> EmbeddingProvider:
-    """Factory to get the configured embedding provider as a singleton."""
+    """
+    Returns a singleton instance of the embedding provider.
+    Forces MockProvider on Render to prevent OOM crashes on 512MB instances.
+    """
     global _singleton_embedding_provider
     if _singleton_embedding_provider is not None:
         return _singleton_embedding_provider
 
     provider_type = os.getenv("EMBEDDING_PROVIDER", "mock").lower()
+    
+    # If running on Render, force 'mock' to avoid 512MB OOM crash
+    if os.getenv("RENDER"):
+        provider_type = "mock"
 
     if provider_type == "mock":
         _singleton_embedding_provider = MockEmbeddingProvider()
@@ -118,8 +125,6 @@ def get_embedding_provider() -> EmbeddingProvider:
         _singleton_embedding_provider = LocalEmbeddingProvider()
         return _singleton_embedding_provider
     else:
-        # Default safe lightweight fallback to avoid OOM
+        # Default fallback
         _singleton_embedding_provider = MockEmbeddingProvider()
         return _singleton_embedding_provider
-
-

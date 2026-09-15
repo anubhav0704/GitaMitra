@@ -70,13 +70,19 @@ class OpenAIProvider(LLMProvider):
                     usage = data.get("usage", {})
                     return LLMResponse(content=content, model=current_model, usage=usage)
             except Exception as e:
-                last_error = e
-                logger.warning(f"Error calling {current_model}: {e}. Trying fallback...")
+                err_msg = str(e)
+                if hasattr(e, 'response') and e.response is not None:
+                    try:
+                        err_msg += f" - Response: {e.response.text}"
+                    except Exception:
+                        pass
+                last_error = err_msg
+                logger.warning(f"Error calling {current_model}: {last_error}. Trying fallback...")
                 continue
 
         logger.error(f"All LLM models failed. Last error: {last_error}")
         return LLMResponse(
-            content="I am GitaMitra, your spiritual companion. I experienced a momentary delay connecting to my reasoning service. Please feel free to share your thoughts, and let's explore them together.",
+            content=f"⚠️ **System Error: LLM API Connection Failed**\n\nThe AI provider could not be reached or rejected the request. Please check your API key, model name, and rate limits in the Render dashboard.\n\n*Error details: {last_error}*",
             model=self.model,
             usage={}
         )
@@ -132,8 +138,15 @@ class OpenAIProvider(LLMProvider):
                         if yielded_any:
                             return
             except Exception as e:
-                logger.warning(f"Model {current_model} stream error: {e}. Trying fallback...")
+                err_msg = str(e)
+                if hasattr(e, 'response') and e.response is not None:
+                    try:
+                        err_msg += f" - Response: {e.response.text}"
+                    except Exception:
+                        pass
+                last_error = err_msg
+                logger.warning(f"Model {current_model} stream error: {last_error}. Trying fallback...")
                 continue
 
-        logger.error("All LLM models in stream failed. Yielding immediate fallback message.")
-        yield "Namaste. I am here alongside you. I am experiencing a brief pause connecting to my deeper knowledge base. Please feel free to share what is on your mind, and let's explore it together."
+        logger.error(f"All LLM models in stream failed. Last error: {last_error}")
+        yield f"⚠️ **System Error: LLM API Connection Failed**\n\nThe AI provider could not be reached or rejected the request. Please check your API key, model name, and rate limits in the Render dashboard.\n\n*Error details: {last_error}*"

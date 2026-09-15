@@ -677,8 +677,10 @@ export default function ChatPage() {
             </button>
 
             {/* Model Badge */}
-            <div className="flex items-center space-x-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/15 text-xs font-serif font-bold text-amber-900 dark:text-amber-200 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <div className="flex items-center space-x-2 px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/15 text-xs font-serif font-bold text-amber-900 dark:text-amber-200 shadow-xs">
+              <div className="w-4 h-4 rounded-full overflow-hidden border border-amber-400/60 shrink-0 bg-black">
+                <img src="/logo.png" alt="GitaMitra" className="w-full h-full object-cover" />
+              </div>
               <span>GitaMitra · गीतामित्र</span>
             </div>
           </div>
@@ -714,15 +716,15 @@ export default function ChatPage() {
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar px-3 sm:px-4 py-3 sm:py-4">
           <div className="max-w-3xl mx-auto w-full">
             {messages.length === 0 && !streamingContent ? (
-              /* Divine Welcome Screen with Lord Krishna Portrait */
+              /* Divine Welcome Screen with Official Logo */
               <div className="py-3 sm:py-5 px-2 text-center space-y-3 sm:space-y-4 animate-in fade-in duration-300">
-                {/* Celestial Portrait of Lord Krishna */}
+                {/* Official Sacred Emblem of GitaMitra */}
                 <div className="relative inline-flex items-center justify-center group">
                   <div className="absolute inset-0 rounded-full bg-amber-500/30 blur-2xl group-hover:blur-3xl transition-all duration-300 pointer-events-none"></div>
-                  <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-amber-400/80 shadow-2xl shadow-amber-500/30 group-hover:scale-105 transition-transform duration-500">
+                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-amber-400/90 shadow-2xl shadow-amber-500/35 group-hover:scale-105 transition-transform duration-500 bg-black">
                     <img
-                      src="/images/krishna_divine_portrait.jpg"
-                      alt="Lord Krishna in Celestial Realm"
+                      src="/logo.png"
+                      alt="GitaMitra Official Sacred Emblem"
                       className="w-full h-full object-cover"
                     />
                   </div>

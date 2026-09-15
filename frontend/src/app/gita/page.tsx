@@ -49,8 +49,8 @@ export default function GitaExplorer() {
         {/* Hero Section */}
         <div className="text-center space-y-4 max-w-2xl mx-auto animate-in fade-in duration-300">
           <div className="flex justify-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 text-white font-serif text-2xl font-bold flex items-center justify-center shadow-lg shadow-amber-500/25 border border-amber-300/40">
-              ॐ
+            <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg shadow-amber-500/25 border border-amber-300/40 bg-black">
+              <img src="/logo.png" alt="GitaMitra Official Logo" className="w-full h-full object-cover" />
             </div>
           </div>
 

@@ -59,8 +59,12 @@ export default function Navbar() {
               <Link href={user ? "/chat" : "/"} className="flex items-center space-x-3 group">
                 <div className="relative">
                   <div className="absolute inset-0 rounded-2xl bg-amber-500/30 blur-md group-hover:blur-lg transition-all duration-300"></div>
-                  <div className="relative w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 flex items-center justify-center text-white font-serif font-bold text-lg shadow-md shadow-amber-500/25 border border-amber-300/40 group-hover:scale-105 transition-all">
-                    ॐ
+                  <div className="relative w-10 h-10 rounded-2xl overflow-hidden shadow-md shadow-amber-500/25 border border-amber-300/50 group-hover:scale-105 transition-all bg-black shrink-0">
+                    <img
+                      src="/logo.png"
+                      alt="GitaMitra Official Logo"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
                 <div className="flex items-baseline space-x-2">

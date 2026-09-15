@@ -74,8 +74,12 @@ export default function Login() {
           <div className="flex justify-center">
             <Link href="/" className="relative group">
               <div className="absolute inset-0 rounded-2xl bg-amber-500/30 blur-xl group-hover:blur-2xl transition-all"></div>
-              <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 text-white font-serif text-2xl font-bold flex items-center justify-center shadow-lg shadow-amber-500/25 border border-amber-300/40">
-                ॐ
+              <div className="relative w-16 h-16 rounded-2xl overflow-hidden shadow-lg shadow-amber-500/25 border border-amber-300/40 bg-black group-hover:scale-105 transition-transform">
+                <img
+                  src="/logo.png"
+                  alt="GitaMitra Official Logo"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </Link>
           </div>

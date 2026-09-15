@@ -101,8 +101,8 @@ export function PWAInstallPrompt() {
         <div className="fixed top-2 left-3 right-3 sm:left-auto sm:right-4 sm:top-16 sm:w-96 z-50 animate-in fade-in slide-in-from-top-3 duration-300">
           <div className="p-3 rounded-2xl bg-[#0c091a]/95 text-white border border-amber-500/40 shadow-2xl backdrop-blur-xl flex items-center justify-between gap-3">
             <div className="flex items-center space-x-3 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 to-yellow-400 text-stone-950 flex items-center justify-center font-serif text-base font-bold shadow-md shrink-0">
-                ॐ
+              <div className="w-10 h-10 rounded-xl overflow-hidden border border-amber-500/40 bg-black shrink-0 shadow-md">
+                <img src="/logo.png" alt="GitaMitra Official Logo" className="w-full h-full object-cover" />
               </div>
               <div className="min-w-0">
                 <p className="font-serif text-xs font-bold text-amber-200 truncate">
@@ -156,8 +156,8 @@ export function PWAInstallPrompt() {
           >
             <div className="flex items-center justify-between pb-2 border-b border-amber-500/20">
               <div className="flex items-center space-x-2">
-                <div className="w-7 h-7 rounded-lg bg-amber-500 text-stone-950 flex items-center justify-center font-serif font-bold text-sm">
-                  ॐ
+                <div className="w-8 h-8 rounded-lg overflow-hidden border border-amber-500 bg-black shrink-0">
+                  <img src="/logo.png" alt="GitaMitra Official Logo" className="w-full h-full object-cover" />
                 </div>
                 <span className="font-serif font-bold text-sm text-amber-300">
                   Install GitaMitra on iPhone / iPad

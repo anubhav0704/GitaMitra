@@ -172,8 +172,8 @@ export default function AdminDashboardPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-amber-500/20 pb-5">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-600 to-yellow-500 flex items-center justify-center text-white font-serif font-bold text-lg shadow-md">
-              ॐ
+            <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-md border border-amber-500/30 bg-black shrink-0">
+              <img src="/logo.png" alt="GitaMitra Official Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="flex items-center space-x-2">

@@ -43,9 +43,13 @@ export default function Home() {
           {/* Sacred Emblem & Badge */}
           <div className="flex flex-col items-center space-y-3">
             <div className="relative group">
-              <div className="absolute inset-0 rounded-2xl bg-amber-500/35 blur-xl group-hover:blur-2xl transition-all duration-300 pointer-events-none"></div>
-              <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 text-white font-serif text-2xl sm:text-3xl font-bold flex items-center justify-center shadow-lg shadow-amber-500/30 border border-amber-300/50 group-hover:scale-105 transition-transform">
-                ॐ
+              <div className="absolute inset-0 rounded-3xl bg-amber-500/35 blur-xl group-hover:blur-2xl transition-all duration-300 pointer-events-none"></div>
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl overflow-hidden shadow-xl shadow-amber-500/30 border-2 border-amber-400/60 group-hover:scale-105 transition-transform bg-black shrink-0">
+                <img
+                  src="/logo.png"
+                  alt="GitaMitra Official Logo"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
@@ -188,8 +192,11 @@ export default function Home() {
       {/* Devotional Footer */}
       <footer className="border-t border-amber-500/25 py-8 text-xs text-stone-600 dark:text-stone-400 font-serif bg-white/50 dark:bg-black/50 backdrop-blur-md">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-amber-700 dark:text-amber-400">ॐ GitaMitra</span>
+          <div className="flex items-center space-x-2.5">
+            <div className="w-6 h-6 rounded-lg overflow-hidden border border-amber-500/40 bg-black shrink-0">
+              <img src="/logo.png" alt="GitaMitra" className="w-full h-full object-cover" />
+            </div>
+            <span className="font-bold text-amber-700 dark:text-amber-400">GitaMitra</span>
             <span>·</span>
             <span>श्रीमद्भगवद्गीता</span>
           </div>

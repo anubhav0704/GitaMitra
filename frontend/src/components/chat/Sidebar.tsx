@@ -157,12 +157,21 @@ export default function Sidebar({
       >
         {/* Top Header: Brand + Collapse button */}
         <div className="p-3.5 border-b border-amber-500/20 flex items-center justify-between flex-shrink-0">
-          <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 text-white flex items-center justify-center font-serif text-sm font-bold shadow-xs group-hover:scale-105 transition-transform">
-              ॐ
+          <Link href="/" className="flex items-center space-x-2.5 group">
+            <div className="w-8 h-8 rounded-xl overflow-hidden shadow-xs border border-amber-500/30 group-hover:scale-105 transition-transform bg-black shrink-0">
+              <img
+                src="/logo.png"
+                alt="GitaMitra Official Logo"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="flex items-baseline space-x-1 font-serif text-sm font-bold tracking-tight text-stone-900 dark:text-white">
-              <span>Gita<span className="text-amber-600 dark:text-amber-400">Mitra</span></span>
+            <div className="flex flex-col">
+              <span className="font-serif text-sm font-bold tracking-tight text-stone-900 dark:text-white leading-tight">
+                Gita<span className="text-amber-600 dark:text-amber-400">Mitra</span>
+              </span>
+              <span className="text-[10px] font-serif text-amber-800/80 dark:text-amber-400 -mt-0.5">
+                गीता मित्र
+              </span>
             </div>
           </Link>
 

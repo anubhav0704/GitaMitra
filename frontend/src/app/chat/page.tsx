@@ -31,6 +31,7 @@ import { useVoiceRecorder } from "../../lib/voice";
 import { API_BASE, getAuthHeaders, resilientFetch } from "../../lib/api";
 import { OnboardingModal } from "../../components/onboarding/OnboardingModal";
 import { MobileNav } from "../../components/layout/MobileNav";
+import { InstallAppButton } from "../../components/pwa/PWAInstallPrompt";
 
 interface PromptCard {
   title: string;
@@ -620,7 +621,7 @@ export default function ChatPage() {
   const firstName = user.name ? user.name.split(" ")[0] : "Seeker";
 
   return (
-    <div className="fixed inset-0 flex h-screen w-screen overflow-hidden bg-krishna-theme text-stone-900 dark:text-stone-100 selection:bg-amber-500/30 selection:text-amber-900 dark:selection:text-amber-200">
+    <div className="fixed inset-0 flex h-screen h-[100dvh] max-h-[100dvh] w-full overflow-hidden bg-krishna-theme text-stone-900 dark:text-stone-100 selection:bg-amber-500/30 selection:text-amber-900 dark:selection:text-amber-200">
       {/* Sidebar (Sacred Temple Drawer) */}
       <Sidebar
         conversations={conversations}
@@ -641,7 +642,7 @@ export default function ChatPage() {
       />
 
       {/* Main Chat Workspace */}
-      <div className="flex-1 min-w-0 flex flex-col h-full max-h-screen overflow-hidden relative">
+      <div className="flex-1 min-w-0 flex flex-col h-full max-h-[100dvh] overflow-hidden relative">
         {/* Top Header Bar */}
         <header className="h-14 flex items-center justify-between px-4 border-b border-amber-500/25 bg-white/80 dark:bg-[#0c091a]/85 backdrop-blur-xl z-10 flex-shrink-0">
           <div className="flex items-center space-x-2">
@@ -684,6 +685,8 @@ export default function ChatPage() {
 
           {/* Right Header Controls */}
           <div className="flex items-center space-x-2">
+            <InstallAppButton className="hidden sm:inline-flex px-2.5 py-1 text-xs rounded-full border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20" />
+            
             <Link
               href="/gita"
               className="flex items-center space-x-1.5 px-3.5 py-1 text-xs font-serif font-semibold text-amber-900 dark:text-amber-200 border border-amber-500/30 bg-amber-500/15 rounded-full hover:bg-amber-500/25 transition-colors"
@@ -833,8 +836,8 @@ export default function ChatPage() {
           </div>
         </div>
 
-        {/* Pinned Bottom Floating Composer */}
-        <div className="flex-shrink-0 px-3 sm:px-4 pt-2.5 pb-[76px] md:!pb-3 bg-white/80 dark:bg-[#0c091a]/90 backdrop-blur-xl border-t border-amber-500/20 z-20">
+        {/* Bottom Floating Composer */}
+        <div className="flex-shrink-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/85 dark:bg-[#0c091a]/95 backdrop-blur-xl border-t border-amber-500/25 z-20">
           <div className="max-w-3xl mx-auto w-full">
             {/* Voice Recording Active Banner */}
             {isRecording && (
@@ -971,6 +974,9 @@ export default function ChatPage() {
             </p>
           </div>
         </div>
+
+        {/* Mobile Bottom Navigation - Naturally positioned in flex flow right below composer */}
+        <MobileNav isChat={true} />
       </div>
 
       {/* Lightweight First-Time Onboarding Modal */}
@@ -981,10 +987,6 @@ export default function ChatPage() {
           userName={user.name || undefined}
         />
       )}
-
-
-      {/* Mobile Bottom Navigation */}
-      <MobileNav />
     </div>
   );
 }

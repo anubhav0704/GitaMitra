@@ -26,6 +26,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import ProfileModal from "../ProfileModal";
 import { API_BASE, getAuthHeaders } from "../../lib/api";
+import { InstallAppButton } from "../pwa/PWAInstallPrompt";
 
 export interface ConversationItem {
   id: string;
@@ -226,6 +227,9 @@ export default function Sidebar({
               </button>
             )}
           </div>
+
+          {/* Direct Install PWA Action */}
+          <InstallAppButton className="w-full justify-center px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-[11px]" />
         </div>
 
         {/* Conversation List / Dialogue History - Separately Scrollable */}

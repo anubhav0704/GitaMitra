@@ -5,8 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MessageSquare, BookOpen, Shield, Settings as SettingsIcon } from "lucide-react";
 
-export const MobileNav: React.FC = () => {
+export interface MobileNavProps {
+  className?: string;
+  isChat?: boolean;
+}
+
+export const MobileNav: React.FC<MobileNavProps> = ({ className = "", isChat }) => {
   const pathname = usePathname();
+  const activeIsChat = isChat ?? (pathname === "/chat");
 
   const navItems = [
     { href: "/chat", label: "Dialogue", icon: MessageSquare, active: pathname === "/chat" },
@@ -18,7 +24,9 @@ export const MobileNav: React.FC = () => {
   return (
     <nav
       aria-label="Mobile navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#faf6ee]/95 dark:bg-[#0c091a]/95 backdrop-blur-xl border-t border-amber-500/25 px-2 flex items-center justify-around select-none h-14 shadow-lg safe-area-pb"
+      className={`md:hidden bg-[#faf6ee]/95 dark:bg-[#0c091a]/95 backdrop-blur-xl border-t border-amber-500/25 px-2 flex items-center justify-around select-none h-14 shadow-lg safe-area-pb ${
+        activeIsChat ? "relative flex-shrink-0 z-20" : "fixed bottom-0 left-0 right-0 z-30"
+      } ${className}`}
     >
       {navItems.map((item) => {
         const Icon = item.icon;

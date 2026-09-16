@@ -141,7 +141,7 @@ body {
 }
 
 .bg-krishna-theme {
-  background-image: linear-gradient(rgba(253, 251, 247, 0.85), rgba(253, 251, 247, 0.94)), url('/images/krishna_divine_portrait.jpg');
+  background-image: linear-gradient(rgba(253, 251, 247, 0.55), rgba(253, 251, 247, 0.65)), url('/images/krishna_divine_portrait.jpg');
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;

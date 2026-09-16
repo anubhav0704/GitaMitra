@@ -673,7 +673,7 @@ export default function ChatPage() {
       {/* Main Chat Workspace */}
       <div className="flex-1 min-w-0 flex flex-col h-full max-h-[100dvh] overflow-hidden relative">
         {/* Top Header Bar */}
-        <header className="h-14 flex items-center justify-between px-4 border-b border-amber-500/25 bg-white/80 dark:bg-[#0c091a]/85 backdrop-blur-xl z-10 flex-shrink-0">
+        <header className="h-14 flex items-center justify-between px-4 border-b border-amber-500/25 bg-white/80 dark:bg-[#0c091a]/85 backdrop-blur-xl z-10 flex-shrink-0 sticky top-0">
           <div className="flex items-center space-x-2">
             {/* Mobile drawer toggle */}
             <button
@@ -706,7 +706,7 @@ export default function ChatPage() {
             </button>
 
             {/* Model Badge */}
-            <div className="flex items-center space-x-2 px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/15 text-xs font-serif font-bold text-amber-900 dark:text-amber-200 shadow-xs">
+            <div className="flex items-center space-x-2 px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/15 text-sm font-serif font-bold text-amber-900 dark:text-amber-200 shadow-xs">
               <div className="w-4 h-4 rounded-full overflow-hidden border border-amber-400/60 shrink-0 bg-black">
                 <img src="/logo.png" alt="GitaMitra" className="w-full h-full object-cover" />
               </div>
@@ -891,7 +891,7 @@ export default function ChatPage() {
         </div>
 
         {/* Bottom Floating Composer */}
-        <div className="flex-shrink-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/85 dark:bg-[#0c091a]/95 backdrop-blur-xl border-t border-amber-500/25 z-20">
+        <div className="flex-shrink-0 px-3 sm:px-4 py-2 sm:py-2.5 border-t border-amber-500/20 z-20">
           <div className="max-w-3xl mx-auto w-full">
             {/* Voice Recording Active Banner */}
             {isRecording && (
@@ -957,7 +957,7 @@ export default function ChatPage() {
               </div>
             )}
 
-            <div className="rounded-[24px] bg-white/95 dark:bg-[#15102a]/95 backdrop-blur-xl border border-amber-500/35 p-2.5 sm:p-3 shadow-xl focus-within:border-amber-500 dark:focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all duration-200 flex flex-col">
+            <div className="rounded-[24px] bg-white/70 dark:bg-[#15102a]/75 backdrop-blur-2xl border border-amber-500/35 p-2.5 sm:p-3 shadow-xl focus-within:border-amber-500 dark:focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all duration-200 flex flex-col">
               {/* Voice Transcribed Notice Badge */}
               {isVoiceInput && inputText.trim() && (
                 <div className="px-2 py-0.5 mb-1 inline-flex items-center space-x-1 text-[10px] font-serif text-amber-700 dark:text-amber-300 bg-amber-500/10 rounded-full border border-amber-500/20 self-start">

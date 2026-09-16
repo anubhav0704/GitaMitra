@@ -148,6 +148,16 @@ export const api = {
       request<{ message: string }>("/auth/change-password", {
         method: "POST",
         body: JSON.stringify(payload)
+      }),
+    google: (credential: string) =>
+      request<{
+        message: string;
+        access_token: string;
+        token_type: string;
+        user: { id: string; name: string; email: string; role?: string; avatar_url?: string | null };
+      }>("/auth/google", {
+        method: "POST",
+        body: JSON.stringify({ credential })
       })
   },
 

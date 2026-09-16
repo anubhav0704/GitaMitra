@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
 import { API_BASE, setAuthToken, getAuthHeaders, resilientFetch } from "../../lib/api";
 import { ArrowRight, Lock, Mail, Sparkles, Eye, EyeOff } from "lucide-react";
+import GoogleAuthButton from "../../components/auth/GoogleAuthButton";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -99,6 +100,21 @@ export default function Login() {
 
         {/* Temple Glass Card */}
         <div className="temple-card p-8 shadow-2xl">
+          {/* Google Sign-In */}
+          <div className="mb-4">
+            <GoogleAuthButton mode="login" />
+          </div>
+
+          {/* Elegant Sacred Divider */}
+          <div className="relative my-5 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-amber-500/20"></div>
+            </div>
+            <div className="relative px-3 bg-[#fbf9f5] dark:bg-[#120e26] rounded-full text-[10px] uppercase font-serif tracking-widest text-stone-500 dark:text-stone-400 font-semibold border border-amber-500/20">
+              or continue with email
+            </div>
+          </div>
+
           <form className="space-y-4" onSubmit={handleSubmit}>
             {error && (
               <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 font-serif text-xs text-rose-700 dark:text-rose-300">

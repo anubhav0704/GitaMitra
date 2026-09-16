@@ -12,10 +12,11 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = "gitamitra"
     POSTGRES_PORT: str = "5432"
 
-    # JWT Authentication
+    # JWT & OAuth Authentication
     JWT_SECRET: str = "super_secret_key_change_this_in_production"
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7 # 7 days
+    GOOGLE_CLIENT_ID: str = ""
 
     # RAG Settings
     RAG_TOP_K: int = 5

@@ -35,3 +35,6 @@ class ChangePasswordRequest(BaseModel):
 class ProfilePictureUpdate(BaseModel):
     avatar_url: Optional[str] = None
 
+class GoogleAuthRequest(BaseModel):
+    credential: str = Field(..., description="Google ID Token JWT returned by Google Identity Services")
+

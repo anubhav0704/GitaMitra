@@ -2,11 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from datetime import datetime
+import secrets
+import httpx
 
 from app.core.database import get_db
+from app.core.config import settings
 from app.core.security import get_password_hash, verify_password, create_access_token
 from app.models.domain import User
-from app.schemas.auth import UserCreate, UserLogin, UserResponse, ChangePasswordRequest, ProfilePictureUpdate
+from app.schemas.auth import UserCreate, UserLogin, UserResponse, ChangePasswordRequest, ProfilePictureUpdate, GoogleAuthRequest
 from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -100,6 +103,110 @@ async def login(response: Response, user_data: UserLogin, db: AsyncSession = Dep
     
     return {
         "message": "Successfully logged in",
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": str(user.id),
+            "email": user.email,
+            "name": user.name,
+            "role": user.role,
+        }
+    }
+
+@router.post("/google")
+async def google_auth(response: Response, auth_data: GoogleAuthRequest, db: AsyncSession = Depends(get_db)):
+    # 1. Verify Google ID token with Google's tokeninfo endpoint
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            res = await client.get(
+                "https://oauth2.googleapis.com/tokeninfo",
+                params={"id_token": auth_data.credential}
+            )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Unable to reach Google OAuth verification servers: {str(e)}"
+        )
+
+    if res.status_code != 200:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired Google authentication token"
+        )
+
+    payload = res.json()
+
+    # 2. Audience validation if GOOGLE_CLIENT_ID is configured
+    if settings.GOOGLE_CLIENT_ID and payload.get("aud") != settings.GOOGLE_CLIENT_ID:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google token audience does not match configured Client ID"
+        )
+
+    email = payload.get("email")
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google account did not provide an email address"
+        )
+
+    # Ensure email is verified
+    email_verified = payload.get("email_verified")
+    if email_verified is False or str(email_verified).lower() == "false":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google account email is not verified"
+        )
+
+    # 3. Lookup user or auto-register new seeker
+    stmt = select(User).where(User.email == email)
+    result = await db.execute(stmt)
+    user = result.scalar_one_or_none()
+
+    now = datetime.utcnow()
+    name = payload.get("name") or email.split("@")[0]
+    picture = payload.get("picture")
+
+    if user:
+        if not user.is_active:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user account")
+        if not user.avatar_url and picture:
+            user.avatar_url = picture
+        if not user.name:
+            user.name = name
+        user.last_login_at = now
+        await db.commit()
+        await db.refresh(user)
+    else:
+        # Auto-register new seeker
+        user = User(
+            email=email,
+            name=name,
+            password_hash=get_password_hash(secrets.token_urlsafe(32)),
+            avatar_url=picture,
+            role="user",
+            is_active=True,
+            last_login_at=now
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+
+    # 4. Generate access token
+    access_token = create_access_token(subject=str(user.id))
+
+    # 5. Set HttpOnly cookie
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        samesite="none",
+        secure=True,
+        max_age=7 * 24 * 60 * 60, # 7 days
+    )
+
+    return {
+        "message": "Successfully authenticated with Google",
         "access_token": access_token,
         "token_type": "bearer",
         "user": {

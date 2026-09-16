@@ -158,65 +158,83 @@ async def google_auth(response: Response, auth_data: GoogleAuthRequest, db: Asyn
             detail="Google account email is not verified"
         )
 
+    # Ensure table columns exist safely (idempotent schema upgrade)
+    from sqlalchemy import text
+    try:
+        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;"))
+        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user';"))
+        await db.commit()
+    except Exception:
+        await db.rollback()
+
     # 3. Lookup user or auto-register new seeker
-    stmt = select(User).where(User.email == email)
-    result = await db.execute(stmt)
-    user = result.scalar_one_or_none()
+    try:
+        stmt = select(User).where(User.email == email)
+        result = await db.execute(stmt)
+        user = result.scalar_one_or_none()
 
-    now = datetime.utcnow()
-    name = payload.get("name") or email.split("@")[0]
-    picture = payload.get("picture")
+        now = datetime.utcnow()
+        name = payload.get("name") or email.split("@")[0]
+        picture = payload.get("picture")
 
-    if user:
-        if not user.is_active:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user account")
-        if not user.avatar_url and picture:
-            user.avatar_url = picture
-        if not user.name:
-            user.name = name
-        user.last_login_at = now
-        await db.commit()
-        await db.refresh(user)
-    else:
-        # Auto-register new seeker
-        user = User(
-            email=email,
-            name=name,
-            password_hash=get_password_hash(secrets.token_urlsafe(32)),
-            avatar_url=picture,
-            role="user",
-            is_active=True,
-            last_login_at=now
+        if user:
+            if not user.is_active:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user account")
+            if hasattr(user, "avatar_url") and not user.avatar_url and picture:
+                user.avatar_url = picture
+            if not user.name:
+                user.name = name
+            user.last_login_at = now
+            await db.commit()
+            await db.refresh(user)
+        else:
+            # Auto-register new seeker
+            user = User(
+                email=email,
+                name=name,
+                password_hash=get_password_hash(secrets.token_urlsafe(32)),
+                avatar_url=picture,
+                role="user",
+                is_active=True,
+                last_login_at=now
+            )
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+
+        # 4. Generate access token
+        access_token = create_access_token(subject=str(user.id))
+
+        # 5. Set HttpOnly cookie
+        response.set_cookie(
+            key="access_token",
+            value=f"Bearer {access_token}",
+            httponly=True,
+            samesite="none",
+            secure=True,
+            max_age=7 * 24 * 60 * 60, # 7 days
         )
-        db.add(user)
-        await db.commit()
-        await db.refresh(user)
 
-    # 4. Generate access token
-    access_token = create_access_token(subject=str(user.id))
-
-    # 5. Set HttpOnly cookie
-    response.set_cookie(
-        key="access_token",
-        value=f"Bearer {access_token}",
-        httponly=True,
-        samesite="none",
-        secure=True,
-        max_age=7 * 24 * 60 * 60, # 7 days
-    )
-
-    return {
-        "message": "Successfully authenticated with Google",
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": {
-            "id": str(user.id),
-            "email": user.email,
-            "name": user.name,
-            "role": user.role,
-            "avatar_url": user.avatar_url
+        return {
+            "message": "Successfully authenticated with Google",
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "id": str(user.id),
+                "email": user.email,
+                "name": user.name,
+                "role": getattr(user, "role", "user"),
+                "avatar_url": getattr(user, "avatar_url", None)
+            }
         }
-    }
+    except HTTPException:
+        raise
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database authentication error: {str(e)}"
+        )
 
 @router.post("/logout")
 async def logout(response: Response):

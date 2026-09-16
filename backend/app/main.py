@@ -27,6 +27,8 @@ async def lifespan(app: FastAPI):
         
         async with engine.begin() as conn:
             await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
+            await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;"))
+            await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user';"))
             await conn.run_sync(Base.metadata.create_all)
             
         async with async_session_maker() as session:

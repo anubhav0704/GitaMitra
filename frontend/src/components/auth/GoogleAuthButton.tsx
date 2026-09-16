@@ -143,7 +143,7 @@ export default function GoogleAuthButton({ mode = "login", className = "" }: Goo
         size: "large",
         text: mode === "register" ? "signup_with" : "continue_with",
         shape: "pill",
-        width: "100%",
+        width: 320,
         logo_alignment: "left",
       });
     } catch (err) {

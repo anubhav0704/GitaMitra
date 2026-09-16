@@ -608,6 +608,7 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
               <span>Sign Out</span>
             </button>
           </div>
+          </div>
         </div>
       </div>
     </div>

@@ -673,7 +673,7 @@ export default function ChatPage() {
       {/* Main Chat Workspace */}
       <div className="flex-1 min-w-0 flex flex-col h-full max-h-[100dvh] overflow-hidden relative">
         {/* Top Header Bar */}
-        <header className="h-14 flex items-center justify-between px-4 border-b border-amber-500/25 bg-white/80 dark:bg-[#0c091a]/85 backdrop-blur-xl z-10 flex-shrink-0">
+        <header className="h-14 flex items-center justify-between px-4 border-b border-amber-500/20 bg-white/40 dark:bg-[#0c091a]/60 backdrop-blur-md z-10 flex-shrink-0">
           <div className="flex items-center space-x-2">
             {/* Mobile drawer toggle */}
             <button
@@ -891,7 +891,7 @@ export default function ChatPage() {
         </div>
 
         {/* Bottom Floating Composer */}
-        <div className="flex-shrink-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/85 dark:bg-[#0c091a]/95 backdrop-blur-xl border-t border-amber-500/25 z-20">
+        <div className="flex-shrink-0 px-3 sm:px-4 py-2 sm:py-2.5 bg-transparent z-20">
           <div className="max-w-3xl mx-auto w-full">
             {/* Voice Recording Active Banner */}
             {isRecording && (
@@ -957,7 +957,7 @@ export default function ChatPage() {
               </div>
             )}
 
-            <div className="rounded-[24px] bg-white/95 dark:bg-[#15102a]/95 backdrop-blur-xl border border-amber-500/35 p-2.5 sm:p-3 shadow-xl focus-within:border-amber-500 dark:focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all duration-200 flex flex-col">
+            <div className="rounded-[24px] bg-white/35 dark:bg-black/40 backdrop-blur-md border border-amber-500/40 p-2.5 sm:p-3 shadow-xl focus-within:border-amber-500 dark:focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all duration-200 flex flex-col">
               {/* Voice Transcribed Notice Badge */}
               {isVoiceInput && inputText.trim() && (
                 <div className="px-2 py-0.5 mb-1 inline-flex items-center space-x-1 text-[10px] font-serif text-amber-700 dark:text-amber-300 bg-amber-500/10 rounded-full border border-amber-500/20 self-start">
@@ -973,11 +973,11 @@ export default function ChatPage() {
                 onKeyDown={handleKeyDown}
                 rows={1}
                 placeholder="Ask Lord Krishna anything about your duty, peace, purpose, or Gita verses..."
-                className="w-full max-h-36 resize-none bg-transparent px-2 py-1 text-sm sm:text-[15px] text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none font-sans"
+                className="w-full max-h-36 resize-none bg-transparent px-2 py-1 text-sm sm:text-[15px] text-stone-950 dark:text-stone-50 placeholder-stone-700 dark:placeholder-stone-300 focus:outline-none font-sans font-medium"
               />
 
               <div className="flex items-center justify-between pt-1.5 px-1 min-w-0">
-                <div className="flex items-center space-x-1.5 font-serif text-[10px] sm:text-[11px] text-amber-800 dark:text-amber-400 truncate pr-2">
+                <div className="flex items-center space-x-1.5 font-serif text-[10px] sm:text-[11px] text-amber-900 dark:text-amber-300 font-semibold truncate pr-2">
                   <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
                   <span className="truncate">Grounded in 700 Verses of Bhagavad Gita</span>
                 </div>
@@ -1023,7 +1023,7 @@ export default function ChatPage() {
               </div>
             </div>
 
-            <p className="hidden sm:block text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 text-center mt-1.5 font-serif">
+            <p className="hidden sm:block text-[10px] sm:text-[11px] text-stone-800 dark:text-stone-300 text-center mt-1.5 font-serif font-medium drop-shadow-xs">
               GitaMitra offers spiritual reflection grounded in Dharma. Press Enter to send, Shift+Enter for newline.
             </p>
           </div>

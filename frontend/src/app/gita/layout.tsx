@@ -31,7 +31,7 @@ export default function GitaLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen overflow-y-auto bg-white dark:bg-[#212121] text-gray-900 dark:text-gray-100 transition-colors duration-200">
+    <div className="flex-1 flex flex-col min-h-screen bg-white dark:bg-[#212121] text-gray-900 dark:text-gray-100 transition-colors duration-200">
       <Navbar />
       <div className="flex-1">
         {children}

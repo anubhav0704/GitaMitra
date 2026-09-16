@@ -453,6 +453,17 @@ export default function ChatPage() {
     }
   };
 
+  const handleRetry = () => {
+    if (isGenerating) return;
+    const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
+    if (lastUserMsg?.content) {
+      setChatError(null);
+      sendMessage(lastUserMsg.content, lastUserMsg.input_mode as any, true);
+    } else if (inputText.trim()) {
+      sendMessage();
+    }
+  };
+
   const handleRegenerate = () => {
     const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
     if (lastUserMsg && !isGenerating) {
@@ -463,12 +474,12 @@ export default function ChatPage() {
         }
         return prev;
       });
-      sendMessage(lastUserMsg.content, lastUserMsg.input_mode as any);
+      sendMessage(lastUserMsg.content, lastUserMsg.input_mode as any, true);
     }
   };
 
   // Send message via SSE streaming
-  const sendMessage = async (textToSend?: string, mode?: "text" | "voice") => {
+  const sendMessage = async (textToSend?: string, mode?: "text" | "voice", isRetryOrRegenerate?: boolean) => {
     const message = (textToSend || inputText).trim();
     if (!message || isGenerating) return;
 
@@ -486,9 +497,11 @@ export default function ChatPage() {
     setIsUserScrolledUp(false);
     setTimeout(() => scrollToBottom("smooth"), 50);
 
-    // Append optimistic user message with input_mode
-    const userMsg: MessageItem = { role: "user", content: message, input_mode: currentMode };
-    setMessages((prev) => [...prev, userMsg]);
+    // Append optimistic user message only if this isn't a retry/regeneration
+    if (!isRetryOrRegenerate) {
+      const userMsg: MessageItem = { role: "user", content: message, input_mode: currentMode };
+      setMessages((prev) => [...prev, userMsg]);
+    }
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -858,11 +871,13 @@ export default function ChatPage() {
                   <span>{chatError}</span>
                 </div>
                 <button
-                  onClick={() => sendMessage()}
-                  className="inline-flex items-center space-x-1 text-xs font-bold underline ml-3 cursor-pointer"
+                  type="button"
+                  onClick={handleRetry}
+                  disabled={isGenerating}
+                  className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-100 dark:bg-rose-900/60 hover:bg-rose-200 dark:hover:bg-rose-800/80 text-rose-800 dark:text-rose-200 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 ml-3 shrink-0"
                 >
-                  <RefreshCw className="w-3 h-3" />
-                  <span>Retry</span>
+                  <RefreshCw className={`w-3 h-3 ${isGenerating ? "animate-spin" : ""}`} />
+                  <span>{isGenerating ? "Retrying..." : "Retry"}</span>
                 </button>
               </div>
             )}

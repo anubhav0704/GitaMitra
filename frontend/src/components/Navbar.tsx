@@ -51,7 +51,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="bg-white/80 dark:bg-[#0c0919]/85 backdrop-blur-xl border-b border-amber-500/20 sticky top-0 z-40 transition-colors duration-200 shadow-xs">
+      <header className="bg-white/95 dark:bg-[#0c0919]/95 backdrop-blur-xl border-b border-amber-500/20 sticky top-0 z-50 w-full transition-colors duration-200 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             {/* Sacred Brand Identity */}

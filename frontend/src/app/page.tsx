@@ -32,7 +32,7 @@ export default function Home() {
   if (user) return null;
 
   return (
-    <div className="min-h-screen bg-chariot-theme flex flex-col justify-between text-stone-900 dark:text-stone-100 selection:bg-amber-500/30 selection:text-amber-900 dark:selection:text-amber-200 overflow-x-hidden">
+    <div className="min-h-screen bg-chariot-theme flex flex-col justify-between text-stone-900 dark:text-stone-100 selection:bg-amber-500/30 selection:text-amber-900 dark:selection:text-amber-200 overflow-x-clip">
       {/* Top Sacred Navigation Bar */}
       <Navbar />
 

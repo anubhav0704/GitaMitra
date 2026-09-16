@@ -17,6 +17,7 @@ class UserResponse(BaseModel):
     name: Optional[str]
     email: str
     role: str = "user"
+    avatar_url: Optional[str] = None
     created_at: datetime
     
     model_config = {
@@ -30,4 +31,7 @@ class Token(BaseModel):
 class ChangePasswordRequest(BaseModel):
     current_password: str
     new_password: str = Field(..., min_length=8)
+
+class ProfilePictureUpdate(BaseModel):
+    avatar_url: Optional[str] = None
 

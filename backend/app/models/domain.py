@@ -16,6 +16,7 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(String(20), default="user", nullable=False, index=True) # 'user' or 'admin'
     is_active = Column(Boolean, default=True)
+    avatar_url = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     last_login_at = Column(DateTime, nullable=True)

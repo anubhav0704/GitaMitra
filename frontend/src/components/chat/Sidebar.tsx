@@ -407,9 +407,17 @@ export default function Sidebar({
               title="Seeker Account"
             >
               <div className="flex items-center space-x-2.5 min-w-0">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 text-white font-serif font-bold text-xs flex items-center justify-center shadow-xs">
-                  {initial}
-                </div>
+                {user?.avatar_url ? (
+                  <img
+                    src={user.avatar_url}
+                    alt={user.name || "Seeker"}
+                    className="w-7 h-7 rounded-full object-cover border border-amber-500/40 shadow-xs shrink-0"
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 text-white font-serif font-bold text-xs flex items-center justify-center shadow-xs shrink-0">
+                    {initial}
+                  </div>
+                )}
                 <div className="text-left truncate">
                   <p className="text-xs font-serif font-bold text-stone-900 dark:text-white truncate">
                     {user?.name || "Seeker"}

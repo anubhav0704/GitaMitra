@@ -6,7 +6,7 @@ from datetime import datetime
 from app.core.database import get_db
 from app.core.security import get_password_hash, verify_password, create_access_token
 from app.models.domain import User
-from app.schemas.auth import UserCreate, UserLogin, UserResponse, ChangePasswordRequest
+from app.schemas.auth import UserCreate, UserLogin, UserResponse, ChangePasswordRequest, ProfilePictureUpdate
 from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -106,7 +106,8 @@ async def login(response: Response, user_data: UserLogin, db: AsyncSession = Dep
             "id": str(user.id),
             "email": user.email,
             "name": user.name,
-            "role": user.role
+            "role": user.role,
+            "avatar_url": user.avatar_url
         }
     }
 
@@ -181,6 +182,7 @@ async def export_user_data(
             "id": str(current_user.id),
             "name": current_user.name,
             "email": current_user.email,
+            "avatar_url": getattr(current_user, "avatar_url", None),
             "created_at": current_user.created_at.isoformat() if current_user.created_at else None
         },
         "preferences": pref.settings if pref else {},
@@ -213,4 +215,25 @@ async def delete_user_account(
         secure=True,
     )
     return {"message": "Account and all associated personal data have been permanently deleted."}
+
+@router.post("/profile-picture")
+async def update_profile_picture(
+    payload: ProfilePictureUpdate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Updates the user's profile picture."""
+    current_user.avatar_url = payload.avatar_url
+    await db.commit()
+    return {"message": "Profile picture updated successfully", "avatar_url": current_user.avatar_url}
+
+@router.delete("/profile-picture")
+async def delete_profile_picture(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Removes the user's profile picture."""
+    current_user.avatar_url = None
+    await db.commit()
+    return {"message": "Profile picture removed successfully"}
 

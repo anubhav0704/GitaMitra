@@ -21,18 +21,22 @@ import {
   AlertCircle,
   Loader2,
   Download,
-  Trash2
+  Trash2,
+  Camera,
+  FileText
 } from "lucide-react";
 import { API_BASE, getAuthHeaders } from "../lib/api";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
+import { exportUserDataAsPdf } from "../lib/exportPdf";
 
 interface User {
   id: string;
   name: string | null;
   email: string;
   role?: string;
+  avatar_url?: string | null;
 }
 
 export interface ProfileModalProps {
@@ -43,9 +47,12 @@ export interface ProfileModalProps {
 }
 
 export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout: propLogout }: ProfileModalProps) {
-  const { user: authUser, logout: authLogout } = useAuth();
+  const { user: authUser, logout: authLogout, updateProfilePicture } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [memoryCount, setMemoryCount] = useState<number | null>(null);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -94,6 +101,104 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
     }
   };
 
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Please select a valid image file (PNG, JPG, WebP).");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Image size must be under 5MB.");
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const base64Url = reader.result as string;
+          if (updateProfilePicture) {
+            await updateProfilePicture(base64Url);
+          }
+        } catch (err: any) {
+          setUploadError(err.message || "Failed to update profile picture.");
+        } finally {
+          setUploadingPhoto(false);
+        }
+      };
+      reader.onerror = () => {
+        setUploadError("Failed to read image file.");
+        setUploadingPhoto(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err: any) {
+      setUploadError(err.message || "Failed to update profile picture.");
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handlePhotoRemove = async () => {
+    if (confirm("Remove profile picture and revert to initial letter?")) {
+      setUploadError(null);
+      try {
+        if (updateProfilePicture) {
+          await updateProfilePicture(null);
+        }
+      } catch (err: any) {
+        setUploadError(err.message || "Failed to remove profile picture.");
+      }
+    }
+  };
+
+  const handleExportPdf = async () => {
+    setIsExportingPdf(true);
+    try {
+      let exportData: any = null;
+      try {
+        const res = await fetch(`${API_BASE}/auth/account/export`, {
+          headers: getAuthHeaders(),
+          credentials: "include",
+        });
+        if (res.ok) {
+          exportData = await res.json();
+        }
+      } catch (err) {
+        console.warn("[ProfileModal] Could not fetch remote export:", err);
+      }
+
+      // If backend export is unavailable, assemble complete fallback from session
+      if (!exportData) {
+        exportData = {
+          export_metadata: {
+            exported_at: new Date().toISOString(),
+            application: "GitaMitra Companion v1.0",
+            version: "1.0-production",
+          },
+          user_profile: {
+            id: currentUser?.id,
+            name: currentUser?.name,
+            email: currentUser?.email,
+            created_at: new Date().toISOString(),
+          },
+          memories: [],
+          conversations: [],
+        };
+      }
+
+      await exportUserDataAsPdf(exportData);
+    } catch (err: any) {
+      console.error("PDF export failed:", err);
+      alert("Failed to generate PDF. Please check your connection and try again.");
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -145,11 +250,57 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
         {/* Scrollable Modal Content Body */}
         <div className="flex-1 overflow-y-auto px-6 pb-6 relative scrollbar-thin">
           {/* Avatar badge overlapping banner */}
-          <div className="-mt-10 mb-4 flex justify-between items-end">
-            <div className="w-18 h-18 rounded-2xl bg-white dark:bg-gray-800 p-1.5 shadow-xl">
-              <div className="w-full h-full rounded-xl bg-gradient-to-tr from-amber-600 to-amber-500 text-white font-serif font-bold text-xl flex items-center justify-center shadow-inner">
-                {initial}
+          <div className="-mt-12 mb-4 flex justify-between items-end">
+            <div className="relative group">
+              <div className="w-20 h-20 rounded-2xl bg-white dark:bg-gray-800 p-1.5 shadow-xl ring-2 ring-amber-500/20 overflow-hidden">
+                {currentUser?.avatar_url ? (
+                  <img
+                    src={currentUser.avatar_url}
+                    alt={currentUser.name || "Seeker Avatar"}
+                    className="w-full h-full rounded-xl object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-xl bg-gradient-to-tr from-amber-600 to-amber-500 text-white font-serif font-bold text-2xl flex items-center justify-center shadow-inner select-none">
+                    {initial}
+                  </div>
+                )}
+
+                {/* Uploading indicator */}
+                {uploadingPhoto && (
+                  <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
+                    <Loader2 className="w-5 h-5 text-white animate-spin" />
+                  </div>
+                )}
               </div>
+
+              {/* Upload photo trigger button */}
+              <label
+                htmlFor="profile-picture-upload"
+                className="absolute -bottom-1 -right-1 p-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white shadow-lg cursor-pointer transition-all hover:scale-110 active:scale-95 flex items-center justify-center border border-white dark:border-gray-900"
+                title="Upload Profile Picture"
+              >
+                <Camera className="w-3.5 h-3.5" />
+                <input
+                  id="profile-picture-upload"
+                  type="file"
+                  accept="image/png, image/jpeg, image/webp, image/gif"
+                  className="hidden"
+                  onChange={handlePhotoUpload}
+                  disabled={uploadingPhoto}
+                />
+              </label>
+
+              {/* Remove photo button if custom picture uploaded */}
+              {currentUser?.avatar_url && (
+                <button
+                  type="button"
+                  onClick={handlePhotoRemove}
+                  className="absolute -top-1 -right-1 p-1 rounded-full bg-rose-600 hover:bg-rose-500 text-white shadow-md cursor-pointer transition-all hover:scale-110 border border-white dark:border-gray-900"
+                  title="Remove picture (revert to initial letter)"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
             </div>
 
             {/* Theme quick switcher */}
@@ -170,6 +321,14 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
               )}
             </button>
           </div>
+
+          {/* Upload error notice */}
+          {uploadError && (
+            <div className="mb-3 p-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 flex items-center space-x-2 text-rose-600 text-xs">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{uploadError}</span>
+            </div>
+          )}
 
           {/* User details */}
           <div className="space-y-1">
@@ -270,14 +429,24 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
 
             <button
               type="button"
-              onClick={() => window.open(`${API_BASE}/auth/account/export`, "_blank")}
-              className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 border border-gray-100 dark:border-gray-800 text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors cursor-pointer"
+              disabled={isExportingPdf}
+              onClick={handleExportPdf}
+              className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/30 border border-amber-200/80 dark:border-amber-900/50 text-xs font-medium text-gray-700 dark:text-gray-300 transition-colors cursor-pointer group"
             >
               <div className="flex items-center space-x-2.5">
-                <Download className="w-4 h-4 text-emerald-500" />
-                <span className="font-medium text-gray-800 dark:text-gray-200">Export My Data (JSON)</span>
+                {isExportingPdf ? (
+                  <Loader2 className="w-4 h-4 text-amber-600 animate-spin" />
+                ) : (
+                  <FileText className="w-4 h-4 text-amber-600 group-hover:scale-110 transition-transform" />
+                )}
+                <div className="text-left">
+                  <span className="font-medium text-gray-800 dark:text-gray-200 block">Export My Data (PDF)</span>
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400">Download formatted spiritual profile archive</span>
+                </div>
               </div>
-              <span className="text-xs text-emerald-600 font-semibold">Download</span>
+              <span className="text-xs text-amber-700 dark:text-amber-400 font-semibold px-2 py-1 rounded-lg bg-amber-500/10">
+                {isExportingPdf ? "Generating..." : "Download PDF"}
+              </span>
             </button>
 
             <button

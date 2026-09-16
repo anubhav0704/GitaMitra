@@ -149,9 +149,19 @@ export default function Navbar() {
                 <div className="flex items-center space-x-2 text-xs">
                   <button
                     onClick={() => setProfileModalOpen(true)}
-                    className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 hover:bg-amber-500/20 transition-colors"
+                    className="flex items-center space-x-2 px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 hover:bg-amber-500/20 transition-colors"
                   >
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    {user.avatar_url ? (
+                      <img
+                        src={user.avatar_url}
+                        alt={user.name || "Seeker"}
+                        className="w-5 h-5 rounded-full object-cover border border-amber-500/40 shrink-0"
+                      />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-amber-600 to-amber-500 text-white font-serif font-bold text-[10px] flex items-center justify-center shrink-0">
+                        {(user.name ? user.name[0] : user.email ? user.email[0] : "S").toUpperCase()}
+                      </div>
+                    )}
                     <span className="font-serif max-w-[110px] truncate">{user.name || user.email?.split("@")[0]}</span>
                   </button>
                 </div>

@@ -133,15 +133,12 @@ export default function Navbar() {
             </div>
 
             {/* Right Controls */}
-            <div className="flex items-center space-x-2 sm:space-x-2.5">
-              {/* Bilingual Language Switcher (hidden on mobile phone screens, kept in sidebar) */}
-              <LanguageSwitcherButton className="hidden md:inline-flex" />
-
+            <div className="flex items-center space-x-2.5">
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
                 aria-label="Toggle theme"
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-amber-500/25 bg-amber-500/5 hover:bg-amber-500/15 flex items-center justify-center text-amber-600 dark:text-amber-400 transition-colors shrink-0"
+                className="w-9 h-9 rounded-full border border-amber-500/25 bg-amber-500/5 hover:bg-amber-500/15 flex items-center justify-center text-amber-600 dark:text-amber-400 transition-colors"
                 title={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
               >
                 {theme === "dark" ? (
@@ -155,53 +152,20 @@ export default function Navbar() {
                 <div className="flex items-center space-x-2 text-xs">
                   <button
                     onClick={() => setProfileModalOpen(true)}
-                    className="flex items-center space-x-2 px-2 sm:px-2.5 py-1 rounded-xl sm:rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 hover:bg-amber-500/20 transition-colors shrink-0"
+                    className="flex items-center space-x-2 px-2.5 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 hover:bg-amber-500/20 transition-colors"
                   >
                     {user.avatar_url ? (
                       <img
                         src={user.avatar_url}
                         alt={user.name || "Seeker"}
-                        className="w-6 h-6 sm:w-5 sm:h-5 rounded-full object-cover border border-amber-500/40 shrink-0"
+                        className="w-5 h-5 rounded-full object-cover border border-amber-500/40 shrink-0"
                       />
                     ) : (
-                      <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-gradient-to-tr from-amber-600 to-amber-500 text-white font-serif font-bold text-[10px] flex items-center justify-center shrink-0">
+                      <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-amber-600 to-amber-500 text-white font-serif font-bold text-[10px] flex items-center justify-center shrink-0">
                         {(user.name ? user.name[0] : user.email ? user.email[0] : "S").toUpperCase()}
                       </div>
                     )}
-                    {(() => {
-                      const fullName = user.name?.trim() || user.email?.split("@")[0] || "Seeker";
-                      const words = fullName.split(/\s+/);
-                      if (words.length >= 2) {
-                        return (
-                          <div className="flex flex-col text-left leading-tight">
-                            <span className="font-serif font-semibold text-[11px] sm:text-xs text-stone-900 dark:text-stone-100 max-w-[75px] sm:max-w-[120px] truncate">
-                              {words[0]}
-                            </span>
-                            <span className="font-serif text-[10px] sm:text-[11px] text-amber-700 dark:text-amber-300 font-medium max-w-[75px] sm:max-w-[120px] truncate">
-                              {words.slice(1).join(" ")}
-                            </span>
-                          </div>
-                        );
-                      }
-                      if (fullName.length > 9) {
-                        const mid = Math.ceil(fullName.length / 2);
-                        return (
-                          <div className="flex flex-col text-left leading-tight">
-                            <span className="font-serif font-semibold text-[10px] sm:text-xs text-stone-900 dark:text-stone-100 max-w-[75px] sm:max-w-[120px] truncate">
-                              {fullName.slice(0, mid)}
-                            </span>
-                            <span className="font-serif text-[9px] sm:text-[10px] text-amber-700 dark:text-amber-300 font-medium max-w-[75px] sm:max-w-[120px] truncate">
-                              {fullName.slice(mid)}
-                            </span>
-                          </div>
-                        );
-                      }
-                      return (
-                        <span className="font-serif text-xs font-semibold max-w-[80px] sm:max-w-[120px] truncate">
-                          {fullName}
-                        </span>
-                      );
-                    })()}
+                    <span className="font-serif max-w-[120px] truncate">{user.name || user.email?.split("@")[0]}</span>
                   </button>
                 </div>
               ) : (

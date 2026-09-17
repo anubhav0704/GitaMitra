@@ -816,7 +816,6 @@ export default function ChatPage() {
 
           {/* Right Header Controls */}
           <div className="flex items-center space-x-2">
-            <LanguageSwitcherButton className="hidden md:inline-flex" />
             <InstallAppButton className="hidden sm:inline-flex px-2.5 py-1 text-xs rounded-full border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20" />
             
             <Link

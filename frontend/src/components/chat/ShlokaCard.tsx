@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Copy, Check, ExternalLink, Sparkles } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
+import { cleanHindiTranslation } from "../../lib/devanagari";
 
 export interface ShlokaReference {
   reference: string;
@@ -16,6 +18,7 @@ export interface ShlokaReference {
 }
 
 export default function ShlokaCard({ refData }: { refData: ShlokaReference }) {
+  const { t, isHindi } = useLanguage();
   const [copiedSanskrit, setCopiedSanskrit] = useState(false);
   const [copiedTrans, setCopiedTrans] = useState(false);
 
@@ -30,6 +33,14 @@ export default function ShlokaCard({ refData }: { refData: ShlokaReference }) {
     }
   };
 
+  const activeTranslation = isHindi
+    ? (cleanHindiTranslation(refData.translation_hi) || refData.translation_en)
+    : refData.translation_en;
+
+  const referenceTitle = isHindi
+    ? `श्रीमद्भगवद्गीता ${refData.chapter}.${refData.verse}`
+    : `Bhagavad Gita ${refData.chapter}.${refData.verse}`;
+
   return (
     <div className="my-3 rounded-2xl border border-amber-500/30 bg-amber-50/70 dark:bg-[#18122c]/80 backdrop-blur-md p-4 shadow-sm transition-all duration-200">
       {/* Header */}
@@ -39,11 +50,11 @@ export default function ShlokaCard({ refData }: { refData: ShlokaReference }) {
             ॐ
           </div>
           <span className="font-bold text-amber-900 dark:text-amber-200 font-serif tracking-wide text-sm">
-            {refData.reference.startsWith("Bhagavad Gita") ? refData.reference : `Bhagavad Gita ${refData.reference}`}
+            {referenceTitle}
           </span>
           {refData.relevance_score !== undefined && (
             <span className="text-[10px] px-2 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/15 text-amber-800 dark:text-amber-300 font-semibold font-serif">
-              Relevance: {refData.relevance_score.toFixed(2)}
+              {t.gita.relevance} {refData.relevance_score.toFixed(2)}
             </span>
           )}
         </div>
@@ -52,7 +63,7 @@ export default function ShlokaCard({ refData }: { refData: ShlokaReference }) {
           href={`/gita/chapter/${refData.chapter}/verse/${refData.verse}`}
           className="inline-flex items-center space-x-1 text-xs font-serif text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-100 hover:underline transition-colors"
         >
-          <span>View in Explorer</span>
+          <span>{t.gita.viewInExplorer}</span>
           <ExternalLink className="w-3 h-3 ml-0.5" />
         </Link>
       </div>
@@ -63,15 +74,15 @@ export default function ShlokaCard({ refData }: { refData: ShlokaReference }) {
           <div className="flex items-center justify-between mb-1.5 font-serif text-[11px] uppercase tracking-wider text-amber-800/80 dark:text-amber-300">
             <span className="flex items-center space-x-1">
               <Sparkles className="w-3 h-3 text-amber-500" />
-              <span>Sanskrit Shloka</span>
+              <span>{t.gita.sanskritShloka}</span>
             </span>
             <button
               onClick={() => copyText(refData.sanskrit, "sanskrit")}
               className="text-xs text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-300 flex items-center space-x-1 px-1.5 py-0.5 rounded transition-colors cursor-pointer"
-              title="Copy Sanskrit text"
+              title={t.gita.copyShloka}
             >
-              {copiedSanskrit ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
-              <span>{copiedSanskrit ? "Copied" : "Copy"}</span>
+              {copiedSanskrit ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedSanskrit ? t.gita.copied : t.gita.copy}</span>
             </button>
           </div>
           <p className="font-serif text-stone-900 dark:text-amber-100 text-sm sm:text-[15px] leading-relaxed whitespace-pre-line bg-white/80 dark:bg-[#0f0b1f]/90 p-3.5 rounded-xl border border-amber-500/20 font-medium">
@@ -81,21 +92,21 @@ export default function ShlokaCard({ refData }: { refData: ShlokaReference }) {
       )}
 
       {/* Translation */}
-      {refData.translation_en && (
+      {activeTranslation && (
         <div>
           <div className="flex items-center justify-between mb-1 font-serif text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">
-            <span>Translation</span>
+            <span>{isHindi ? t.gita.hindiTranslationTitle : t.gita.translationTitle}</span>
             <button
-              onClick={() => copyText(refData.translation_en, "trans")}
+              onClick={() => copyText(activeTranslation, "trans")}
               className="text-xs text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-300 flex items-center space-x-1 px-1.5 py-0.5 rounded transition-colors cursor-pointer"
-              title="Copy translation"
+              title={t.gita.copy}
             >
-              {copiedTrans ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
-              <span>{copiedTrans ? "Copied" : "Copy"}</span>
+              {copiedTrans ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedTrans ? t.gita.copied : t.gita.copy}</span>
             </button>
           </div>
           <p className="text-stone-700 dark:text-stone-300 text-xs sm:text-sm italic leading-relaxed font-sans">
-            &quot;{refData.translation_en}&quot;
+            &quot;{activeTranslation}&quot;
           </p>
         </div>
       )}
@@ -103,7 +114,9 @@ export default function ShlokaCard({ refData }: { refData: ShlokaReference }) {
       {/* Why This Verse */}
       {refData.why_this_verse && (
         <div className="mt-3 pt-2.5 border-t border-amber-500/20 text-xs text-stone-600 dark:text-stone-400">
-          <span className="font-serif text-[11px] font-bold text-amber-700 dark:text-amber-400 mr-1.5 uppercase">Spiritual Context:</span>
+          <span className="font-serif text-[11px] font-bold text-amber-700 dark:text-amber-400 mr-1.5 uppercase">
+            {t.gita.spiritualContext}
+          </span>
           {refData.why_this_verse}
         </div>
       )}

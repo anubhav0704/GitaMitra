@@ -125,6 +125,39 @@ export interface Translations {
     totalMessages: string;
     totalMemories: string;
   };
+  gita: {
+    explorerBadge: string;
+    explorerTitle: string;
+    explorerSubtitle: string;
+    explorerDescription: string;
+    searchPlaceholder: string;
+    loadingChapters: string;
+    chapterBadge: string;
+    versesSuffix: string;
+    exploreChapter: string;
+    backToAllChapters: string;
+    chapterOfTotal: string;
+    chapterNotFound: string;
+    returnToAllChapters: string;
+    versesInChapter: string;
+    ofTotalVerses: string;
+    verseBadge: string;
+    verseNotFound: string;
+    returnToChapter: string;
+    loadingVerse: string;
+    sanskritShloka: string;
+    copyShloka: string;
+    copied: string;
+    copy: string;
+    translationTitle: string;
+    englishTranslationTitle: string;
+    hindiTranslationTitle: string;
+    reflectWithKrishna: string;
+    viewInExplorer: string;
+    spiritualContext: string;
+    relevance: string;
+    openingSanctuary: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -249,6 +282,39 @@ export const translations: Record<Language, Translations> = {
       totalMessages: "Total Messages",
       totalMemories: "Active Memories",
     },
+    gita: {
+      explorerBadge: "Bhagavad Gita · 18 Chapters · 700 Verses",
+      explorerTitle: "Bhagavad Gita",
+      explorerSubtitle: "Explorer",
+      explorerDescription: "Immerse yourself in all 18 sacred chapters of timeless wisdom and spiritual liberation.",
+      searchPlaceholder: "Search chapters by number, name, or topic...",
+      loadingChapters: "Opening sacred chapters...",
+      chapterBadge: "Chapter",
+      versesSuffix: "Verses",
+      exploreChapter: "Explore Chapter",
+      backToAllChapters: "Back to All 18 Chapters",
+      chapterOfTotal: "of 18",
+      chapterNotFound: "Chapter Not Found",
+      returnToAllChapters: "Return to All Chapters",
+      versesInChapter: "Verses in this Sacred Chapter",
+      ofTotalVerses: "Verses",
+      verseBadge: "Verse",
+      verseNotFound: "Verse Not Found",
+      returnToChapter: "Return to Chapter",
+      loadingVerse: "Opening Shloka...",
+      sanskritShloka: "Sanskrit Shloka",
+      copyShloka: "Copy Shloka",
+      copied: "Copied",
+      copy: "Copy",
+      translationTitle: "English Translation",
+      englishTranslationTitle: "English Translation",
+      hindiTranslationTitle: "Hindi Translation",
+      reflectWithKrishna: "Reflect on this Verse with Lord Krishna",
+      viewInExplorer: "View in Explorer",
+      spiritualContext: "Spiritual Context:",
+      relevance: "Relevance:",
+      openingSanctuary: "Opening Gita Sanctuary...",
+    },
   },
   hi: {
     common: {
@@ -370,6 +436,39 @@ export const translations: Record<Language, Translations> = {
       totalConversations: "कुल संवाद",
       totalMessages: "कुल संदेश",
       totalMemories: "सक्रिय स्मृतियाँ",
+    },
+    gita: {
+      explorerBadge: "श्रीमद्भगवद्गीता · १८ अध्याय · ७०० श्लोक",
+      explorerTitle: "श्रीमद्भगवद्गीता",
+      explorerSubtitle: "ज्ञानकोश",
+      explorerDescription: "शाश्वत ज्ञान और आध्यात्मिक मुक्ति के सभी १८ पवित्र अध्यायों का अनुशीलन करें।",
+      searchPlaceholder: "अध्याय संख्या, नाम अथवा विषय से खोजें...",
+      loadingChapters: "पावन अध्याय लोड हो रहे हैं...",
+      chapterBadge: "अध्याय",
+      versesSuffix: "श्लोक",
+      exploreChapter: "अध्याय पढ़ें",
+      backToAllChapters: "सभी १८ अध्यायों पर वापस जाएं",
+      chapterOfTotal: "कुल १८",
+      chapterNotFound: "अध्याय नहीं मिला",
+      returnToAllChapters: "सभी अध्यायों पर वापस जाएं",
+      versesInChapter: "इस पावन अध्याय के श्लोक",
+      ofTotalVerses: "श्लोक",
+      verseBadge: "श्लोक",
+      verseNotFound: "श्लोक नहीं मिला",
+      returnToChapter: "अध्याय पर वापस जाएं",
+      loadingVerse: "पावन श्लोक लोड हो रहा है...",
+      sanskritShloka: "संस्कृत श्लोक",
+      copyShloka: "श्लोक कॉपी करें",
+      copied: "कॉपी हो गया",
+      copy: "प्रतिलिपि",
+      translationTitle: "हिन्दी अनुवाद",
+      englishTranslationTitle: "अंग्रेजी अनुवाद",
+      hindiTranslationTitle: "हिन्दी अनुवाद",
+      reflectWithKrishna: "भगवान श्रीकृष्ण के साथ इस श्लोक पर चिंतन करें",
+      viewInExplorer: "ग्रंथ में देखें",
+      spiritualContext: "आध्यात्मिक संदर्भ:",
+      relevance: "प्रासंगिकता:",
+      openingSanctuary: "गीता धाम लोड हो रहा है...",
     },
   },
 };

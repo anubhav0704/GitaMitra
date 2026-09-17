@@ -3,10 +3,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import Navbar from "../../components/Navbar";
 
 export default function GitaLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function GitaLayout({ children }: { children: React.ReactNode }) 
       <div className="flex-1 flex items-center justify-center min-h-screen bg-[#090714] text-amber-200 font-serif">
         <div className="flex flex-col items-center space-y-3">
           <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xs tracking-widest uppercase font-serif">Opening Gita Sanctuary...</p>
+          <p className="text-xs tracking-widest uppercase font-serif">{t.gita.openingSanctuary}</p>
         </div>
       </div>
     );

@@ -2,19 +2,23 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, BookOpen, ArrowRight, Sparkles } from "lucide-react";
+import { Search, ArrowRight, Sparkles } from "lucide-react";
 import { MobileNav } from "../../components/layout/MobileNav";
 import { API_BASE } from "../../lib/api";
+import { useLanguage } from "../../context/LanguageContext";
 
 interface Chapter {
   chapter_number: number;
   title_sanskrit: string;
   title_english: string;
+  title_hindi?: string;
   summary_en: string;
+  summary_hi?: string;
   total_verses: number;
 }
 
 export default function GitaExplorer() {
+  const { t, isHindi } = useLanguage();
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,10 +40,12 @@ export default function GitaExplorer() {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
-      c.title_english.toLowerCase().includes(q) ||
-      c.title_sanskrit.toLowerCase().includes(q) ||
+      c.title_english?.toLowerCase().includes(q) ||
+      c.title_sanskrit?.toLowerCase().includes(q) ||
+      c.title_hindi?.toLowerCase().includes(q) ||
       c.chapter_number.toString().includes(q) ||
-      c.summary_en.toLowerCase().includes(q)
+      c.summary_en?.toLowerCase().includes(q) ||
+      c.summary_hi?.toLowerCase().includes(q)
     );
   });
 
@@ -56,15 +62,29 @@ export default function GitaExplorer() {
 
           <div className="inline-flex items-center space-x-2 font-serif text-xs uppercase tracking-widest text-amber-900 dark:text-amber-300 font-bold px-4 py-1 rounded-full bg-amber-500/15 border border-amber-500/30">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>श्रीमद्भगवद्गीता · 18 Adhyayas · 700 Verses</span>
+            <span>{t.gita.explorerBadge}</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-bold tracking-tight font-serif text-stone-900 dark:text-white">
-            Bhagavad Gita <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 dark:from-amber-400 dark:via-yellow-300 dark:to-orange-400">Explorer</span>
+            {isHindi ? (
+              <>
+                श्रीमद्भगवद्गीता{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 dark:from-amber-400 dark:via-yellow-300 dark:to-orange-400">
+                  {t.gita.explorerSubtitle}
+                </span>
+              </>
+            ) : (
+              <>
+                Bhagavad Gita{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 dark:from-amber-400 dark:via-yellow-300 dark:to-orange-400">
+                  {t.gita.explorerSubtitle}
+                </span>
+              </>
+            )}
           </h1>
 
           <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 font-sans leading-relaxed font-medium">
-            Immerse yourself in all 18 sacred chapters of timeless wisdom and spiritual liberation.
+            {t.gita.explorerDescription}
           </p>
         </div>
 
@@ -77,7 +97,7 @@ export default function GitaExplorer() {
             <input
               type="text"
               className="block w-full pl-11 pr-4 py-3 rounded-full border border-amber-500/35 bg-white/95 dark:bg-[#15102a]/95 text-stone-900 dark:text-white placeholder-stone-400 text-sm focus:outline-none focus:border-amber-500 dark:focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 transition-all shadow-lg backdrop-blur-md"
-              placeholder="Search chapters by number, Sanskrit name, or topic..."
+              placeholder={t.gita.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -88,7 +108,7 @@ export default function GitaExplorer() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-3 font-serif">
             <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-xs text-amber-800 dark:text-amber-300 uppercase tracking-widest">Opening sacred chapters...</p>
+            <p className="text-xs text-amber-800 dark:text-amber-300 uppercase tracking-widest">{t.gita.loadingChapters}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -102,29 +122,26 @@ export default function GitaExplorer() {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center font-serif text-xs">
                       <span className="px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/15 text-amber-900 dark:text-amber-200 font-bold">
-                        अध्याय {chapter.chapter_number}
+                        {t.gita.chapterBadge} {chapter.chapter_number}
                       </span>
                       <span className="text-amber-800 dark:text-amber-400 font-semibold">
-                        {chapter.total_verses} Verses
+                        {chapter.total_verses} {t.gita.versesSuffix}
                       </span>
                     </div>
 
                     <div>
                       <h2 className="font-serif text-lg font-bold text-stone-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                        {chapter.title_english}
+                        {isHindi ? chapter.title_sanskrit : chapter.title_english}
                       </h2>
-                      <p className="text-base text-amber-700 dark:text-amber-300 font-serif mt-0.5 font-semibold">
-                        {chapter.title_sanskrit}
-                      </p>
                     </div>
 
-                    <p className="text-xs text-stone-700 dark:text-stone-300 line-clamp-2 leading-relaxed font-sans font-medium">
-                      {chapter.summary_en}
+                    <p className="text-xs text-stone-700 dark:text-stone-300 line-clamp-3 leading-relaxed font-sans font-medium">
+                      {isHindi ? (chapter.summary_hi || chapter.summary_en) : chapter.summary_en}
                     </p>
                   </div>
 
                   <div className="pt-4 mt-3 border-t border-amber-500/20 flex items-center justify-between font-serif text-xs text-amber-800 dark:text-amber-300 group-hover:text-amber-900 dark:group-hover:text-amber-200 transition-colors">
-                    <span className="font-semibold">Explore Chapter</span>
+                    <span className="font-semibold">{t.gita.exploreChapter}</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>

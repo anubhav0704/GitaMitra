@@ -165,8 +165,9 @@ class PromptBuilder:
             )
 
         if is_first_response:
+            heading_text = "## **!! राधे राधे !!**" if user_language == "hi" else "## **!! Radhe Radhe !!**"
             instructions.append(
-                "- SACRED GREETING (FIRST RESPONSE IN CHAT): This is the very first response in a new conversation with the seeker. You MUST begin your response with the sacred heading:\n## **!! Radhe Radhe !!**\nplaced as a prominent heading at the beginning of your response (strictly once)."
+                f"- SACRED GREETING (FIRST RESPONSE IN CHAT): This is the very first response in a new conversation with the seeker. You MUST begin your response with the sacred heading:\n{heading_text}\nplaced as a prominent heading at the beginning of your response (strictly once)."
             )
 
         sections.append("\n<response_instructions>")

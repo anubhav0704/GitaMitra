@@ -136,10 +136,15 @@ export default function MessageBubble({
     return lines.map((line, idx) => {
       const trimmed = line.trim();
 
-      // Sacred Greeting Heading: "!! Radhe Radhe !!" in bold and slightly large font in the middle (strictly once)
-      if (trimmed.includes("!! Radhe Radhe !!")) {
+      // Sacred Greeting Heading: "!! Radhe Radhe !!" (English) or "!! राधे राधे !!" (Hindi)
+      const isRadheHeading = 
+        trimmed.includes("!! Radhe Radhe !!") || 
+        trimmed.includes("!! राधे राधे !!") ||
+        /^[#\s*]*!*\s*!\s*(?:Radhe\s+Radhe|राधे\s*राधे)\s*!\s*!*[#\s*]*/i.test(trimmed);
+
+      if (isRadheHeading) {
         const remaining = trimmed
-          .replace(/^[#\s*]*!*\s*!\s*Radhe\s+Radhe\s*!\s*!*[#\s*]*/gi, "")
+          .replace(/^[#\s*]*!*\s*!\s*(?:Radhe\s+Radhe|राधे\s*राधे)\s*!\s*!*[#\s*]*/gi, "")
           .trim();
 
         if (radheRendered) {
@@ -156,7 +161,7 @@ export default function MessageBubble({
           <React.Fragment key={idx}>
             <div className="my-3 text-center">
               <h2 className="text-base sm:text-lg font-bold font-serif text-amber-900 dark:text-amber-300 tracking-wide inline-block px-5 py-1 rounded-full bg-amber-500/15 border border-amber-500/35 shadow-xs">
-                !! Radhe Radhe !!
+                {isHindi ? "!! राधे राधे !!" : "!! Radhe Radhe !!"}
               </h2>
             </div>
             {remaining ? (

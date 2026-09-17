@@ -10,13 +10,22 @@ from app.core.config import settings
 
 class TestNewFeatures(unittest.TestCase):
     def test_first_turn_radhe_radhe_prompt_directive(self):
-        # 1. When is_first_response is True, prompt should include sacred Radhe Radhe instruction
+        # 1. When is_first_response is True and English, prompt should include English sacred Radhe Radhe instruction
         prompt_first = PromptBuilder.build_prompt(
             user_message="Pranam, how do I overcome grief?",
-            is_first_response=True
+            is_first_response=True,
+            user_language="en"
         )
         self.assertIn("!! Radhe Radhe !!", prompt_first)
         self.assertIn("SACRED GREETING", prompt_first)
+
+        # When is_first_response is True and Hindi, prompt should include Devanagari !! राधे राधे !!
+        prompt_first_hi = PromptBuilder.build_prompt(
+            user_message="प्रणाम, शोक से कैसे उबरें?",
+            is_first_response=True,
+            user_language="hi"
+        )
+        self.assertIn("!! राधे राधे !!", prompt_first_hi)
 
         # 2. When is_first_response is False, prompt should not include it
         prompt_later = PromptBuilder.build_prompt(
@@ -84,6 +93,12 @@ class TestNewFeatures(unittest.TestCase):
         non_first_dup = "## **!! Radhe Radhe !!**\n\nSome answer.\n\n## **!! Radhe Radhe !!**"
         normalized_non_first = normalize_radhe_heading(non_first_dup, is_first_response=False)
         self.assertEqual(normalized_non_first.count("!! Radhe Radhe !!"), 1)
+
+        # Case 5: Hindi mode should output ## **!! राधे राधे !!**
+        hi_text = "प्रणाम जिज्ञासु, आपका स्वागत है।"
+        normalized_hi = normalize_radhe_heading(hi_text, is_first_response=True, user_language="hi")
+        self.assertEqual(normalized_hi.count("!! राधे राधे !!"), 1)
+        self.assertTrue(normalized_hi.startswith("## **!! राधे राधे !!**"))
 
     def test_prompt_builder_bilingual_support(self):
         # When language is 'hi', prompt must include 100% pure Hindi mandate

@@ -25,22 +25,26 @@ from app.llm.validator import ResponseValidator
 
 logger = logging.getLogger(__name__)
 
-def normalize_radhe_heading(content: str, is_first_response: bool) -> str:
+def normalize_radhe_heading(content: str, is_first_response: bool, user_language: str = "en") -> str:
     """
-    Ensures that for the first response in a conversation, '## **!! Radhe Radhe !!**'
+    Ensures that for the first response in a conversation, the sacred heading
+    ('## **!! Radhe Radhe !!**' for English or '## **!! राधे राधे !!**' for Hindi)
     appears strictly once at the top of the message.
     If multiple occurrences exist, all extras are removed.
     """
-    pattern = re.compile(r'(?i)(?:#+\s*)?(?:\*\*)?!\s*!\s*Radhe\s+Radhe\s*!\s*!(?:\*\*)?')
+    target_heading = "## **!! राधे राधे !!**" if user_language == "hi" else "## **!! Radhe Radhe !!**"
+    pattern = re.compile(r'(?i)(?:#+\s*)?(?:\*\*)?!\s*!\s*(?:Radhe\s+Radhe|राधे\s*राधे)\s*!\s*!(?:\*\*)?')
     if is_first_response:
         matches = list(pattern.finditer(content))
         if len(matches) > 1:
             cleaned = pattern.sub("", content).strip()
-            return f"## **!! Radhe Radhe !!**\n\n{cleaned}"
+            return f"{target_heading}\n\n{cleaned}"
         elif len(matches) == 0:
-            return f"## **!! Radhe Radhe !!**\n\n{content.strip()}"
+            return f"{target_heading}\n\n{content.strip()}"
         else:
-            return content
+            first = matches[0]
+            rest = content[first.end():].strip()
+            return f"{target_heading}\n\n{rest}"
     else:
         matches = list(pattern.finditer(content))
         if len(matches) > 1:
@@ -226,7 +230,7 @@ class ChatService:
         )
 
         # Ensure first response has sacred heading strictly once
-        cleaned_content = normalize_radhe_heading(cleaned_content, is_first_response)
+        cleaned_content = normalize_radhe_heading(cleaned_content, is_first_response, language)
 
         # 11. Save Assistant message
         assistant_msg = Message(
@@ -399,7 +403,7 @@ class ChatService:
             )
 
             # Guarantee first response preserves sacred greeting heading strictly once
-            cleaned_content = normalize_radhe_heading(cleaned_content, is_first_response)
+            cleaned_content = normalize_radhe_heading(cleaned_content, is_first_response, language)
 
             # 12. Persist assistant message
             assistant_msg = Message(

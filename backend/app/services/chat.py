@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import uuid
 from datetime import datetime
 from typing import AsyncGenerator, Dict, Any, List, Optional
@@ -23,6 +24,31 @@ from app.llm.prompt_builder import PromptBuilder, GITAMITRA_PROMPT_VERSION
 from app.llm.validator import ResponseValidator
 
 logger = logging.getLogger(__name__)
+
+def normalize_radhe_heading(content: str, is_first_response: bool) -> str:
+    """
+    Ensures that for the first response in a conversation, '## **!! Radhe Radhe !!**'
+    appears strictly once at the top of the message.
+    If multiple occurrences exist, all extras are removed.
+    """
+    pattern = re.compile(r'(?i)(?:#+\s*)?(?:\*\*)?!\s*!\s*Radhe\s+Radhe\s*!\s*!(?:\*\*)?')
+    if is_first_response:
+        matches = list(pattern.finditer(content))
+        if len(matches) > 1:
+            cleaned = pattern.sub("", content).strip()
+            return f"## **!! Radhe Radhe !!**\n\n{cleaned}"
+        elif len(matches) == 0:
+            return f"## **!! Radhe Radhe !!**\n\n{content.strip()}"
+        else:
+            return content
+    else:
+        matches = list(pattern.finditer(content))
+        if len(matches) > 1:
+            first = matches[0]
+            rest = pattern.sub("", content[first.end():]).strip()
+            return content[:first.end()].strip() + "\n\n" + rest
+        return content
+
 
 class ChatService:
     """
@@ -197,9 +223,8 @@ class ChatService:
             query_contexts=emotion_data["contexts"]
         )
 
-        # Ensure first response has sacred heading
-        if is_first_response and "!! Radhe Radhe !!" not in cleaned_content:
-            cleaned_content = f"## **!! Radhe Radhe !!**\n\n{cleaned_content}"
+        # Ensure first response has sacred heading strictly once
+        cleaned_content = normalize_radhe_heading(cleaned_content, is_first_response)
 
         # 11. Save Assistant message
         assistant_msg = Message(
@@ -348,10 +373,6 @@ class ChatService:
 
             # 10. Stream tokens from LLM
             accumulated_chunks = []
-            if is_first_response:
-                initial_heading = "## **!! Radhe Radhe !!**\n\n"
-                accumulated_chunks.append(initial_heading)
-                yield f"event: token\ndata: {json.dumps({'token': initial_heading})}\n\n"
 
             async for token in self.llm.stream(
                 prompt=prompt,
@@ -373,9 +394,8 @@ class ChatService:
                 query_contexts=emotion_data["contexts"]
             )
 
-            # Guarantee first response preserves sacred greeting heading
-            if is_first_response and "!! Radhe Radhe !!" not in cleaned_content:
-                cleaned_content = f"## **!! Radhe Radhe !!**\n\n{cleaned_content}"
+            # Guarantee first response preserves sacred greeting heading strictly once
+            cleaned_content = normalize_radhe_heading(cleaned_content, is_first_response)
 
             # 12. Persist assistant message
             assistant_msg = Message(

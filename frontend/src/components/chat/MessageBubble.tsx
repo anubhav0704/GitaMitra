@@ -101,6 +101,7 @@ export default function MessageBubble({
 
   // Safe formatting helper for headings, bold, verses, bullet points
   const renderFormattedContent = (content: string) => {
+    let radheRendered = false;
     const lines = content.split("\n");
     // Clean robotic AI bold heading prefixes while preserving and elegantly styling bold terms used for focus
     const renderInline = (text: string) => {
@@ -133,14 +134,35 @@ export default function MessageBubble({
     return lines.map((line, idx) => {
       const trimmed = line.trim();
 
-      // Sacred Greeting Heading: "!! Radhe Radhe !!" in bold and slightly large font in the middle
+      // Sacred Greeting Heading: "!! Radhe Radhe !!" in bold and slightly large font in the middle (strictly once)
       if (trimmed.includes("!! Radhe Radhe !!")) {
+        const remaining = trimmed
+          .replace(/^[#\s*]*!*\s*!\s*Radhe\s+Radhe\s*!\s*!*[#\s*]*/gi, "")
+          .trim();
+
+        if (radheRendered) {
+          if (!remaining) return null;
+          return (
+            <p key={idx} className="text-sm text-stone-800 dark:text-stone-200 leading-relaxed my-1 font-sans">
+              {renderInline(remaining)}
+            </p>
+          );
+        }
+
+        radheRendered = true;
         return (
-          <div key={idx} className="my-3 text-center">
-            <h2 className="text-base sm:text-lg font-bold font-serif text-amber-900 dark:text-amber-300 tracking-wide inline-block px-5 py-1 rounded-full bg-amber-500/15 border border-amber-500/35 shadow-xs">
-              !! Radhe Radhe !!
-            </h2>
-          </div>
+          <React.Fragment key={idx}>
+            <div className="my-3 text-center">
+              <h2 className="text-base sm:text-lg font-bold font-serif text-amber-900 dark:text-amber-300 tracking-wide inline-block px-5 py-1 rounded-full bg-amber-500/15 border border-amber-500/35 shadow-xs">
+                !! Radhe Radhe !!
+              </h2>
+            </div>
+            {remaining ? (
+              <p className="text-sm text-stone-800 dark:text-stone-200 leading-relaxed my-1 font-sans">
+                {renderInline(remaining)}
+              </p>
+            ) : null}
+          </React.Fragment>
         );
       }
 

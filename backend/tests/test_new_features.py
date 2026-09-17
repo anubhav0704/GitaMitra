@@ -59,5 +59,33 @@ class TestNewFeatures(unittest.TestCase):
         self.assertIn("admin@gitamitra.org", admin_emails)
         self.assertIn("anubhavkr0407@gmail.com", admin_emails)
 
+    def test_normalize_radhe_heading_deduplication(self):
+        from app.services.chat import normalize_radhe_heading
+
+        # Case 1: Duplicate occurrences generated
+        duplicate_text = "## **!! Radhe Radhe !!**\n\n## **!! Radhe Radhe !!**\n\nPranam seeker."
+        normalized = normalize_radhe_heading(duplicate_text, is_first_response=True)
+        self.assertEqual(normalized.count("!! Radhe Radhe !!"), 1)
+        self.assertTrue(normalized.startswith("## **!! Radhe Radhe !!**"))
+        self.assertIn("Pranam seeker.", normalized)
+
+        # Case 2: Zero occurrences on first response - should inject exactly once
+        no_heading_text = "Pranam seeker, welcome to GitaMitra."
+        normalized_added = normalize_radhe_heading(no_heading_text, is_first_response=True)
+        self.assertEqual(normalized_added.count("!! Radhe Radhe !!"), 1)
+        self.assertTrue(normalized_added.startswith("## **!! Radhe Radhe !!**"))
+
+        # Case 3: Exactly one occurrence already present
+        single_text = "## **!! Radhe Radhe !!**\n\nDear seeker, welcome."
+        normalized_single = normalize_radhe_heading(single_text, is_first_response=True)
+        self.assertEqual(normalized_single.count("!! Radhe Radhe !!"), 1)
+
+        # Case 4: Non-first response with accidental duplicate
+        non_first_dup = "## **!! Radhe Radhe !!**\n\nSome answer.\n\n## **!! Radhe Radhe !!**"
+        normalized_non_first = normalize_radhe_heading(non_first_dup, is_first_response=False)
+        self.assertEqual(normalized_non_first.count("!! Radhe Radhe !!"), 1)
+
+
 if __name__ == "__main__":
     unittest.main()
+

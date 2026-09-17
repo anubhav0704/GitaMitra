@@ -57,7 +57,7 @@ export default function Home() {
 
             <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full border border-amber-500/35 bg-amber-500/15 text-amber-900 dark:text-amber-200 text-xs font-serif font-semibold tracking-wider shadow-xs">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>{isHindi ? "श्रीमद्भगवद्गीता · शाश्वत आध्यात्मिक मित्र" : "श्रीमद्भगवद्गीता · Timeless Spiritual Companion"}</span>
+              <span>{isHindi ? "श्रीमद्भगवद्गीता · शाश्वत आध्यात्मिक मित्र" : "Bhagavad Gita · Timeless Spiritual Companion"}</span>
             </div>
           </div>
 
@@ -117,7 +117,7 @@ export default function Home() {
               />
               <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/95 via-black/75 to-transparent text-white font-serif text-center">
                 <p className="text-xs uppercase tracking-widest text-amber-300 font-bold">
-                  ✦ श्रीकृष्ण-अर्जुन संवाद · कुरुक्षेत्र ✦
+                  {isHindi ? "✦ श्रीकृष्ण-अर्जुन संवाद · कुरुक्षेत्र ✦" : "✦ Krishna-Arjuna Dialogue · Kurukshetra ✦"}
                 </p>
                 <p className="text-xs sm:text-sm text-stone-200 mt-0.5 font-sans">
                   {isHindi
@@ -221,14 +221,22 @@ export default function Home() {
             <div className="w-6 h-6 rounded-lg overflow-hidden border border-amber-500/40 bg-black shrink-0">
               <img src="/logo.png" alt="GitaMitra" className="w-full h-full object-cover" />
             </div>
-            <span className="font-bold text-amber-700 dark:text-amber-400">GitaMitra</span>
+            <span className="font-bold text-amber-700 dark:text-amber-400">
+              {isHindi ? "गीतामित्र" : "GitaMitra"}
+            </span>
             <span>·</span>
-            <span>श्रीमद्भगवद्गीता</span>
+            <span>{isHindi ? "श्रीमद्भगवद्गीता" : "Bhagavad Gita"}</span>
           </div>
           <div className="flex items-center space-x-6 text-xs font-semibold">
-            <Link href="/gita" className="hover:text-amber-600 dark:hover:text-amber-300 transition-colors">Gita Explorer</Link>
-            <Link href="/chat" className="hover:text-amber-600 dark:hover:text-amber-300 transition-colors">Dialogue</Link>
-            <Link href="/settings" className="hover:text-amber-600 dark:hover:text-amber-300 transition-colors">Sanctuary</Link>
+            <Link href="/gita" className="hover:text-amber-600 dark:hover:text-amber-300 transition-colors">
+              {isHindi ? "गीता अन्वेषक" : "Gita Explorer"}
+            </Link>
+            <Link href="/chat" className="hover:text-amber-600 dark:hover:text-amber-300 transition-colors">
+              {isHindi ? "भगवद् संवाद" : "Dialogue"}
+            </Link>
+            <Link href="/settings" className="hover:text-amber-600 dark:hover:text-amber-300 transition-colors">
+              {isHindi ? "सेटिंग्स" : "Sanctuary"}
+            </Link>
           </div>
         </div>
       </footer>

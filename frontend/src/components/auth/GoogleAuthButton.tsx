@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import { API_BASE, setAuthToken, resilientFetch } from "../../lib/api";
 import { AlertCircle, CheckCircle2, Loader2, Sparkles, X } from "lucide-react";
 
@@ -44,6 +45,7 @@ interface GoogleAuthButtonProps {
 export default function GoogleAuthButton({ mode = "login", className = "" }: GoogleAuthButtonProps) {
   const router = useRouter();
   const { login } = useAuth();
+  const { isHindi } = useLanguage();
   const buttonContainerRef = useRef<HTMLDivElement>(null);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -217,7 +219,9 @@ export default function GoogleAuthButton({ mode = "login", className = "" }: Goo
           </svg>
 
           <span>
-            {mode === "register" ? "Sign up with Google" : "Continue with Google"}
+            {mode === "register"
+              ? (isHindi ? "Google से खाता बनाएं" : "Sign up with Google")
+              : (isHindi ? "Google से प्रवेश करें" : "Continue with Google")}
           </span>
         </button>
       )}

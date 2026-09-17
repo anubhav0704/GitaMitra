@@ -41,91 +41,175 @@ interface PromptCard {
   tag: string;
 }
 
-const INQUIRY_LIBRARY: PromptCard[] = [
+const INQUIRY_LIBRARY_EN: PromptCard[] = [
   {
     title: "Moral Duty vs Affection",
     prompt: "How do I choose between doing what is right and protecting the feelings of someone I love?",
-    tag: "धर्म // Dharma"
+    tag: "Duty & Ethics"
   },
   {
     title: "Anxiety & Racing Thoughts",
     prompt: "My mind never stops worrying about what might happen next. How do I find inner calm?",
-    tag: "ध्यान योग // Dhyana Yoga"
+    tag: "Mindful Meditation"
   },
   {
     title: "Releasing Fear of Failure",
     prompt: "I am giving my best effort, but fear of an outcome is paralyzing me. How do I act with detachment?",
-    tag: "निष्काम कर्म // Nishkama Karma"
+    tag: "Selfless Action"
   },
   {
     title: "Grief & Coping with Loss",
     prompt: "I am struggling with deep sorrow after losing someone precious. How does the Gita understand grief?",
-    tag: "आत्म तत्त्व // Eternal Soul"
+    tag: "Eternal Soul"
   },
   {
     title: "Mastering Anger & Irritation",
     prompt: "Small frustrations quickly trigger my anger and disturb my peace. How do I maintain equanimity?",
-    tag: "समत्वं // Samatvam"
+    tag: "Equanimity"
   },
   {
     title: "Loneliness & Feeling Alienated",
     prompt: "I feel surrounded by people yet profoundly alone and misunderstood. How can I feel connected within?",
-    tag: "भक्ति योग // Bhakti Yoga"
+    tag: "Devotion & Oneness"
   },
   {
     title: "Mental Exhaustion & Burnout",
     prompt: "I feel depleted and overwhelmed by non-stop demands. Where do I find renewal and balance?",
-    tag: "युक्त चेष्ट // Moderation"
+    tag: "Moderation"
   },
   {
     title: "Overcoming Comparison & Envy",
     prompt: "When I see others flourishing while I struggle, bitterness creeps in. How do I transcend jealousy?",
-    tag: "ज्ञान योग // Jnana Yoga"
+    tag: "Wisdom & Truth"
   },
   {
     title: "Forgiving Deep Betrayal",
     prompt: "Someone broke my trust. How can I practice forgiveness without feeling like a victim?",
-    tag: "क्षमा // Forgiveness"
+    tag: "Forgiveness"
   },
   {
     title: "Discovering Authentic Calling",
-    prompt: "I feel trapped between external expectations and my own nature. How do I recognize my Swadharma?",
-    tag: "स्वधर्म // Swadharma"
+    prompt: "I feel trapped between external expectations and my own nature. How do I recognize my true calling?",
+    tag: "Inner Nature"
   },
   {
     title: "Self-Doubt & Inner Critic",
     prompt: "I constantly feel not good enough and doubt my abilities. How do I cultivate unshakeable self-faith?",
-    tag: "आत्म श्रद्धा // Self-Faith"
+    tag: "Self-Confidence"
   },
   {
     title: "Standing Firm in Crisis",
     prompt: "Circumstances feel overwhelming right now. How do I gather courage when everything feels shaken?",
-    tag: "अभयम् // Fearlessness"
+    tag: "Courage"
   },
   {
     title: "Guilt & Healing Past Regrets",
     prompt: "I carry heavy guilt about mistakes I made in the past. Can an individual truly be redeemed?",
-    tag: "शुद्धि // Purification"
+    tag: "Inner Healing"
   },
   {
     title: "Love Without Possessiveness",
     prompt: "How can I love and care for others deeply without becoming possessive or terrified of losing them?",
-    tag: "वैराग्य // Dispassion"
+    tag: "Pure Attachment"
   },
   {
     title: "Conflict & Ethical Decisions",
-    prompt: "When two good values clash, how does Buddhi Yoga guide a seeker to discern the right action?",
-    tag: "बुद्धि योग // Buddhi Yoga"
+    prompt: "When two good values clash, how does higher wisdom guide a seeker to discern the right action?",
+    tag: "Discernment"
   },
   {
     title: "Accepting Inevitable Change",
     prompt: "Life transitions frighten me and I resist change. How do I accept the flow of time and impermanence?",
-    tag: "अनित्यता // Impermanence"
+    tag: "Impermanence"
   }
 ];
 
-function getRandomInquiries(count: number = 4): PromptCard[] {
-  const shuffled = [...INQUIRY_LIBRARY].sort(() => 0.5 - Math.random());
+const INQUIRY_LIBRARY_HI: PromptCard[] = [
+  {
+    title: "कर्तव्य और स्नेह का द्वंद्व",
+    prompt: "उचित कर्तव्य का पालन करने और किसी प्रियजन की भावनाओं की रक्षा करने में से मैं किसे प्राथमिकता दूँ?",
+    tag: "धर्म और कर्तव्य"
+  },
+  {
+    title: "चिंता और चंचल विचार",
+    prompt: "मेरा मन भविष्य की आशंकाओं से कभी शांत नहीं होता। मैं आंतरिक शांति कैसे प्राप्त करूँ?",
+    tag: "ध्यान योग"
+  },
+  {
+    title: "असफलता के भय से मुक्ति",
+    prompt: "मैं पूरा परिश्रम कर रहा हूँ, फिर भी परिणाम का भय मुझे विचलित करता है। अनासक्त होकर कर्म कैसे करूँ?",
+    tag: "निष्काम कर्म"
+  },
+  {
+    title: "शोक और वियोग की वेदना",
+    prompt: "किसी प्रिय के बिछड़ने से मन गहन पीड़ा में है। श्रीमद्भगवद्गीता शोक को किस दृष्टि से समझाती है?",
+    tag: "आत्म तत्त्व"
+  },
+  {
+    title: "क्रोध और रोष पर नियंत्रण",
+    prompt: "छोटी-छोटी बातों पर तुरंत क्रोध आ जाता है और शांति भंग हो जाती है। मैं समत्व भाव कैसे बनाए रखूँ?",
+    tag: "समत्व भाव"
+  },
+  {
+    title: "अकेलापन और उपेक्षा",
+    prompt: "भीड़ में रहकर भी मैं स्वयं को नितांत अकेला और उपेक्षित पाता हूँ। अंतर्मन से जुड़ने का क्या मार्ग है?",
+    tag: "भक्ति योग"
+  },
+  {
+    title: "मानसिक थकावट और तनाव",
+    prompt: "निरंतर दायित्वों से मैं अत्यंत थक चुका हूँ। जीवन में पुनः नवजीवन और संतुलन कहाँ से लाऊँ?",
+    tag: "संतुलित जीवन"
+  },
+  {
+    title: "ईर्ष्या और तुलना से मुक्ति",
+    prompt: "दूसरों की प्रगति देखकर जब मन में ईर्ष्या जागती है, तब मैं इस दुर्भाव से कैसे मुक्त होऊँ?",
+    tag: "ज्ञान योग"
+  },
+  {
+    title: "विश्वासघात और क्षमा",
+    prompt: "किसी ने मेरा गहरा विश्वास तोड़ा है। दुर्बल बने बिना मैं उसे हृदय से क्षमा कैसे करूँ?",
+    tag: "क्षमा भाव"
+  },
+  {
+    title: "स्वधर्म और सच्चा उद्देश्य",
+    prompt: "सामाजिक अपेक्षाओं और अपने वास्तविक स्वभाव के बीच उलझा हुआ हूँ। मैं अपना स्वधर्म कैसे पहचानूँ?",
+    tag: "स्वधर्म"
+  },
+  {
+    title: "आत्म-संदेह से मुक्ति",
+    prompt: "मुझे निरंतर अपनी योग्यता पर संदेह रहता है। मैं अपने भीतर अटूट आत्म-विश्वास कैसे जगाऊँ?",
+    tag: "आत्म-विश्वास"
+  },
+  {
+    title: "संकट में अडिग रहना",
+    prompt: "परिस्थितियाँ अत्यंत विकट हो गई हैं। जब सब कुछ डगमगा रहा हो, तब साहस कहाँ से जुटाऊँ?",
+    tag: "अभय"
+  },
+  {
+    title: "अतीत की गलतियाँ और ग्लानि",
+    prompt: "पुरानी भूलों का बोझ मेरे मन को कचोटता रहता है। क्या मनुष्य सचमुच पश्चाताप से शुद्ध हो सकता है?",
+    tag: "आत्म-शुद्धि"
+  },
+  {
+    title: "अनासक्त सच्चा प्रेम",
+    prompt: "बिना अधिकार जताए और खोने के डर से मुक्त होकर मैं दूसरों से सच्चा प्रेम कैसे करूँ?",
+    tag: "वैराग्य और प्रेम"
+  },
+  {
+    title: "धर्मसंकट और नैतिक निर्णय",
+    prompt: "जब दो अच्छे मूल्यों में टकराव हो, तब बुद्धि योग द्वारा सही निर्णय कैसे लिया जाए?",
+    tag: "बुद्धि योग"
+  },
+  {
+    title: "परिवर्तन का सहज स्वीकार",
+    prompt: "जीवन के बदलाव मुझे भयभीत करते हैं। समय के प्रवाह और अनित्यता को सहजता से कैसे स्वीकारूँ?",
+    tag: "अनित्यता"
+  }
+];
+
+function getRandomInquiries(count: number = 4, lang: string = "en"): PromptCard[] {
+  const library = lang === "hi" ? INQUIRY_LIBRARY_HI : INQUIRY_LIBRARY_EN;
+  const shuffled = [...library].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 }
 
@@ -146,15 +230,15 @@ export default function ChatPage() {
   const [chatError, setChatError] = useState<string | null>(null);
 
   // Suggested Inquiries - generalized across life themes and randomized for every session
-  const [suggestedCards, setSuggestedCards] = useState<PromptCard[]>(() => INQUIRY_LIBRARY.slice(0, 4));
+  const [suggestedCards, setSuggestedCards] = useState<PromptCard[]>(() => getRandomInquiries(4, language));
 
   useEffect(() => {
-    // Randomize inquiries on client mount so every user and session gets a unique set
-    setSuggestedCards(getRandomInquiries(4));
-  }, []);
+    // Refresh inquiries when language changes or on mount
+    setSuggestedCards(getRandomInquiries(4, language));
+  }, [language]);
 
   const shuffleInquiries = () => {
-    setSuggestedCards(getRandomInquiries(4));
+    setSuggestedCards(getRandomInquiries(4, language));
   };
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -726,7 +810,7 @@ export default function ChatPage() {
               <div className="w-4 h-4 rounded-full overflow-hidden border border-amber-400/60 shrink-0 bg-black">
                 <img src="/logo.png" alt="GitaMitra" className="w-full h-full object-cover" />
               </div>
-              <span>GitaMitra · गीतामित्र</span>
+              <span>{isHindi ? "गीतामित्र" : "GitaMitra"}</span>
             </div>
           </div>
 
@@ -738,10 +822,10 @@ export default function ChatPage() {
             <Link
               href="/gita"
               className="flex items-center space-x-1.5 px-3.5 py-1 text-xs font-serif font-semibold text-amber-900 dark:text-amber-200 border border-amber-500/30 bg-amber-500/15 rounded-full hover:bg-amber-500/25 transition-colors"
-              title="Browse Bhagavad Gita Verses"
+              title={isHindi ? "श्रीमद्भगवद्गीता के श्लोक पढ़ें" : "Browse Bhagavad Gita Verses"}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Gita 700 Verses</span>
+              <span className="hidden sm:inline">{isHindi ? "गीता ७०० श्लोक" : "Gita 700 Verses"}</span>
             </Link>
 
             <button
@@ -820,7 +904,7 @@ export default function ChatPage() {
                       >
                         <div>
                           <div className="flex items-center justify-between font-serif text-[10px] sm:text-[11px] text-amber-800 dark:text-amber-400 font-semibold uppercase tracking-wider mb-1">
-                            <span>✦ Inquiry 0{i + 1}</span>
+                            <span>{isHindi ? `✦ जिज्ञासा ०${i + 1}` : `✦ Inquiry 0${i + 1}`}</span>
                             <span>{card.tag}</span>
                           </div>
                           <p className="font-serif text-xs font-bold text-stone-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
@@ -870,9 +954,9 @@ export default function ChatPage() {
               </div>
             )}
 
-            {/* Error Banner */}
+            {/* Error Banner with Retry */}
             {chatError && (
-              <div className="mt-4 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs flex items-center justify-between font-serif">
+              <div className="my-3 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-800 dark:text-rose-300 flex items-center justify-between font-serif">
                 <div className="flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
                   <span>{chatError}</span>
@@ -884,7 +968,7 @@ export default function ChatPage() {
                   className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-100 dark:bg-rose-900/60 hover:bg-rose-200 dark:hover:bg-rose-800/80 text-rose-800 dark:text-rose-200 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 ml-3 shrink-0"
                 >
                   <RefreshCw className={`w-3 h-3 ${isGenerating ? "animate-spin" : ""}`} />
-                  <span>{isGenerating ? "Retrying..." : "Retry"}</span>
+                  <span>{isGenerating ? (isHindi ? "पुनः प्रयास..." : "Retrying...") : (isHindi ? "पुनः प्रयास करें" : "Retry")}</span>
                 </button>
               </div>
             )}
@@ -901,10 +985,10 @@ export default function ChatPage() {
                 scrollToBottom("smooth");
               }}
               className="sticky bottom-3 float-right mr-2 z-30 px-3 py-1.5 rounded-full bg-white/95 dark:bg-[#1a1435]/95 border border-amber-500/40 text-amber-900 dark:text-amber-200 shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center space-x-1.5 text-xs font-serif cursor-pointer backdrop-blur-md animate-in fade-in"
-              title="Jump to latest divine counsel"
+              title={isHindi ? "नवीनतम मार्गदर्शन पर जाएँ" : "Jump to latest divine counsel"}
             >
               <ArrowDown className="w-3.5 h-3.5 text-amber-500" />
-              <span>Latest</span>
+              <span>{isHindi ? "नवीनतम" : "Latest"}</span>
               {isGenerating && (
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
               )}
@@ -925,13 +1009,13 @@ export default function ChatPage() {
                   </div>
                   <div className="flex flex-col">
                     <span className="font-serif text-xs font-bold text-stone-900 dark:text-amber-100 flex items-center gap-1.5">
-                      <span>Listening to your voice...</span>
+                      <span>{isHindi ? "आपकी वाणी सुन रहे हैं..." : "Listening to your voice..."}</span>
                       <span className="text-[11px] text-amber-700 dark:text-amber-300 font-mono">
                         (00:{recordingDuration < 10 ? `0${recordingDuration}` : recordingDuration} / 01:00)
                       </span>
                     </span>
                     <span className="text-[10px] text-stone-600 dark:text-stone-300 font-sans">
-                      Speak freely in English, Hindi, or Hinglish
+                      {isHindi ? "निःसंकोच हिन्दी में बोलें" : "Speak freely in English"}
                     </span>
                   </div>
                 </div>
@@ -941,7 +1025,7 @@ export default function ChatPage() {
                     type="button"
                     onClick={handleCancelRecording}
                     className="p-1.5 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200 transition-colors cursor-pointer"
-                    title="Cancel recording"
+                    title={isHindi ? "रद्द करें" : "Cancel recording"}
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -951,7 +1035,7 @@ export default function ChatPage() {
                     className="px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 text-white font-serif text-xs font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center space-x-1 cursor-pointer shadow-sm"
                   >
                     <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                    <span>Done</span>
+                    <span>{isHindi ? "पूर्ण" : "Done"}</span>
                   </button>
                 </div>
               </div>
@@ -961,7 +1045,7 @@ export default function ChatPage() {
             {isTranscribing && (
               <div className="mb-2.5 p-2.5 rounded-2xl bg-amber-500/10 dark:bg-amber-950/30 border border-amber-500/30 flex items-center justify-center space-x-2 text-xs font-serif text-amber-800 dark:text-amber-300 animate-pulse">
                 <Loader2 className="w-4 h-4 animate-spin text-amber-600 dark:text-amber-400" />
-                <span>Transcribing your speech with Gita-grounded precision...</span>
+                <span>{isHindi ? "आपकी वाणी को पाठ में परिवर्तित किया जा रहा है..." : "Transcribing your speech with Gita-grounded precision..."}</span>
               </div>
             )}
 
@@ -984,7 +1068,7 @@ export default function ChatPage() {
               {isVoiceInput && inputText.trim() && (
                 <div className="px-2 py-0.5 mb-1 inline-flex items-center space-x-1 text-[10px] font-serif text-amber-700 dark:text-amber-300 bg-amber-500/10 rounded-full border border-amber-500/20 self-start">
                   <Mic className="w-3 h-3 text-amber-600" />
-                  <span>Voice Transcribed — Review or edit before sending</span>
+                  <span>{isHindi ? "वाणी से प्रतिलेखित — भेजने से पहले समीक्षा करें या संपादित करें" : "Voice Transcribed — Review or edit before sending"}</span>
                 </div>
               )}
 
@@ -1017,7 +1101,7 @@ export default function ChatPage() {
                         ? "bg-rose-600 text-white animate-pulse shadow-md shadow-rose-500/30 ring-2 ring-rose-400"
                         : "bg-amber-500/15 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 hover:bg-amber-500/25 border border-amber-500/30"
                     }`}
-                    title={isRecording ? "Finish recording" : "Speak to GitaMitra"}
+                    title={isRecording ? (isHindi ? "रिकॉर्डिंग समाप्त करें" : "Finish recording") : (isHindi ? "श्री कृष्ण से बोलकर पूछें" : "Speak to GitaMitra")}
                   >
                     {isRecording ? <Square className="w-3 h-3 fill-current" /> : <Mic className="w-3.5 h-3.5" />}
                   </button>
@@ -1028,7 +1112,7 @@ export default function ChatPage() {
                       type="button"
                       onClick={stopGenerating}
                       className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-stone-900 dark:bg-amber-400 text-white dark:text-stone-900 flex items-center justify-center hover:opacity-80 active:scale-95 transition-all cursor-pointer shadow-xs"
-                      title="Stop generating"
+                      title={isHindi ? "उत्तर रोकें" : "Stop generating"}
                     >
                       <Square className="w-3 h-3 fill-current" />
                     </button>
@@ -1038,7 +1122,7 @@ export default function ChatPage() {
                       onClick={() => sendMessage()}
                       disabled={!inputText.trim()}
                       className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-600 text-white disabled:opacity-20 flex items-center justify-center hover:opacity-90 active:scale-95 transition-all cursor-pointer shadow-md shadow-amber-500/30"
-                      title="Send inquiry"
+                      title={isHindi ? "जिज्ञासा भेजें" : "Send inquiry"}
                     >
                       <ArrowUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                     </button>

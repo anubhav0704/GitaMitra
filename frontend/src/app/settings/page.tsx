@@ -202,7 +202,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center space-x-2 text-stone-900 dark:text-white">
                 <Sun className="w-4 h-4 text-amber-600" />
-                <span>{isHindi ? "पवित्र प्रभात (Light)" : "Sacred Dawn (Light)"}</span>
+                <span>{isHindi ? "पवित्र प्रभात" : "Sacred Dawn (Light)"}</span>
               </div>
               <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans mt-1">
                 {isHindi ? "दिन के आध्यात्मिक चिंतन हेतु सौम्य केसरिया एवं श्वेत आभा।" : "Warm cream and saffron hues for daytime reflection."}
@@ -219,7 +219,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center space-x-2 text-stone-900 dark:text-white">
                 <Moon className="w-4 h-4 text-amber-400" />
-                <span>{isHindi ? "दिव्य रात्रि (Dark)" : "Cosmic Night (Dark)"}</span>
+                <span>{isHindi ? "दिव्य रात्रि" : "Cosmic Night (Dark)"}</span>
               </div>
               <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans mt-1">
                 {isHindi ? "गहन ध्यान और शांति हेतु स्वर्णिम एवं गहन आभा।" : "Deep obsidian and luminous gold for tranquil meditation."}
@@ -237,10 +237,10 @@ export default function SettingsPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-serif text-xs">
             {[
-              { id: "auto", label: isHindi ? "स्वतः पहचान" : "Auto-detect", sub: isHindi ? "ऑटो स्विच" : "Auto switch" },
-              { id: "hi", label: "हिन्दी (Hindi)", sub: "देवनागरी" },
-              { id: "en", label: "English", sub: "Modern clarity" },
-              { id: "hinglish", label: "Hinglish", sub: "Bilingual" }
+              { id: "auto", label: isHindi ? "स्वतः पहचान" : "Auto-detect", sub: isHindi ? "स्वतः चयन" : "Auto switch" },
+              { id: "hi", label: isHindi ? "हिन्दी" : "Hindi", sub: isHindi ? "देवनागरी लिपि" : "Devanagari script" },
+              { id: "en", label: isHindi ? "अंग्रेजी" : "English", sub: isHindi ? "स्पष्ट भाषा" : "Modern clarity" },
+              { id: "hinglish", label: isHindi ? "हिंग्लिश" : "Hinglish", sub: isHindi ? "द्विभाषी" : "Bilingual" }
             ].map((l) => (
               <button
                 key={l.id}
@@ -262,25 +262,25 @@ export default function SettingsPage() {
         <div className="temple-card p-5 sm:p-6 space-y-4">
           <div className="flex items-center space-x-2 text-xs font-serif font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
             <SlidersHorizontal className="w-4 h-4" />
-            <span>3. Response Exegesis Depth</span>
+            <span>{isHindi ? "३. उत्तर की गहराई" : "3. Response Exegesis Depth"}</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-serif text-xs">
             {[
               {
                 id: "simple",
-                title: "Simple",
-                desc: "Concise answers with direct practical application."
+                title: isHindi ? "सरल" : "Simple",
+                desc: isHindi ? "प्रत्यक्ष व्यावहारिक उपयोग के साथ संक्षिप्त उत्तर।" : "Concise answers with direct practical application."
               },
               {
                 id: "balanced",
-                title: "Balanced",
-                desc: "Grounded Gita perspective, shloka, and life guidance."
+                title: isHindi ? "संतुलित" : "Balanced",
+                desc: isHindi ? "संतुलित गीता दृष्टिकोण, श्लोक और जीवन मार्गदर्शन।" : "Grounded Gita perspective, shloka, and life guidance."
               },
               {
                 id: "deep",
-                title: "Deep Exegesis",
-                desc: "Extensive Sanskrit analysis and philosophical context."
+                title: isHindi ? "गहन चिंतन" : "Deep Exegesis",
+                desc: isHindi ? "विस्तृत दार्शनिक विश्लेषण और शास्त्रीय संदर्भ।" : "Extensive Sanskrit analysis and philosophical context."
               }
             ].map((d) => (
               <button
@@ -304,11 +304,11 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between border-b border-amber-500/20 pb-4">
             <div className="flex items-center space-x-2 text-xs font-serif font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
               <Volume2 className="w-4 h-4" />
-              <span>4. Spiritual Voice Sanctuary</span>
+              <span>{isHindi ? "४. आध्यात्मिक वाणी आश्रम" : "4. Spiritual Voice Sanctuary"}</span>
             </div>
 
             <div className="flex items-center space-x-3 text-xs font-serif">
-              <span className="text-stone-700 dark:text-stone-300">Auto-Recite:</span>
+              <span className="text-stone-700 dark:text-stone-300">{isHindi ? "स्वतः पाठ:" : "Auto-Recite:"}</span>
               <button
                 onClick={() => handleUpdateVoice({ auto_play: !voiceSettings.auto_play })}
                 className={`w-12 h-7 rounded-full p-1 transition-colors duration-200 cursor-pointer ${
@@ -327,12 +327,12 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-serif text-xs">
             {/* Persona */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-stone-800 dark:text-stone-200">Voice Persona</label>
+              <label className="text-xs font-bold text-stone-800 dark:text-stone-200">{isHindi ? "वाणी का स्वरूप" : "Voice Persona"}</label>
               <div className="grid grid-cols-3 gap-1.5">
                 {[
-                  { id: "calm_guide", label: "Calm" },
-                  { id: "sage", label: "Sage" },
-                  { id: "gentle", label: "Gentle" }
+                  { id: "calm_guide", label: isHindi ? "शांत" : "Calm" },
+                  { id: "sage", label: isHindi ? "ऋषि" : "Sage" },
+                  { id: "gentle", label: isHindi ? "सौम्य" : "Gentle" }
                 ].map((p) => (
                   <button
                     key={p.id}
@@ -351,7 +351,7 @@ export default function SettingsPage() {
 
             {/* Speed */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-stone-800 dark:text-stone-200">Recitation Speed</label>
+              <label className="text-xs font-bold text-stone-800 dark:text-stone-200">{isHindi ? "पाठ की गति" : "Recitation Speed"}</label>
               <div className="grid grid-cols-3 gap-1.5">
                 {[
                   { speed: 0.85, label: "0.85x" },
@@ -380,7 +380,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between border-b border-amber-500/20 pb-4">
             <div className="flex items-center space-x-2 text-xs font-serif font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
               <Shield className="w-4 h-4" />
-              <span>5. Continuous Memory Sanctuary</span>
+              <span>{isHindi ? "५. सतत स्मृति आश्रम" : "5. Continuous Memory Sanctuary"}</span>
             </div>
 
             <button
@@ -399,13 +399,13 @@ export default function SettingsPage() {
 
           <div className="flex items-center justify-between text-xs font-serif">
             <span className="text-stone-700 dark:text-stone-300">
-              Preserved Contexts: <strong className="text-amber-800 dark:text-amber-300">{memoryCount}</strong>
+              {isHindi ? "संचित संदर्भ:" : "Preserved Contexts:"} <strong className="text-amber-800 dark:text-amber-300">{memoryCount}</strong>
             </span>
             <Link
               href="/memory"
               className="inline-flex items-center space-x-1 text-amber-600 dark:text-amber-400 hover:underline font-bold"
             >
-              <span>Manage Memories</span>
+              <span>{isHindi ? "स्मृतियाँ प्रबंधित करें" : "Manage Memories"}</span>
               <ExternalLink className="w-3 h-3" />
             </Link>
           </div>
@@ -415,13 +415,13 @@ export default function SettingsPage() {
         <div className="temple-card p-5 sm:p-6 space-y-4">
           <div className="flex items-center space-x-2 text-xs font-serif font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
             <UserIcon className="w-4 h-4" />
-            <span>6. Seeker Account & Sovereignty</span>
+            <span>{isHindi ? "६. जिज्ञासु खाता एवं अधिकार" : "6. Seeker Account & Sovereignty"}</span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
             <div>
               <p className="font-serif font-bold text-sm text-stone-900 dark:text-white">
-                {user?.name || "Seeker"}
+                {user?.name || (isHindi ? "जिज्ञासु" : "Seeker")}
               </p>
               <p className="font-sans text-xs text-stone-500 dark:text-stone-400">
                 {user?.email}
@@ -434,7 +434,7 @@ export default function SettingsPage() {
                 size="sm"
                 onClick={() => setProfileModalOpen(true)}
               >
-                Profile & Password
+                {isHindi ? "प्रोफ़ाइल एवं पासवर्ड" : "Profile & Password"}
               </Button>
               <Button
                 variant="danger"
@@ -442,7 +442,7 @@ export default function SettingsPage() {
                 onClick={handleLogout}
                 leftIcon={<LogOut className="w-3.5 h-3.5" />}
               >
-                Logout
+                {isHindi ? "लॉग आउट" : "Logout"}
               </Button>
             </div>
 

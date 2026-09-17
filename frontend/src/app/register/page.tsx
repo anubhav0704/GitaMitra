@@ -136,7 +136,7 @@ export default function Register() {
           <div>
             <div className="inline-flex items-center space-x-1.5 font-serif text-xs uppercase tracking-widest text-amber-900 dark:text-amber-300 mb-1 font-bold px-3 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>आत्मसंयम योग</span>
+              <span>{isHindi ? "आत्मसंयम योग" : "Sacred Covenant"}</span>
             </div>
             <h1 className="text-2xl font-bold font-serif tracking-tight text-stone-900 dark:text-white">
               {t.auth.registerTitle}

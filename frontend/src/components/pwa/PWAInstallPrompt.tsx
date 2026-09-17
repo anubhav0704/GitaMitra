@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Download, Share, PlusSquare, X, Smartphone, Check } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -217,6 +218,7 @@ export function PWAInstallPrompt() {
 
 // Compact Button version for Sidebar or Settings
 export function InstallAppButton({ className = "" }: { className?: string }) {
+  const { isHindi } = useLanguage();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIos, setIsIos] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
@@ -253,7 +255,9 @@ export function InstallAppButton({ className = "" }: { className?: string }) {
       await deferredPrompt.prompt();
       setDeferredPrompt(null);
     } else {
-      alert("To install GitaMitra on your device: open your browser's menu (⋮ or Share) and select 'Install app' or 'Add to Home Screen'.");
+      alert(isHindi
+        ? "अपने उपकरण पर गीतामित्र स्थापित करने के लिए: अपने ब्राउज़र का मेनू (⋮ या Share) खोलें और 'ऐप इंस्टॉल करें' या 'होम स्क्रीन पर जोड़ें' चुनें।"
+        : "To install GitaMitra on your device: open your browser's menu (⋮ or Share) and select 'Install app' or 'Add to Home Screen'.");
     }
   };
 
@@ -263,10 +267,10 @@ export function InstallAppButton({ className = "" }: { className?: string }) {
         type="button"
         onClick={handleClick}
         className={`flex items-center space-x-2 text-xs font-serif text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-amber-100 transition-colors cursor-pointer ${className}`}
-        title="Install GitaMitra as an App on your phone or PC"
+        title={isHindi ? "गीतामित्र को अपने फ़ोन या कंप्यूटर पर ऐप के रूप में स्थापित करें" : "Install GitaMitra as an App on your phone or PC"}
       >
         <Smartphone className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-        <span>Use as App / Install</span>
+        <span>{isHindi ? "ऐप स्थापित करें" : "Install App"}</span>
       </button>
 
       {showIosModal && (

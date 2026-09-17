@@ -27,13 +27,13 @@ export interface MessageItem {
 }
 
 const FEEDBACK_CATEGORIES = [
-  { id: "verse_not_relevant", label: "Verse not relevant" },
-  { id: "explanation_unclear", label: "Explanation unclear" },
-  { id: "not_practical", label: "Not practical enough" },
-  { id: "too_long", label: "Too long" },
-  { id: "too_short", label: "Too short" },
-  { id: "inaccurate_reference", label: "Inaccurate reference" },
-  { id: "inappropriate_response", label: "Inappropriate response" }
+  { id: "verse_not_relevant", label: "Verse not relevant", labelHi: "श्लोक प्रासंगिक नहीं" },
+  { id: "explanation_unclear", label: "Explanation unclear", labelHi: "व्याख्या अस्पष्ट है" },
+  { id: "not_practical", label: "Not practical enough", labelHi: "पर्याप्त व्यावहारिक नहीं" },
+  { id: "too_long", label: "Too long", labelHi: "अत्यधिक लंबा" },
+  { id: "too_short", label: "Too short", labelHi: "अत्यधिक संक्षिप्त" },
+  { id: "inaccurate_reference", label: "Inaccurate reference", labelHi: "गलत संदर्भ" },
+  { id: "inappropriate_response", label: "Inappropriate response", labelHi: "अनुचित उत्तर" }
 ];
 
 export default function MessageBubble({
@@ -188,7 +188,7 @@ export default function MessageBubble({
           >
             <div className="flex items-center space-x-2 font-serif text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>प्रैक्टिकल सार // Core Spiritual Guidance</span>
+              <span>{isHindi ? "व्यावहारिक सार" : "Core Spiritual Guidance"}</span>
             </div>
             <p className="text-sm font-medium text-stone-900 dark:text-amber-100 leading-relaxed font-sans">
               {renderInline(saarText)}
@@ -283,7 +283,7 @@ export default function MessageBubble({
                 {isHindi ? "भगवान श्री कृष्ण" : "Lord Krishna"}
               </span>
               <span className="text-[10px] text-amber-700 dark:text-amber-400">
-                (गीतामित्र)
+                ({isHindi ? "गीतामित्र" : "GitaMitra"})
               </span>
             </div>
           </div>
@@ -349,17 +349,17 @@ export default function MessageBubble({
             title="Copy response"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-            <span className="text-[11px]">{copied ? "Copied" : "Copy"}</span>
+            <span className="text-[11px]">{copied ? (isHindi ? "कॉपी किया" : "Copied") : (isHindi ? "कॉपी" : "Copy")}</span>
           </button>
 
           {onRegenerate && (
             <button
               onClick={onRegenerate}
               className="hover:text-amber-600 dark:hover:text-amber-300 flex items-center space-x-1 transition-colors cursor-pointer"
-              title="Regenerate counsel"
+              title={isHindi ? "मार्गदर्शन पुनः प्राप्त करें" : "Regenerate counsel"}
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span className="text-[11px]">Regenerate</span>
+              <span className="text-[11px]">{isHindi ? "पुनः उत्पन्न करें" : "Regenerate"}</span>
             </button>
           )}
 
@@ -371,10 +371,10 @@ export default function MessageBubble({
                 ? "text-emerald-600 font-bold"
                 : "hover:text-amber-600 dark:hover:text-amber-300"
             }`}
-            title="Good response"
+            title={isHindi ? "सार्थक उत्तर" : "Good response"}
           >
             <ThumbsUp className="w-3.5 h-3.5" />
-            {feedbackSent === true && <span className="text-[11px]">Helpful</span>}
+            {feedbackSent === true && <span className="text-[11px]">{isHindi ? "उपयोगी" : "Helpful"}</span>}
           </button>
 
           <button
@@ -385,10 +385,10 @@ export default function MessageBubble({
                 ? "text-rose-600 font-bold"
                 : "hover:text-amber-600 dark:hover:text-amber-300"
             }`}
-            title="Report response"
+            title={isHindi ? "प्रतिक्रिया दें" : "Report response"}
           >
             <ThumbsDown className="w-3.5 h-3.5" />
-            {feedbackSent === false && <span className="text-[11px]">Reported</span>}
+            {feedbackSent === false && <span className="text-[11px]">{isHindi ? "रिपोर्ट किया" : "Reported"}</span>}
           </button>
         </div>
 
@@ -396,7 +396,7 @@ export default function MessageBubble({
         {showFeedbackModal && (
           <div className="mt-3 p-4 rounded-2xl border border-amber-500/30 bg-amber-50/90 dark:bg-[#1c1535] text-xs max-w-md animate-in fade-in font-serif">
             <div className="font-bold text-amber-900 dark:text-amber-200 mb-2">
-              Share Reflection Feedback
+              {isHindi ? "चिंतन प्रतिक्रिया साझा करें" : "Share Reflection Feedback"}
             </div>
             <div className="flex flex-wrap gap-1.5 mb-2.5 font-sans">
               {FEEDBACK_CATEGORIES.map((cat) => (
@@ -409,12 +409,12 @@ export default function MessageBubble({
                       : "bg-white dark:bg-[#120e26] text-stone-700 dark:text-stone-300 border-amber-500/25 hover:border-amber-500"
                   }`}
                 >
-                  {cat.label}
+                  {isHindi ? cat.labelHi : cat.label}
                 </button>
               ))}
             </div>
             <textarea
-              placeholder="Additional thoughts (optional)..."
+              placeholder={isHindi ? "अतिरिक्त विचार (वैकल्पिक)..." : "Additional thoughts (optional)..."}
               value={feedbackComment}
               onChange={(e) => setFeedbackComment(e.target.value)}
               className="w-full text-xs p-2.5 rounded-xl border border-amber-500/30 bg-white dark:bg-[#120e26] text-stone-900 dark:text-white mb-2.5 resize-none outline-none focus:border-amber-500 font-sans"
@@ -425,14 +425,14 @@ export default function MessageBubble({
                 onClick={() => setShowFeedbackModal(false)}
                 className="px-3 py-1 text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 cursor-pointer"
               >
-                Cancel
+                {isHindi ? "रद्द करें" : "Cancel"}
               </button>
               <button
                 onClick={() => submitDetailedFeedback(false)}
                 disabled={submittingFeedback}
                 className="px-4 py-1.5 rounded-full bg-amber-600 text-white font-semibold hover:bg-amber-500 transition-colors cursor-pointer"
               >
-                {submittingFeedback ? "Submitting..." : "Submit"}
+                {submittingFeedback ? (isHindi ? "भेजा जा रहा है..." : "Submitting...") : (isHindi ? "जमा करें" : "Submit")}
               </button>
             </div>
           </div>

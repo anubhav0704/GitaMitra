@@ -21,7 +21,7 @@ import {
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -71,10 +71,11 @@ export default function Navbar() {
                 </div>
                 <div className="flex items-baseline space-x-2">
                   <span className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100 font-serif">
-                    Gita<span className="text-amber-600 dark:text-amber-400">Mitra</span>
-                  </span>
-                  <span className="hidden md:inline-block text-[10px] tracking-wider uppercase font-semibold text-amber-800 dark:text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 font-serif">
-                    गीतामित्र
+                    {language === "hi" ? (
+                      <>गीता<span className="text-amber-600 dark:text-amber-400">मित्र</span></>
+                    ) : (
+                      <>Gita<span className="text-amber-600 dark:text-amber-400">Mitra</span></>
+                    )}
                   </span>
                 </div>
               </Link>

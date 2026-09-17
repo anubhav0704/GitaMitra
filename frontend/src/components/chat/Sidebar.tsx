@@ -167,33 +167,21 @@ export default function Sidebar({
             </div>
             <div className="flex flex-col">
               <span className="font-serif text-sm font-bold tracking-tight text-stone-900 dark:text-white leading-tight">
-                Gita<span className="text-amber-600 dark:text-amber-400">Mitra</span>
-              </span>
-              <span className="text-[10px] font-serif text-amber-800/80 dark:text-amber-400 -mt-0.5">
-                गीता मित्र
+                {language === "hi" ? (
+                  <>गीता<span className="text-amber-600 dark:text-amber-400">मित्र</span></>
+                ) : (
+                  <>Gita<span className="text-amber-600 dark:text-amber-400">Mitra</span></>
+                )}
               </span>
             </div>
           </Link>
 
           <div className="flex items-center space-x-1.5">
-            <LanguageSwitcherButton className="scale-90" />
-
-            {user?.role === "admin" && (
-              <Link
-                href="/admin"
-                className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/35 text-[9px] font-bold uppercase tracking-wider hover:bg-amber-500/30 transition-all font-serif flex items-center gap-1"
-                title="Switch to Administrator Command Center"
-              >
-                <Shield className="w-2.5 h-2.5" />
-                <span>Admin</span>
-              </Link>
-            )}
-
             {onToggleCollapse && (
               <button
                 onClick={onToggleCollapse}
                 className="hidden md:flex p-1.5 text-stone-500 hover:text-amber-600 dark:text-stone-400 dark:hover:text-amber-300 rounded-lg hover:bg-amber-500/10 transition-colors cursor-pointer"
-                title="Collapse sidebar"
+                title={language === "hi" ? "साइडबार समेटें" : "Collapse sidebar"}
                 aria-label="Collapse sidebar"
               >
                 <PanelLeftClose className="w-4 h-4" />
@@ -203,7 +191,7 @@ export default function Sidebar({
             <button
               onClick={onClose}
               className="md:hidden p-1.5 text-stone-500 hover:text-amber-600 dark:text-stone-400 dark:hover:text-amber-300 rounded-lg hover:bg-amber-500/10 transition-colors cursor-pointer"
-              title="Close"
+              title={language === "hi" ? "बंद करें" : "Close"}
             >
               <X className="w-4 h-4" />
             </button>
@@ -415,7 +403,7 @@ export default function Sidebar({
                       ) : (
                         <Sun className="w-3.5 h-3.5 text-amber-600" />
                       )}
-                      <span>{theme === "dark" ? (language === "hi" ? "दिव्य रात्रि (Dark)" : "Cosmic Night (Dark)") : (language === "hi" ? "पवित्र प्रभात (Light)" : "Sacred Dawn (Light)")}</span>
+                      <span>{theme === "dark" ? (language === "hi" ? "दिव्य रात्रि" : "Cosmic Night (Dark)") : (language === "hi" ? "पवित्र प्रभात" : "Sacred Dawn (Light)")}</span>
                     </div>
                   </button>
 
@@ -426,7 +414,7 @@ export default function Sidebar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <span className="font-bold text-amber-600 dark:text-amber-400 text-xs">अ / A</span>
-                      <span>{language === "en" ? "Switch to हिन्दी" : "Switch to English"}</span>
+                      <span>{language === "en" ? "Switch to Hindi (हिन्दी)" : "अंग्रेजी में बदलें (English)"}</span>
                     </div>
                     <span className="text-[10px] bg-amber-500/15 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded-md font-bold uppercase">
                       {language === "en" ? "HI" : "EN"}

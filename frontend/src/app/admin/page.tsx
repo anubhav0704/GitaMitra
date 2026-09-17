@@ -451,9 +451,10 @@ export default function AdminDashboardPage() {
             <Link
               href="/chat"
               className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-white text-xs font-serif font-bold shadow-md shadow-amber-500/20 hover:opacity-95 active:scale-95 transition-all"
+              title="Return to Main Spiritual Dialogue Portal (/chat)"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to App</span>
+              <span>Main Portal</span>
             </Link>
           </div>
         </div>

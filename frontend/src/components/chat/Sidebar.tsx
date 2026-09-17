@@ -173,7 +173,18 @@ export default function Sidebar({
             </div>
           </Link>
 
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1.5">
+            {user?.role === "admin" && (
+              <Link
+                href="/admin"
+                className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/35 text-[9px] font-bold uppercase tracking-wider hover:bg-amber-500/30 transition-all font-serif flex items-center gap-1"
+                title="Switch to Administrator Command Center"
+              >
+                <Shield className="w-2.5 h-2.5" />
+                <span>Admin</span>
+              </Link>
+            )}
+
             {onToggleCollapse && (
               <button
                 onClick={onToggleCollapse}
@@ -358,6 +369,23 @@ export default function Sidebar({
                     {user?.email}
                   </p>
                 </div>
+
+                {/* Admin Portal Trigger */}
+                {user?.role === "admin" && (
+                  <div className="py-1">
+                    <Link
+                      href="/admin"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        onClose();
+                      }}
+                      className="w-full flex items-center space-x-2.5 px-3.5 py-2 text-xs text-amber-800 dark:text-amber-300 hover:bg-amber-500/15 font-bold transition-colors font-serif"
+                    >
+                      <Shield className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                      <span>Admin Command Center</span>
+                    </Link>
+                  </div>
+                )}
 
                 {/* Profile Edit Trigger */}
                 <div className="py-1">

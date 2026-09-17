@@ -588,6 +588,32 @@ export default function ProfileModal({ isOpen, onClose, user: propUser, onLogout
             </form>
           )}
 
+          {/* Admin Portal Quick Switch */}
+          {currentUser?.role === "admin" && (
+            <div className="mt-4 p-3 rounded-2xl bg-amber-500/15 border border-amber-500/35 flex items-center justify-between">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-7 h-7 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                  <Shield className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-serif font-bold text-amber-900 dark:text-amber-200">
+                    Administrator Command Center
+                  </p>
+                  <p className="text-[10px] text-stone-600 dark:text-stone-400">
+                    Full database explorer & user vaults
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/admin"
+                onClick={onClose}
+                className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-serif font-bold shadow-sm transition-colors"
+              >
+                Go to Admin →
+              </Link>
+            </div>
+          )}
+
           {/* Logout footer */}
           <div className="mt-5 pt-4 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
             <div className="flex items-center space-x-2 text-[10px] text-gray-500 dark:text-gray-400">

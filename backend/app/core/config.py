@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7 # 7 days
     GOOGLE_CLIENT_ID: str = ""
-    ADMIN_EMAILS: str = "admin@gitamitra.org,admin@example.com"
+    ADMIN_EMAILS: str = "anubhavkr0407@gmail.com,admin@gitamitra.org,admin@example.com"
     ADMIN_SETUP_KEY: str = "gitamitra_sacred_admin_secret_2026"
 
     # RAG Settings

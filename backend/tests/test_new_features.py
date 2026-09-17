@@ -57,6 +57,7 @@ class TestNewFeatures(unittest.TestCase):
     def test_admin_emails_configuration(self):
         admin_emails = [e.strip().lower() for e in settings.ADMIN_EMAILS.split(",") if e.strip()]
         self.assertIn("admin@gitamitra.org", admin_emails)
+        self.assertIn("anubhavkr0407@gmail.com", admin_emails)
 
 if __name__ == "__main__":
     unittest.main()

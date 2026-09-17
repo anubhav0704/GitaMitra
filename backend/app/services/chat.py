@@ -7,6 +7,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import func
 
 from app.core.config import settings
 from app.models.domain import User, Conversation, Message
@@ -157,7 +158,15 @@ class ChatService:
             rag_context = RAGContextBuilder.build_llm_context(rag_result)
             retrieved_verses = rag_result.get("results", [])
 
-        # 8. Modular Prompt Building
+        # 8. Check if this is the first assistant response in this conversation
+        asst_count_stmt = select(func.count(Message.id)).where(
+            Message.conversation_id == conv.id,
+            Message.role == "assistant"
+        )
+        asst_count = (await self.db.execute(asst_count_stmt)).scalar() or 0
+        is_first_response = (asst_count == 0)
+
+        # 9. Modular Prompt Building
         system_prompt = PromptBuilder.load_system_prompt(response_depth=response_depth)
         prompt = PromptBuilder.build_prompt(
             user_message=message_text,
@@ -167,10 +176,11 @@ class ChatService:
             strategy=strategy,
             response_depth=response_depth,
             detected_emotions=emotion_data["emotions"],
-            gita_concepts=gita_concepts
+            gita_concepts=gita_concepts,
+            is_first_response=is_first_response
         )
 
-        # 9. LLM Generation
+        # 10. LLM Generation
         llm_resp = await self.llm.generate(
             prompt=prompt,
             system_prompt=system_prompt,
@@ -178,7 +188,7 @@ class ChatService:
             max_tokens=settings.LLM_MAX_TOKENS
         )
 
-        # 10. Response Validation
+        # 11. Response Validation
         is_valid, cleaned_content, verified_refs, errors = ResponseValidator.validate(
             content=llm_resp.content,
             retrieved_verses=retrieved_verses,
@@ -186,6 +196,10 @@ class ChatService:
             query_emotions=emotion_data["emotions"],
             query_contexts=emotion_data["contexts"]
         )
+
+        # Ensure first response has sacred heading
+        if is_first_response and "!! Radhe Radhe !!" not in cleaned_content:
+            cleaned_content = f"## **!! Radhe Radhe !!**\n\n{cleaned_content}"
 
         # 11. Save Assistant message
         assistant_msg = Message(
@@ -310,6 +324,14 @@ class ChatService:
 
             yield f"event: retrieval\ndata: {json.dumps({'count': len(retrieved_verses), 'references': [], 'emotions': emotion_data['emotions'], 'contexts': emotion_data['contexts'], 'concepts': [c['name'] for c in gita_concepts], 'strategy': strategy, 'memories_count': len(retrieved_memories), 'memories': mem_previews})}\n\n"
 
+            # 8. Check if this is the first assistant response in this conversation
+            asst_count_stmt = select(func.count(Message.id)).where(
+                Message.conversation_id == conv.id,
+                Message.role == "assistant"
+            )
+            asst_count = (await self.db.execute(asst_count_stmt)).scalar() or 0
+            is_first_response = (asst_count == 0)
+
             # 9. Modular Prompt Building
             system_prompt = PromptBuilder.load_system_prompt(response_depth=response_depth)
             prompt = PromptBuilder.build_prompt(
@@ -320,11 +342,17 @@ class ChatService:
                 strategy=strategy,
                 response_depth=response_depth,
                 detected_emotions=emotion_data["emotions"],
-                gita_concepts=gita_concepts
+                gita_concepts=gita_concepts,
+                is_first_response=is_first_response
             )
 
             # 10. Stream tokens from LLM
             accumulated_chunks = []
+            if is_first_response:
+                initial_heading = "## **!! Radhe Radhe !!**\n\n"
+                accumulated_chunks.append(initial_heading)
+                yield f"event: token\ndata: {json.dumps({'token': initial_heading})}\n\n"
+
             async for token in self.llm.stream(
                 prompt=prompt,
                 system_prompt=system_prompt,
@@ -344,6 +372,10 @@ class ChatService:
                 query_emotions=emotion_data["emotions"],
                 query_contexts=emotion_data["contexts"]
             )
+
+            # Guarantee first response preserves sacred greeting heading
+            if is_first_response and "!! Radhe Radhe !!" not in cleaned_content:
+                cleaned_content = f"## **!! Radhe Radhe !!**\n\n{cleaned_content}"
 
             # 12. Persist assistant message
             assistant_msg = Message(

@@ -53,12 +53,17 @@ async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
             detail="Email already registered"
         )
     
+    # Check if user should be auto-assigned admin role
+    admin_emails = [e.strip().lower() for e in settings.ADMIN_EMAILS.split(",") if e.strip()]
+    user_role = "admin" if user_data.email.lower() in admin_emails else "user"
+
     # Create new user
     hashed_password = get_password_hash(user_data.password)
     new_user = User(
         email=user_data.email,
         name=user_data.name,
         password_hash=hashed_password,
+        role=user_role,
     )
     
     db.add(new_user)
@@ -84,6 +89,11 @@ async def login(response: Response, user_data: UserLogin, db: AsyncSession = Dep
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
         
+    # Auto-elevate to admin if email matches ADMIN_EMAILS
+    admin_emails = [e.strip().lower() for e in settings.ADMIN_EMAILS.split(",") if e.strip()]
+    if user.email.lower() in admin_emails and user.role != "admin":
+        user.role = "admin"
+
     # Update last login
     user.last_login_at = datetime.utcnow()
     await db.commit()
@@ -177,9 +187,14 @@ async def google_auth(response: Response, auth_data: GoogleAuthRequest, db: Asyn
         name = payload.get("name") or email.split("@")[0]
         picture = payload.get("picture")
 
+        admin_emails = [e.strip().lower() for e in settings.ADMIN_EMAILS.split(",") if e.strip()]
+        is_admin_email = email.lower() in admin_emails
+
         if user:
             if not user.is_active:
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user account")
+            if is_admin_email and getattr(user, "role", "user") != "admin":
+                user.role = "admin"
             if hasattr(user, "avatar_url") and not user.avatar_url and picture:
                 user.avatar_url = picture
             if not user.name:
@@ -194,7 +209,7 @@ async def google_auth(response: Response, auth_data: GoogleAuthRequest, db: Asyn
                 name=name,
                 password_hash=get_password_hash(secrets.token_urlsafe(32)),
                 avatar_url=picture,
-                role="user",
+                role="admin" if is_admin_email else "user",
                 is_active=True,
                 last_login_at=now
             )

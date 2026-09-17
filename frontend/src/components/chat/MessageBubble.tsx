@@ -133,6 +133,17 @@ export default function MessageBubble({
     return lines.map((line, idx) => {
       const trimmed = line.trim();
 
+      // Sacred Greeting Heading: "!! Radhe Radhe !!" in bold and slightly large font in the middle
+      if (trimmed.includes("!! Radhe Radhe !!")) {
+        return (
+          <div key={idx} className="my-3 text-center">
+            <h2 className="text-base sm:text-lg font-bold font-serif text-amber-900 dark:text-amber-300 tracking-wide inline-block px-5 py-1 rounded-full bg-amber-500/15 border border-amber-500/35 shadow-xs">
+              !! Radhe Radhe !!
+            </h2>
+          </div>
+        );
+      }
+
       // Special Saar Card: matches "### Saar", "**Saar:**", or "Saar:"
       if (
         trimmed.startsWith("### Saar") ||

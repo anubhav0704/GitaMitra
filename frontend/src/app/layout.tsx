@@ -38,6 +38,7 @@ export const metadata: Metadata = {
 
 import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
+import { LanguageProvider } from "../context/LanguageContext";
 import { PWAInstallPrompt } from "../components/pwa/PWAInstallPrompt";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -61,14 +62,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen flex flex-col bg-chariot-theme text-stone-900 dark:text-stone-100 transition-colors duration-200 selection:bg-amber-500/30">
-        <ThemeProvider>
-          <AuthProvider>
-            <div className="flex-1 flex flex-col min-h-screen">
-              {children}
-            </div>
-            <PWAInstallPrompt />
-          </AuthProvider>
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <div className="flex-1 flex flex-col min-h-screen">
+                {children}
+              </div>
+              <PWAInstallPrompt />
+            </AuthProvider>
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

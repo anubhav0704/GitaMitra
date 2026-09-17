@@ -85,6 +85,23 @@ class TestNewFeatures(unittest.TestCase):
         normalized_non_first = normalize_radhe_heading(non_first_dup, is_first_response=False)
         self.assertEqual(normalized_non_first.count("!! Radhe Radhe !!"), 1)
 
+    def test_prompt_builder_bilingual_support(self):
+        # When language is 'hi', prompt must include Hindi mandate
+        prompt_hi = PromptBuilder.build_prompt(
+            user_message="कर्म क्या है?",
+            user_language="hi"
+        )
+        self.assertIn("LANGUAGE MANDATE (HINDI)", prompt_hi)
+        self.assertIn("Devanagari script", prompt_hi)
+
+        # When language is 'en', prompt must include English instruction
+        prompt_en = PromptBuilder.build_prompt(
+            user_message="What is karma?",
+            user_language="en"
+        )
+        self.assertNotIn("LANGUAGE MANDATE (HINDI)", prompt_en)
+        self.assertIn("reply in English", prompt_en)
+
 
 if __name__ == "__main__":
     unittest.main()

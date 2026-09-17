@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import ShlokaCard, { ShlokaReference } from "./ShlokaCard";
 import VoiceAudioPlayer from "./VoiceAudioPlayer";
+import { useLanguage } from "../../context/LanguageContext";
 import { API_BASE, getAuthHeaders } from "../../lib/api";
 import {
   Copy,
@@ -49,6 +50,7 @@ export default function MessageBubble({
   const [feedbackComment, setFeedbackComment] = useState("");
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [showReferences, setShowReferences] = useState(true);
+  const { t, isHindi } = useLanguage();
 
   const isUser = message.role === "user";
 
@@ -252,7 +254,7 @@ export default function MessageBubble({
       <div className="flex justify-end my-3">
         <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl px-5 py-3.5 bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 text-white font-sans text-sm shadow-md leading-relaxed border border-amber-400/30">
           <div className="flex items-center justify-between font-serif text-[10px] uppercase tracking-widest text-amber-200 mb-1">
-            <span>Seeker Inquiry</span>
+            <span>{t.chat.seekerInquiry}</span>
             {message.input_mode === "voice" && (
               <span className="flex items-center space-x-1 bg-white/20 px-2 py-0.5 rounded-full text-[9px] font-sans font-medium">
                 <Mic className="w-2.5 h-2.5" />
@@ -278,7 +280,7 @@ export default function MessageBubble({
             </div>
             <div className="flex items-baseline space-x-1.5 font-serif">
               <span className="font-bold tracking-wide text-stone-900 dark:text-amber-200 text-sm">
-                Lord Krishna
+                {isHindi ? "भगवान श्री कृष्ण" : "Lord Krishna"}
               </span>
               <span className="text-[10px] text-amber-700 dark:text-amber-400">
                 (गीतामित्र)
@@ -287,7 +289,7 @@ export default function MessageBubble({
           </div>
 
           <span className="text-[10px] font-serif text-stone-400 dark:text-stone-500">
-            {message.created_at ? new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Divine Counsel"}
+            {message.created_at ? new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : t.chat.divineCounsel}
           </span>
         </div>
 
@@ -326,7 +328,7 @@ export default function MessageBubble({
               className="flex items-center space-x-2 font-serif text-xs font-bold text-amber-800 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 transition-colors cursor-pointer py-1"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Verified Scriptural References ({message.references.length})</span>
+              <span>{t.chat.verifiedReferences} ({message.references.length})</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showReferences ? "rotate-180" : ""}`} />
             </button>
             {showReferences && (

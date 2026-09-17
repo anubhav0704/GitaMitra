@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage, LanguageSwitcherButton } from "../../context/LanguageContext";
 import { API_BASE, setAuthToken, getAuthHeaders, resilientFetch } from "../../lib/api";
 import { ArrowRight, Lock, Mail, Sparkles, Eye, EyeOff } from "lucide-react";
 import GoogleAuthButton from "../../components/auth/GoogleAuthButton";
@@ -16,6 +17,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +74,13 @@ export default function Login() {
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-3">
+          <div className="flex justify-between items-center mb-2">
+            <Link href="/" className="text-xs font-serif text-amber-700 dark:text-amber-300 hover:underline">
+              ← {t.common.back}
+            </Link>
+            <LanguageSwitcherButton />
+          </div>
+
           <div className="flex justify-center">
             <Link href="/" className="relative group">
               <div className="absolute inset-0 rounded-2xl bg-amber-500/30 blur-xl group-hover:blur-2xl transition-all"></div>
@@ -90,10 +99,10 @@ export default function Login() {
               <span>गीतामित्र संवाद</span>
             </div>
             <h1 className="text-2xl font-bold font-serif tracking-tight text-stone-900 dark:text-white">
-              Return to GitaMitra
+              {t.auth.welcomeBack}
             </h1>
             <p className="mt-1 text-xs text-stone-700 dark:text-stone-300 font-sans font-medium">
-              Enter your credentials to return to your spiritual sanctuary
+              {t.auth.loginSubtitle}
             </p>
           </div>
         </div>
@@ -111,7 +120,7 @@ export default function Login() {
               <div className="w-full border-t border-amber-500/20"></div>
             </div>
             <div className="relative px-3 bg-[#fbf9f5] dark:bg-[#120e26] rounded-full text-[10px] uppercase font-serif tracking-widest text-stone-500 dark:text-stone-400 font-semibold border border-amber-500/20">
-              or continue with email
+              {t.auth.orContinueWith} email
             </div>
           </div>
 
@@ -124,7 +133,7 @@ export default function Login() {
 
             <div className="space-y-1.5 font-serif">
               <label className="block text-xs font-semibold text-amber-900 dark:text-amber-300 uppercase tracking-wider">
-                Email Address
+                {t.auth.email}
               </label>
               <div className="relative font-sans">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
@@ -133,7 +142,7 @@ export default function Login() {
                 <input
                   type="email"
                   required
-                  placeholder="seeker@gitamitra.org"
+                  placeholder={t.auth.emailPlaceholder}
                   className="block w-full pl-10 pr-4 py-2.5 rounded-2xl border border-amber-500/30 bg-white/90 dark:bg-[#120e26]/90 text-stone-900 dark:text-white placeholder-stone-400 text-xs focus:outline-none focus:border-amber-500 transition-all font-sans"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -143,7 +152,7 @@ export default function Login() {
 
             <div className="space-y-1.5 font-serif">
               <label className="block text-xs font-semibold text-amber-900 dark:text-amber-300 uppercase tracking-wider">
-                Password
+                {t.auth.password}
               </label>
               <div className="relative font-sans">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
@@ -174,7 +183,7 @@ export default function Login() {
                 disabled={isLoading}
                 className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-500/30 hover:shadow-amber-500/45 active:scale-[0.98] disabled:opacity-50 transition-all cursor-pointer"
               >
-                <span>{isLoading ? "Entering Sanctuary..." : "Enter Spiritual Sanctuary"}</span>
+                <span>{isLoading ? t.common.loading : t.auth.loginButton}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -182,12 +191,12 @@ export default function Login() {
 
           <div className="mt-6 text-center border-t border-amber-500/20 pt-4">
             <p className="text-xs text-stone-600 dark:text-stone-300 font-serif">
-              New Seeker?{" "}
+              {t.auth.noAccount}{" "}
               <Link
                 href="/register"
                 className="font-bold text-amber-700 dark:text-amber-300 hover:underline ml-1"
               >
-                Begin Your Journey
+                {t.auth.signUpLink}
               </Link>
             </p>
           </div>

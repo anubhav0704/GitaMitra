@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage, LanguageSwitcherButton } from "../../context/LanguageContext";
 import ProfileModal from "../ProfileModal";
 import { API_BASE, getAuthHeaders } from "../../lib/api";
 import { InstallAppButton } from "../pwa/PWAInstallPrompt";
@@ -60,6 +61,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { t, language, toggleLanguage } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -174,6 +176,8 @@ export default function Sidebar({
           </Link>
 
           <div className="flex items-center space-x-1.5">
+            <LanguageSwitcherButton className="scale-90" />
+
             {user?.role === "admin" && (
               <Link
                 href="/admin"
@@ -218,7 +222,7 @@ export default function Sidebar({
           >
             <div className="flex items-center space-x-2">
               <Plus className="w-4 h-4" />
-              <span>New Spiritual Inquiry</span>
+              <span>{t.chat.newChat}</span>
             </div>
             <span className="hidden sm:inline-block text-[10px] bg-white/20 px-1.5 py-0.5 rounded-md font-mono">
               Ctrl+N
@@ -233,7 +237,7 @@ export default function Sidebar({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search conversations..."
+              placeholder={t.chat.searchChats}
               className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-amber-500/20 bg-white/60 dark:bg-[#15102a]/70 text-xs text-stone-900 dark:text-white placeholder-stone-400 focus:outline-none focus:border-amber-500 font-sans"
             />
             {searchQuery && (
@@ -382,7 +386,7 @@ export default function Sidebar({
                       className="w-full flex items-center space-x-2.5 px-3.5 py-2 text-xs text-amber-800 dark:text-amber-300 hover:bg-amber-500/15 font-bold transition-colors font-serif"
                     >
                       <Shield className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                      <span>Admin Command Center</span>
+                      <span>{t.nav.adminPortal}</span>
                     </Link>
                   </div>
                 )}
@@ -397,7 +401,7 @@ export default function Sidebar({
                     className="w-full flex items-center space-x-2.5 px-3.5 py-2 text-xs text-stone-700 dark:text-stone-300 hover:bg-amber-500/10 hover:text-amber-900 dark:hover:text-amber-200 transition-colors cursor-pointer font-serif"
                   >
                     <UserIcon className="w-3.5 h-3.5 text-stone-400" />
-                    <span>Seeker Profile</span>
+                    <span>{t.nav.profile}</span>
                   </button>
 
                   {/* Theme toggle */}
@@ -411,8 +415,22 @@ export default function Sidebar({
                       ) : (
                         <Sun className="w-3.5 h-3.5 text-amber-600" />
                       )}
-                      <span>Aura: {theme === "dark" ? "Cosmic Night" : "Sacred Dawn"}</span>
+                      <span>{theme === "dark" ? (language === "hi" ? "दिव्य रात्रि (Dark)" : "Cosmic Night (Dark)") : (language === "hi" ? "पवित्र प्रभात (Light)" : "Sacred Dawn (Light)")}</span>
                     </div>
+                  </button>
+
+                  {/* Language switch button inside menu */}
+                  <button
+                    onClick={() => toggleLanguage()}
+                    className="w-full flex items-center justify-between px-3.5 py-2 text-xs text-stone-700 dark:text-stone-300 hover:bg-amber-500/10 hover:text-amber-900 dark:hover:text-amber-200 transition-colors cursor-pointer font-serif"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <span className="font-bold text-amber-600 dark:text-amber-400 text-xs">अ / A</span>
+                      <span>{language === "en" ? "Switch to हिन्दी" : "Switch to English"}</span>
+                    </div>
+                    <span className="text-[10px] bg-amber-500/15 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded-md font-bold uppercase">
+                      {language === "en" ? "HI" : "EN"}
+                    </span>
                   </button>
                 </div>
 
@@ -423,7 +441,7 @@ export default function Sidebar({
                     className="w-full flex items-center space-x-2.5 px-3.5 py-2 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer font-serif"
                   >
                     <LogOut className="w-3.5 h-3.5" />
-                    <span>Conclude Journey (Logout)</span>
+                    <span>{t.nav.logout}</span>
                   </button>
                 </div>
               </div>

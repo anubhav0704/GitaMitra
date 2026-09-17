@@ -2,6 +2,7 @@
 
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage, LanguageSwitcherButton } from "../../context/LanguageContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
@@ -131,6 +132,7 @@ function getRandomInquiries(count: number = 4): PromptCard[] {
 export default function ChatPage() {
   const { user, loading } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { t, language, isHindi } = useLanguage();
   const router = useRouter();
 
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -519,7 +521,8 @@ export default function ChatPage() {
         signal: controller.signal,
         body: JSON.stringify({
           message: message,
-          conversation_id: activeConvId || undefined
+          conversation_id: activeConvId || undefined,
+          language: language
         })
       });
 
@@ -729,6 +732,7 @@ export default function ChatPage() {
 
           {/* Right Header Controls */}
           <div className="flex items-center space-x-2">
+            <LanguageSwitcherButton />
             <InstallAppButton className="hidden sm:inline-flex px-2.5 py-1 text-xs rounded-full border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20" />
             
             <Link
@@ -781,10 +785,13 @@ export default function ChatPage() {
                     ✦ ॐ नमो भगवते वासुदेवाय ✦
                   </div>
                   <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 dark:text-white font-serif">
-                    Namaste, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 dark:from-amber-400 dark:via-yellow-300 dark:to-orange-400">{firstName}</span>
+                    {isHindi ? "राधे राधे, " : "Namaste, "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 dark:from-amber-400 dark:via-yellow-300 dark:to-orange-400">{firstName}</span>
                   </h1>
                   <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 max-w-md mx-auto font-sans leading-relaxed font-medium">
-                    What dilemma, emotion, or duty would you like to reflect upon with the divine counsel of Lord Krishna?
+                    {isHindi
+                      ? "अपने अंतर्मन के किसी द्वंद्व, भावना अथवा कर्तव्य पर भगवान श्री कृष्ण के दिव्य उपदेशों से मार्गदर्शन प्राप्त करें।"
+                      : "What dilemma, emotion, or duty would you like to reflect upon with the divine counsel of Lord Krishna?"}
                   </p>
                 </div>
 
@@ -792,7 +799,7 @@ export default function ChatPage() {
                 <div className="pt-1">
                   <div className="flex items-center justify-between px-1 mb-2">
                     <span className="font-serif text-[11px] text-amber-800/80 dark:text-amber-400 font-semibold tracking-wider uppercase">
-                      ✦ Timeless Life Inquiries
+                      {isHindi ? "✦ शाश्वत जीवन चिंतन सूत्र" : "✦ Timeless Life Inquiries"}
                     </span>
                     <button
                       type="button"
@@ -801,7 +808,7 @@ export default function ChatPage() {
                       title="Explore other inquiries"
                     >
                       <RefreshCw className="w-3 h-3 text-amber-500" />
-                      <span>Shuffle</span>
+                      <span>{isHindi ? "बदलें" : "Shuffle"}</span>
                     </button>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-left">
@@ -987,14 +994,16 @@ export default function ChatPage() {
                 onChange={handleTextareaInput}
                 onKeyDown={handleKeyDown}
                 rows={1}
-                placeholder="Ask Lord Krishna anything about your duty, peace, purpose, or Gita verses..."
+                placeholder={t.chat.inputPlaceholder}
                 className="w-full max-h-36 resize-none bg-transparent px-2 py-1 text-sm sm:text-[15px] text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none font-sans"
               />
 
               <div className="flex items-center justify-between pt-1.5 px-1 min-w-0">
                 <div className="flex items-center space-x-1.5 font-serif text-[10px] sm:text-[11px] text-amber-800 dark:text-amber-400 truncate pr-2">
-                  <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
-                  <span className="truncate">Grounded in 700 Verses of Bhagavad Gita</span>
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span className="truncate">
+                    {isHindi ? "श्रीमद्भगवद्गीता के ७०० श्लोकों पर आधारित" : "Grounded in 700 Verses of Bhagavad Gita"}
+                  </span>
                 </div>
 
                 <div className="flex items-center space-x-2 shrink-0">
@@ -1039,7 +1048,9 @@ export default function ChatPage() {
             </div>
 
             <p className="hidden sm:block text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 text-center mt-1.5 font-serif">
-              GitaMitra offers spiritual reflection grounded in Dharma. Press Enter to send, Shift+Enter for newline.
+              {isHindi
+                ? "गीतामित्र धर्म पर आधारित आध्यात्मिक चिंतन प्रस्तुत करता है। संदेश भेजने हेतु Enter दबाएँ, नई पंक्ति हेतु Shift+Enter।"
+                : "GitaMitra offers spiritual reflection grounded in Dharma. Press Enter to send, Shift+Enter for newline."}
             </p>
           </div>
         </div>

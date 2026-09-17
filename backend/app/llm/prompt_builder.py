@@ -72,7 +72,8 @@ class PromptBuilder:
         response_depth: str = "BALANCED",
         detected_emotions: Optional[List[str]] = None,
         gita_concepts: Optional[List[Dict[str, Any]]] = None,
-        is_first_response: bool = False
+        is_first_response: bool = False,
+        user_language: Optional[str] = "en"
     ) -> str:
         """
         Combines retrieved Gita context, user memories, conversation history,
@@ -151,9 +152,15 @@ class PromptBuilder:
             "- MODERN REAL-WORLD APPLICATION: Provide grounded, practical wisdom for everyday life. How does the teaching help in modern work, family, inner dilemmas, and facing unavoidable challenges with equanimity?",
             "- CONVERSATIONAL TONE: Converse naturally in flowing, thoughtful paragraphs with genuine warmth and intellectual depth. Avoid rigid corporate headings ('### Understanding', '### Saar', '### What You Can Do').",
             "- If the strategy is IDENTITY (or user asks if you are Shri Krishna): State clearly in the first sentence: 'I am GitaMitra, an AI spiritual companion inspired by the Bhagavad Gita, and not Shri Krishna Himself.' Keep it to 1-2 warm, direct conversational paragraphs without headings, action checklists, or verses.",
-            "- If the strategy is CRISIS: Focus on immediate empathy and helpline resources without philosophical lectures.",
-            "- Match the user's language (English, Hindi, or Hinglish)."
+            "- If the strategy is CRISIS: Focus on immediate empathy and helpline resources without philosophical lectures."
         ]
+
+        if user_language == "hi":
+            instructions.append(
+                "- LANGUAGE MANDATE (HINDI): The seeker has chosen Hindi (हिन्दी) as their platform language. You MUST respond primarily in clear, graceful, and natural Hindi (written in Devanagari script). Keep the sacred heading as '## **!! Radhe Radhe !!**' if applicable. Present Gita wisdom, reflections, and guidance authentically in Hindi while keeping Sanskrit shlokas and terms accessible."
+            )
+        else:
+            instructions.append("- Match the user's language (English, Hindi, or Hinglish). If the seeker writes in English, reply in English.")
 
         if is_first_response:
             instructions.append(

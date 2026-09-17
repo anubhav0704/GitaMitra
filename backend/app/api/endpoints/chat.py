@@ -16,6 +16,7 @@ class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=4000)
     conversation_id: Optional[UUID] = None
     response_depth: Optional[str] = Field("BALANCED", description="Response depth: SIMPLE, BALANCED, or DEEP")
+    language: Optional[str] = Field("en", description="User language preference: en or hi")
 
 class ChatResponse(BaseModel):
     conversation_id: str
@@ -44,7 +45,8 @@ async def send_chat_message(
             user=current_user,
             message_text=request.message,
             conversation_id=request.conversation_id,
-            response_depth=request.response_depth or "BALANCED"
+            response_depth=request.response_depth or "BALANCED",
+            language=request.language or "en"
         )
         return result
     except ValueError as e:
@@ -78,7 +80,8 @@ async def stream_chat_message(
                 user=current_user,
                 message_text=request.message,
                 conversation_id=request.conversation_id,
-                response_depth=request.response_depth or "BALANCED"
+                response_depth=request.response_depth or "BALANCED",
+                language=request.language or "en"
             ):
                 yield chunk
         except Exception as e:

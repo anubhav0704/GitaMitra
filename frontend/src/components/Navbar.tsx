@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage, LanguageSwitcherButton } from "../context/LanguageContext";
 import ProfileModal from "./ProfileModal";
 import { API_BASE, getAuthHeaders } from "../lib/api";
 import { 
@@ -20,6 +21,7 @@ import {
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -88,7 +90,7 @@ export default function Navbar() {
                   }`}
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                  <span>Spiritual Dialogue</span>
+                  <span>{t.nav.chat}</span>
                 </Link>
 
                 <Link
@@ -100,7 +102,7 @@ export default function Navbar() {
                   }`}
                 >
                   <BookOpen className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                  <span>Gita Explorer</span>
+                  <span>{t.nav.gita}</span>
                 </Link>
 
                 {user && (
@@ -113,7 +115,7 @@ export default function Navbar() {
                     }`}
                   >
                     <Shield className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>Sanctuary</span>
+                    <span>{t.nav.settings}</span>
                   </Link>
                 )}
 
@@ -123,7 +125,7 @@ export default function Navbar() {
                     className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 font-bold border border-amber-500/40 hover:bg-amber-500/30 transition-all duration-150"
                   >
                     <Shield className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>Admin Portal</span>
+                    <span>{t.nav.adminPortal}</span>
                   </Link>
                 )}
               </nav>
@@ -131,6 +133,9 @@ export default function Navbar() {
 
             {/* Right Controls */}
             <div className="flex items-center space-x-2.5">
+              {/* Bilingual Language Switcher */}
+              <LanguageSwitcherButton />
+
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
@@ -171,7 +176,7 @@ export default function Navbar() {
                     href="/chat"
                     className="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-white font-semibold shadow-sm hover:opacity-90 active:scale-95 transition-all"
                   >
-                    Begin Journey
+                    {t.nav.register}
                   </Link>
                 </div>
               )}

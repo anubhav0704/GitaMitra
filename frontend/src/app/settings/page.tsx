@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage } from "../../context/LanguageContext";
 import {
   Shield,
   ArrowLeft,
@@ -29,6 +30,7 @@ import { api } from "../../lib/api";
 export default function SettingsPage() {
   const { user, loading, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { t, language, setLanguage, isHindi } = useLanguage();
   const router = useRouter();
 
   const [memoryEnabled, setMemoryEnabled] = useState(true);
@@ -125,6 +127,9 @@ export default function SettingsPage() {
 
   const handleSetPreferredLang = (lang: string) => {
     setPreferredLang(lang);
+    if (lang === "hi" || lang === "en") {
+      setLanguage(lang);
+    }
     if (typeof window !== "undefined") {
       localStorage.setItem("gitamitra_preferred_lang", lang);
     }
@@ -152,16 +157,17 @@ export default function SettingsPage() {
             className="inline-flex items-center space-x-2 text-xs font-serif font-bold text-stone-700 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Return to Dialogue</span>
+            <span>{isHindi ? "संवाद पर वापस जाएँ" : "Return to Dialogue"}</span>
           </Link>
 
           <div className="flex items-center space-x-2 font-serif text-xs text-amber-800 dark:text-amber-400">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>GitaMitra Sanctuary Settings</span>
+            <span>{isHindi ? "गीतामित्र आश्रम सेटिंग्स" : "GitaMitra Sanctuary Settings"}</span>
           </div>
         </div>
 
         {/* Status Toast */}
+
         {statusMessage && (
           <div className="p-3 rounded-2xl border border-amber-500/35 bg-amber-500/20 text-amber-950 dark:text-amber-100 font-serif text-xs text-center animate-in fade-in shadow-md">
             ✦ {statusMessage} ✦
@@ -171,10 +177,10 @@ export default function SettingsPage() {
         {/* Hero Header */}
         <div className="temple-card p-6 sm:p-7 space-y-2 shadow-xl">
           <h1 className="text-2xl sm:text-3xl font-bold font-serif text-stone-900 dark:text-white">
-            Sanctuary Preferences
+            {t.settings.pageTitle}
           </h1>
           <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed font-sans font-medium">
-            Customize your spiritual dialogue experience, language preferences, audio recitations, and memory privacy.
+            {t.settings.pageSubtitle}
           </p>
         </div>
 
@@ -182,7 +188,7 @@ export default function SettingsPage() {
         <div className="temple-card p-5 sm:p-6 space-y-4">
           <div className="flex items-center space-x-2 text-xs font-serif font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
             {theme === "dark" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-            <span>1. Visual Aura & Atmosphere</span>
+            <span>{isHindi ? "१. विज़ुअल आभा एवं वातावरण" : "1. Visual Aura & Atmosphere"}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 font-serif text-xs">
@@ -196,10 +202,10 @@ export default function SettingsPage() {
             >
               <div className="flex items-center space-x-2 text-stone-900 dark:text-white">
                 <Sun className="w-4 h-4 text-amber-600" />
-                <span>Sacred Dawn (Light)</span>
+                <span>{isHindi ? "पवित्र प्रभात (Light)" : "Sacred Dawn (Light)"}</span>
               </div>
               <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans mt-1">
-                Warm cream and saffron hues for daytime reflection.
+                {isHindi ? "दिन के आध्यात्मिक चिंतन हेतु सौम्य केसरिया एवं श्वेत आभा।" : "Warm cream and saffron hues for daytime reflection."}
               </p>
             </button>
 
@@ -213,10 +219,10 @@ export default function SettingsPage() {
             >
               <div className="flex items-center space-x-2 text-stone-900 dark:text-white">
                 <Moon className="w-4 h-4 text-amber-400" />
-                <span>Cosmic Night (Dark)</span>
+                <span>{isHindi ? "दिव्य रात्रि (Dark)" : "Cosmic Night (Dark)"}</span>
               </div>
               <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans mt-1">
-                Deep obsidian and luminous gold for tranquil meditation.
+                {isHindi ? "गहन ध्यान और शांति हेतु स्वर्णिम एवं गहन आभा।" : "Deep obsidian and luminous gold for tranquil meditation."}
               </p>
             </button>
           </div>
@@ -226,12 +232,12 @@ export default function SettingsPage() {
         <div className="temple-card p-5 sm:p-6 space-y-4">
           <div className="flex items-center space-x-2 text-xs font-serif font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
             <Globe className="w-4 h-4" />
-            <span>2. Spoken & Counsel Language</span>
+            <span>{isHindi ? "२. संवाद एवं प्लेटफ़ॉर्म भाषा" : "2. Spoken & Counsel Language"}</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-serif text-xs">
             {[
-              { id: "auto", label: "Auto-detect", sub: "Auto switch" },
+              { id: "auto", label: isHindi ? "स्वतः पहचान" : "Auto-detect", sub: isHindi ? "ऑटो स्विच" : "Auto switch" },
               { id: "hi", label: "हिन्दी (Hindi)", sub: "देवनागरी" },
               { id: "en", label: "English", sub: "Modern clarity" },
               { id: "hinglish", label: "Hinglish", sub: "Bilingual" }
@@ -240,8 +246,8 @@ export default function SettingsPage() {
                 key={l.id}
                 onClick={() => handleSetPreferredLang(l.id)}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                  preferredLang === l.id
-                    ? "border-amber-500 bg-amber-500/15 dark:bg-amber-500/20 font-bold shadow-xs"
+                  (language === l.id) || (preferredLang === l.id)
+                    ? "border-amber-500 bg-amber-500/15 dark:bg-amber-500/20 font-bold shadow-xs ring-1 ring-amber-500/30"
                     : "border-amber-500/20 bg-white/40 dark:bg-black/20 hover:border-amber-500/40"
                 }`}
               >

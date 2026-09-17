@@ -128,7 +128,8 @@ class ChatService:
         user: User,
         message_text: str,
         conversation_id: Optional[UUID] = None,
-        response_depth: str = "BALANCED"
+        response_depth: str = "BALANCED",
+        language: str = "en"
     ) -> Dict[str, Any]:
         """Complete non-streaming message generation through Step 7 companion pipeline."""
         conv = await self.get_or_create_conversation(user, conversation_id)
@@ -203,7 +204,8 @@ class ChatService:
             response_depth=response_depth,
             detected_emotions=emotion_data["emotions"],
             gita_concepts=gita_concepts,
-            is_first_response=is_first_response
+            is_first_response=is_first_response,
+            user_language=language
         )
 
         # 10. LLM Generation
@@ -275,7 +277,8 @@ class ChatService:
         user: User,
         message_text: str,
         conversation_id: Optional[UUID] = None,
-        response_depth: str = "BALANCED"
+        response_depth: str = "BALANCED",
+        language: str = "en"
     ) -> AsyncGenerator[str, None]:
         """
         Streams response chunks via Server-Sent Events (SSE).
@@ -368,7 +371,8 @@ class ChatService:
                 response_depth=response_depth,
                 detected_emotions=emotion_data["emotions"],
                 gita_concepts=gita_concepts,
-                is_first_response=is_first_response
+                is_first_response=is_first_response,
+                user_language=language
             )
 
             # 10. Stream tokens from LLM

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MessageSquare, BookOpen, Shield, Settings as SettingsIcon } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 export interface MobileNavProps {
   className?: string;
@@ -12,13 +13,14 @@ export interface MobileNavProps {
 
 export const MobileNav: React.FC<MobileNavProps> = ({ className = "", isChat }) => {
   const pathname = usePathname();
+  const { isHindi } = useLanguage();
   const activeIsChat = isChat ?? (pathname === "/chat");
 
   const navItems = [
-    { href: "/chat", label: "Dialogue", icon: MessageSquare, active: pathname === "/chat" },
-    { href: "/gita", label: "Gita", icon: BookOpen, active: pathname?.startsWith("/gita") },
-    { href: "/memory", label: "Memory", icon: Shield, active: pathname === "/memory" },
-    { href: "/settings", label: "Sanctuary", icon: SettingsIcon, active: pathname === "/settings" }
+    { href: "/chat", label: isHindi ? "भगवद् संवाद" : "Dialogue", icon: MessageSquare, active: pathname === "/chat" },
+    { href: "/gita", label: isHindi ? "गीता" : "Gita", icon: BookOpen, active: pathname?.startsWith("/gita") },
+    { href: "/memory", label: isHindi ? "स्मृति" : "Memory", icon: Shield, active: pathname === "/memory" },
+    { href: "/settings", label: isHindi ? "सेटिंग्स" : "Sanctuary", icon: SettingsIcon, active: pathname === "/settings" }
   ];
 
   return (

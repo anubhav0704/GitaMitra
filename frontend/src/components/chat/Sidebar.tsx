@@ -177,6 +177,11 @@ export default function Sidebar({
           </Link>
 
           <div className="flex items-center space-x-1.5">
+            {/* Language toggle specifically for phone users inside the mobile sidebar */}
+            <div className="md:hidden">
+              <LanguageSwitcherButton />
+            </div>
+
             {onToggleCollapse && (
               <button
                 onClick={onToggleCollapse}

@@ -1,0 +1,35 @@
+name: GitaMitra Backend KeepAlive
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free tier from sleeping (15-minute inactivity limit)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  ping-backend:
+    name: Ping Render Backend Health Endpoint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping Backend Health & Gita API
+        run: |
+          BACKEND_URL="https://gitamitra-backend.onrender.com/api/health/ready"
+          echo "Sending keepalive heartbeat to: $BACKEND_URL"
+          
+          # Perform curl request with 45s timeout to handle potential cold boots gracefully
+          HTTP_STATUS=$(curl -s -o /tmp/health_response.txt -w "%{http_code}" --max-time 45 "$BACKEND_URL" || echo "000")
+          
+          echo "HTTP Status: $HTTP_STATUS"
+          echo "Response Body:"
+          cat /tmp/health_response.txt || true
+          echo ""
+          
+          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 307 ] || [ "$HTTP_STATUS" -eq 308 ]; then
+            echo "✅ Keepalive ping successful. Render backend is awake and healthy!"
+          else
+            echo "⚠️ Non-200 status ($HTTP_STATUS) received. Trying secondary health endpoint..."
+            HTTP_STATUS_SEC=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://gitamitra-backend.onrender.com/api/gita/status" || echo "000")
+            echo "Secondary endpoint HTTP Status: $HTTP_STATUS_SEC"
+          fi

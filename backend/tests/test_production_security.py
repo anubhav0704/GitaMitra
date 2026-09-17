@@ -16,6 +16,13 @@ def test_liveness_and_readiness_probes():
     ready_res = client.get("/api/health/ready")
     assert ready_res.status_code in [200, 503]
 
+    # Test HEAD probes for keepalive monitors
+    head_ready_res = client.head("/api/health/ready")
+    assert head_ready_res.status_code == 200
+
+    head_live_res = client.head("/api/health/live")
+    assert head_live_res.status_code == 200
+
 def test_security_headers():
     """Verify production security headers are set on API responses."""
     res = client.get("/api/health/live")

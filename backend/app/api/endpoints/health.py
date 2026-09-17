@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 import logging
@@ -7,6 +7,13 @@ from app.core.database import get_db
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+@router.head("/health", status_code=status.HTTP_200_OK)
+@router.head("/health/live", status_code=status.HTTP_200_OK)
+@router.head("/health/ready", status_code=status.HTTP_200_OK)
+async def health_head():
+    """Ultra-fast HEAD endpoint for keepalive monitors (UptimeRobot, pingers) returning instant 200 OK."""
+    return Response(status_code=status.HTTP_200_OK)
 
 @router.get("/health")
 async def health_check(db: AsyncSession = Depends(get_db)):
